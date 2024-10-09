@@ -6,4 +6,4 @@ export default defineConfig({
   // Base path to deploy to GitHub Pages
   base: "/my-recipe-app/",
   plugins: [react()],
-}); 
+});
