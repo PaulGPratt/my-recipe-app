@@ -72,13 +72,8 @@ export namespace api {
         "cook_time_minutes": sql.NullInt16
     }
 
-    export interface RecipeListItem {
-        id: string
-        title: string
-    }
-
     export interface RecipeListResponse {
-        Recipes: RecipeListItem[]
+        Recipes: Recipe[]
     }
 
     export class ServiceClient {

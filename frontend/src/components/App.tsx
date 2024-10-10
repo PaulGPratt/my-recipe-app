@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import Client, { Environment, Local, api } from "../client";
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
 import { ThemeProvider } from "./theme-provider";
-import { ModeToggle } from "./mode-toggle";
+import { Badge } from "./ui/badge";
+import { StarIcon } from "@radix-ui/react-icons";
+import { Flame, Timer } from "lucide-react";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -68,31 +69,57 @@ function App() {
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       {/* <ModeToggle/> */}
       <div className="min-h-full">
-      <main className="mt-8 h-full">
-        <div className="mx-auto h-full max-w-4xl rounded-none pb-12 xl:rounded-sm">
-          <div className="flex items-center py-2">
-            <h1 className="text-xl font-bold">Recipes</h1>
+        <main className="mt-8 h-full">
+          <div className="mx-auto h-full max-w-4xl rounded-none pb-12 xl:rounded-sm">
+            <div className="flex items-center py-2 px-4">
+              <h1 className="text-4xl font-bold">Natalie's Recipes</h1>
+            </div>
+            {isLoading ? (
+              <span>Loading...</span>
+            ) : (
+              <ScrollArea className="h-full w-full rounded-md border">
+                <div className="p-4 flex">
+                  {recipeList?.Recipes.map((item) => (
+                    <button
+                      key={item.id}
+                      className={"flex flex-col flex-grow items-start gap-2 rounded-lg border p-3 text-left text-xl transition-all hover:bg-accent"}
+                      onClick={() => { }}
+                    >
+                      <div className="flex w-full flex-col gap-1">
+                        <div className="font-semibold">{item.title}</div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {item.cook_temp_deg_f.Valid ? (
+                          <div className="flex">
+                            <Flame /> {item.cook_temp_deg_f.Int16}°F
+                          </div>
+                        ) : null}
+                        {item.cook_time_minutes.Valid ? (
+                          <div className="flex">
+                            <Timer /> {item.cook_time_minutes.Int16}min
+                          </div>
+                        ) : null}
+                      </div>
+
+                      {/* Todo: hide these until the recipe is selected */}
+                      <div className="text-m text-muted-foreground">
+                        {item.ingredients}
+                      </div>
+                      <div className="text-m text-muted-foreground">
+                        {item.instructions}
+                      </div>
+
+                      
+                    </button>
+                  ))}
+                </div>
+              </ScrollArea>
+            )}
           </div>
-          {isLoading ? (
-            <span>Loading...</span>
-          ) : (
-            <ScrollArea className="h-full w-full rounded-md border">
-              <div className="p-4">
-                {recipeList?.Recipes.map((recipe) => (
-                  <>
-                    <div key={recipe.id} className="text-sm">
-                      {recipe.title}
-                    </div>
-                    <Separator className="my-2" />
-                  </>
-                ))}
-              </div>
-            </ScrollArea>
-          )}
-        </div>
-      </main>
+        </main>
       </div>
-    </ThemeProvider>    
+    </ThemeProvider>
   );
 }
 

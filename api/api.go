@@ -26,13 +26,13 @@ type Recipe struct {
 }
 
 type RecipeListResponse struct {
-	Recipes []*RecipeListItem
+	Recipes []*Recipe
 }
 
-type RecipeListItem struct {
-	Id    string `json:"id"`
-	Title string `json:"title"`
-}
+// type RecipeListItem struct {
+// 	Id    string `json:"id"`
+// 	Title string `json:"title"`
+// }
 
 //encore:api public method=GET path=/api/recipes/:id
 func GetRecipe(ctx context.Context, id string) (*Recipe, error) {
@@ -54,7 +54,7 @@ func GetRecipe(ctx context.Context, id string) (*Recipe, error) {
 //encore:api public method=GET path=/api/recipes
 func GetRecipes(ctx context.Context) (*RecipeListResponse, error) {
 	rows, err := db.Query(ctx, `
-		SELECT id, title
+		SELECT title, ingredients, instructions, cook_temp_deg_f, cook_time_minutes
 		FROM recipe
 	`)
 	if err != nil {
@@ -62,10 +62,10 @@ func GetRecipes(ctx context.Context) (*RecipeListResponse, error) {
 	}
 	defer rows.Close()
 
-	var recipes []*RecipeListItem
+	var recipes []*Recipe
 	for rows.Next() {
-		recipe := &RecipeListItem{}
-		if err := rows.Scan(&recipe.Id, &recipe.Title); err != nil {
+		recipe := &Recipe{}
+		if err := rows.Scan(&recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.CookTempDegF, &recipe.CookTimeMinutes); err != nil {
 			return nil, err
 		}
 		recipes = append(recipes, recipe)
