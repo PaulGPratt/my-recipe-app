@@ -3,7 +3,6 @@ import { MilkdownProvider } from "@milkdown/react";
 import { FloppyDisk, Image } from "@phosphor-icons/react";
 import Client, { Environment, Local } from "../client";
 import { v4 as uuidv4 } from "uuid";
-import CoverSelector from "./CoverSelector.tsx";
 import MarkdownEditor from "./MarkdownEditor.tsx";
 import SharingModal from "./SharingModal.tsx";
 
@@ -29,7 +28,6 @@ function App() {
   const [coverImage, setCoverImage] = useState("");
   const [content, setContent] = useState<string>("");
 
-  const [showCoverSelector, setShowCoverSelector] = useState(false);
   const [showSharingModal, setShowSharingModal] = useState(false);
 
   useEffect(() => {
@@ -76,36 +74,9 @@ function App() {
 
   return (
     <div className="min-h-full">
-      <div
-        className={` pb-32 ${coverImage ? "" : "border-b-2 border-dashed"}`}
-        style={{
-          backgroundImage: `url(${coverImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <header className="relative py-10">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" />
-
-          <button
-            className="absolute bottom-0 right-5 flex items-center space-x-1 rounded border border-black border-opacity-50 bg-white px-2 py-0.5 opacity-70 transition-opacity duration-200 hover:opacity-100 xl:-bottom-28"
-            onClick={() => setShowCoverSelector(true)}
-          >
-            <Image size={20} />{" "}
-            <span>{coverImage ? "Change" : "Add"} cover</span>
-          </button>
-        </header>
-      </div>
-
-      <main className="-mt-20 h-full">
+      <main className="mt-8 h-full">
         <div className="mx-auto h-full max-w-4xl rounded-none pb-12 xl:rounded-sm">
           <div className="prose h-full w-full max-w-none rounded-none border border-black border-opacity-10 xl:rounded-sm">
-            <CoverSelector
-              open={showCoverSelector}
-              setOpen={setShowCoverSelector}
-              client={client}
-              setCoverImage={setCoverImage}
-            />
             {isLoading ? (
               <span>Loading...</span>
             ) : (
