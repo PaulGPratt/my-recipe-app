@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import { MilkdownProvider } from "@milkdown/react";
-import { FloppyDisk, Image } from "@phosphor-icons/react";
-import Client, { Environment, Local } from "../client";
-import { v4 as uuidv4 } from "uuid";
-import MarkdownEditor from "./MarkdownEditor.tsx";
-import SharingModal from "./SharingModal.tsx";
+import Client, { Environment, Local, api } from "../client";
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -22,82 +19,83 @@ function App() {
   const client = getRequestClient();
 
   const urlParams = new URLSearchParams(window.location.search);
-  const queryParamID = urlParams.get("id");
 
   const [isLoading, setIsLoading] = useState(true);
-  const [coverImage, setCoverImage] = useState("");
-  const [content, setContent] = useState<string>("");
-
-  const [showSharingModal, setShowSharingModal] = useState(false);
+  const [recipeList, setRecipeList] = useState<api.RecipeListResponse>();
 
   useEffect(() => {
-    const fetchNote = async () => {
+    const fetchRecipes = async () => {
       // If we do not have an id then we are creating a new note, nothing needs to be fetched
-      if (!queryParamID) {
-        setIsLoading(false);
-        return;
-      }
       try {
         // Fetch the note from the backend
-        const response = await client.note.GetNote(queryParamID);
-        setCoverImage(response.cover_url || "");
-        setContent(response.text || "");
+        const recipeResponse = await client.api.GetRecipes();
+        setRecipeList(recipeResponse)
+
+        console.log(recipeResponse)
       } catch (err) {
         console.error(err);
       }
       setIsLoading(false);
     };
-    fetchNote();
+    fetchRecipes();
   }, []);
 
-  const saveDocument = async () => {
-    try {
-      // Send POST request to the backend for saving the note
-      const response = await client.note.SaveNote({
-        text: content,
-        cover_url: coverImage,
-        // If we have an id then we are updating an existing note, otherwise we are creating a new one
-        id: queryParamID || uuidv4(),
-      });
+  // const saveDocument = async () => {
+  //   try {
+  //     // Send POST request to the backend for saving the note
+  //     const response = await client.note.SaveNote({
+  //       text: content,
+  //       cover_url: coverImage,
+  //       // If we have an id then we are updating an existing note, otherwise we are creating a new one
+  //       id: queryParamID || uuidv4(),
+  //     });
 
-      // Append the id to the url
-      const url = new URL(window.location.href);
-      url.searchParams.set("id", response.id);
-      window.history.pushState(null, "", url.toString());
+  //     // Append the id to the url
+  //     const url = new URL(window.location.href);
+  //     url.searchParams.set("id", response.id);
+  //     window.history.pushState(null, "", url.toString());
 
-      // We now have saved note with an ID, we can now show the sharing modal
-      setShowSharingModal(true);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  //     // We now have saved note with an ID, we can now show the sharing modal
+  //     setShowSharingModal(true);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   return (
     <div className="min-h-full">
       <main className="mt-8 h-full">
         <div className="mx-auto h-full max-w-4xl rounded-none pb-12 xl:rounded-sm">
-          <div className="prose h-full w-full max-w-none rounded-none border border-black border-opacity-10 xl:rounded-sm">
-            {isLoading ? (
-              <span>Loading...</span>
-            ) : (
-              <MilkdownProvider>
-                <MarkdownEditor content={content} setContent={setContent} />
-              </MilkdownProvider>
-            )}
+          <div className="flex items-center py-2">
+            <h1 className="text-xl font-bold">Recipes</h1>
           </div>
+          {isLoading ? (
+            <span>Loading...</span>
+          ) : (
+            <ScrollArea className="h-full w-full rounded-md border">
+              <div className="p-4">
+                {recipeList?.Recipes.map((recipe) => (
+                  <>
+                    <div key={recipe.id} className="text-sm">
+                      {recipe.title}
+                    </div>
+                    <Separator className="my-2" />
+                  </>
+                ))}
+              </div>
+            </ScrollArea>
+          )}
         </div>
       </main>
 
-      <div className="fixed bottom-5 right-5 flex items-center space-x-4">
+      {/* <div className="fixed bottom-5 right-5 flex items-center space-x-4">
         <button
           className="flex items-center space-x-2 rounded bg-black px-2 py-1 text-lg text-white duration-200 hover:opacity-80"
           onClick={() => saveDocument()}
         >
           <FloppyDisk size={20} /> <span>Save</span>
         </button>
-      </div>
-
-      <SharingModal open={showSharingModal} setOpen={setShowSharingModal} />
+      </div> */}
     </div>
   );
 }
