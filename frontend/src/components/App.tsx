@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import Client, { Environment, Local, api } from "../client";
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ThemeProvider } from "./theme-provider";
-import { Badge } from "./ui/badge";
-import { StarIcon } from "@radix-ui/react-icons";
 import { Flame, Timer } from "lucide-react";
 
 /**
@@ -21,7 +19,7 @@ function App() {
   // Get the request client to make requests to the Encore backend
   const client = getRequestClient();
 
-  const urlParams = new URLSearchParams(window.location.search);
+  // const urlParams = new URLSearchParams(window.location.search);
 
   const [isLoading, setIsLoading] = useState(true);
   const [recipeList, setRecipeList] = useState<api.RecipeListResponse>();
