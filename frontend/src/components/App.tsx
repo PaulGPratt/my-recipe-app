@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import Client, { Environment, Local, api } from "../client";
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import { ThemeProvider } from "./theme-provider";
+import { ModeToggle } from "./mode-toggle";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -63,7 +65,9 @@ function App() {
   // };
 
   return (
-    <div className="min-h-full">
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      {/* <ModeToggle/> */}
+      <div className="min-h-full">
       <main className="mt-8 h-full">
         <div className="mx-auto h-full max-w-4xl rounded-none pb-12 xl:rounded-sm">
           <div className="flex items-center py-2">
@@ -87,16 +91,8 @@ function App() {
           )}
         </div>
       </main>
-
-      {/* <div className="fixed bottom-5 right-5 flex items-center space-x-4">
-        <button
-          className="flex items-center space-x-2 rounded bg-black px-2 py-1 text-lg text-white duration-200 hover:opacity-80"
-          onClick={() => saveDocument()}
-        >
-          <FloppyDisk size={20} /> <span>Save</span>
-        </button>
-      </div> */}
-    </div>
+      </div>
+    </ThemeProvider>    
   );
 }
 
