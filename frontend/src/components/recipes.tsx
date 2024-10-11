@@ -16,7 +16,7 @@ const getRequestClient = () => {
     : new Client(Environment("staging"));
 };
 
-function App() {
+function Recipes() {
   // Get the request client to make requests to the Encore backend
   const client = getRequestClient();
 
@@ -117,10 +117,7 @@ function App() {
                           ) : null}
                         </div>
                       </div>
-
                     </div>
-
-
 
                     {/* Todo: hide these until the recipe is selected */}
                     <div className="text-m text-muted-foreground">
@@ -129,8 +126,6 @@ function App() {
                     <div className="text-m text-muted-foreground">
                       {item.instructions}
                     </div>
-
-
                   </button>
                 ))}
               </div>
@@ -142,4 +137,4 @@ function App() {
   );
 }
 
-export default App;
+export default Recipes;
