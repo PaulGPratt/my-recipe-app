@@ -5,6 +5,7 @@ import { ThemeProvider } from "./theme-provider";
 import { Flame, Search, Timer } from "lucide-react";
 import { Input } from "./ui/input";
 import RecipeCardButton from "./recipe-card-button";
+import { ModeToggle } from "./mode-toggle";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -80,15 +81,16 @@ function Recipes() {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      {/* <ModeToggle/> */}
+      
       <main className="h-full ">
         <div className="mx-auto h-full max-w-4xl pb-4 flex flex-col">
-          <div className="px-4 py-4">
-            <div className="relative">
+          <div className="px-4 py-4 flex gap-2">
+            <div className="relative flex-grow">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input placeholder="Search" className="pl-8" value={searchQuery}
                 onChange={handleSearchChange} />
             </div>
+            <ModeToggle/>
           </div>
           {isLoading ? (
             <span>Loading...</span>
