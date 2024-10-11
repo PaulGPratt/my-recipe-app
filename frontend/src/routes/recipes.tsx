@@ -2,7 +2,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import Client, { Environment, Local, api } from "../client";
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ThemeProvider } from "../components/theme-provider";
-import { Flame, Search, Timer } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "../components/ui/input";
 import RecipeCardButton from "../components/recipe-card-button";
 import { ModeToggle } from "../components/mode-toggle";
