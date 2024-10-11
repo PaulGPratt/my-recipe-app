@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import Client, { Environment, Local, api } from "../client";
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ThemeProvider } from "./theme-provider";
-import { Flame, Timer } from "lucide-react";
+import { Flame, Search, Timer } from "lucide-react";
+import { Input } from "./ui/input";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -66,62 +67,65 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       {/* <ModeToggle/> */}
-      <div className="min-h-full">
-        <main className="mt-8 h-full">
-          <div className="mx-auto h-full max-w-4xl rounded-none pb-12 xl:rounded-sm">
-            <div className="flex items-center py-2 px-4">
-              <h1 className="text-4xl font-bold">Natalie's Recipes</h1>
+      <main className="h-full ">
+        <div className="mx-auto h-full max-w-4xl pb-4 flex flex-col">
+          <form>
+            <div className="px-4 py-4">
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input placeholder="Search" className="pl-8" />
+              </div>
             </div>
-            {isLoading ? (
-              <span>Loading...</span>
-            ) : (
-              <ScrollArea className="h-full w-full rounded-md border">
-                <div className="p-4 gap-2 flex flex-col">
-                  {recipeList?.Recipes.map((item) => (
-                    <button
-                      key={item.id}
-                      className={"flex flex-col flex-grow items-start gap-2 rounded-lg border p-3 text-left text-xl transition-all hover:bg-accent"}
-                      onClick={() => { }}
-                    >
-                      <div className="flex w-full flex-col gap-1">
-                        <div className="flex items-center gap-2">
-                          <div className="font-semibold">{item.title}</div>
+          </form>
+          {isLoading ? (
+            <span>Loading...</span>
+          ) : (
+            <ScrollArea className="h-full w-full">
+              <div className="px-4 gap-2 flex flex-col">
+                {recipeList?.Recipes.map((item) => (
+                  <button
+                    key={item.id}
+                    className={"flex flex-col flex-grow items-start gap-2 rounded-lg border p-3 text-left text-xl transition-all hover:bg-accent"}
+                    onClick={() => { }}
+                  >
+                    <div className="flex w-full flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <div className="font-semibold">{item.title}</div>
 
-                          <div className="flex items-center gap-2 ml-auto">
-                            {item.cook_temp_deg_f.Valid ? (
-                              <div className="flex">
-                                <Flame /> {item.cook_temp_deg_f.Int16}°F
-                              </div>
-                            ) : null}
-                            {item.cook_time_minutes.Valid ? (
-                              <div className="flex">
-                                <Timer /> {item.cook_time_minutes.Int16}min
-                              </div>
-                            ) : null}
-                          </div>
+                        <div className="flex items-center gap-2 ml-auto">
+                          {item.cook_temp_deg_f.Valid ? (
+                            <div className="flex">
+                              <Flame /> {item.cook_temp_deg_f.Int16}°F
+                            </div>
+                          ) : null}
+                          {item.cook_time_minutes.Valid ? (
+                            <div className="flex">
+                              <Timer /> {item.cook_time_minutes.Int16}min
+                            </div>
+                          ) : null}
                         </div>
-
                       </div>
 
+                    </div>
 
 
-                      {/* Todo: hide these until the recipe is selected */}
-                      <div className="text-m text-muted-foreground">
-                        {item.ingredients}
-                      </div>
-                      <div className="text-m text-muted-foreground">
-                        {item.instructions}
-                      </div>
+
+                    {/* Todo: hide these until the recipe is selected */}
+                    <div className="text-m text-muted-foreground">
+                      {item.ingredients}
+                    </div>
+                    <div className="text-m text-muted-foreground">
+                      {item.instructions}
+                    </div>
 
 
-                    </button>
-                  ))}
-                </div>
-              </ScrollArea>
-            )}
-          </div>
-        </main>
-      </div>
+                  </button>
+                ))}
+              </div>
+            </ScrollArea>
+          )}
+        </div>
+      </main>
     </ThemeProvider>
   );
 }
