@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import Client, { Environment, Local, api } from "../client";
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ThemeProvider } from "./theme-provider";
@@ -24,6 +24,19 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [recipeList, setRecipeList] = useState<api.RecipeListResponse>();
+
+  // State for search query and filtered recipes
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Handler for search input change
+  const handleSearchChange = (event: { target: { value: SetStateAction<string>; }; }) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter recipes based on search query
+  const filteredRecipes = recipeList?.Recipes.filter((recipe) =>
+    recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -69,20 +82,19 @@ function App() {
       {/* <ModeToggle/> */}
       <main className="h-full ">
         <div className="mx-auto h-full max-w-4xl pb-4 flex flex-col">
-          <form>
-            <div className="px-4 py-4">
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search" className="pl-8" />
-              </div>
+          <div className="px-4 py-4">
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search" className="pl-8" value={searchQuery}
+                onChange={handleSearchChange} />
             </div>
-          </form>
+          </div>
           {isLoading ? (
             <span>Loading...</span>
           ) : (
             <ScrollArea className="h-full w-full">
               <div className="px-4 gap-2 flex flex-col">
-                {recipeList?.Recipes.map((item) => (
+                {filteredRecipes?.map((item) => (
                   <button
                     key={item.id}
                     className={"flex flex-col flex-grow items-start gap-2 rounded-lg border p-3 text-left text-xl transition-all hover:bg-accent"}
