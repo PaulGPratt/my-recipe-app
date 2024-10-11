@@ -54,7 +54,7 @@ func GetRecipe(ctx context.Context, id string) (*Recipe, error) {
 //encore:api public method=GET path=/api/recipes
 func GetRecipes(ctx context.Context) (*RecipeListResponse, error) {
 	rows, err := db.Query(ctx, `
-		SELECT title, ingredients, instructions, cook_temp_deg_f, cook_time_minutes
+		SELECT id, title, ingredients, instructions, cook_temp_deg_f, cook_time_minutes
 		FROM recipe
 	`)
 	if err != nil {
@@ -65,7 +65,7 @@ func GetRecipes(ctx context.Context) (*RecipeListResponse, error) {
 	var recipes []*Recipe
 	for rows.Next() {
 		recipe := &Recipe{}
-		if err := rows.Scan(&recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.CookTempDegF, &recipe.CookTimeMinutes); err != nil {
+		if err := rows.Scan(&recipe.Id, &recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.CookTempDegF, &recipe.CookTimeMinutes); err != nil {
 			return nil, err
 		}
 		recipes = append(recipes, recipe)

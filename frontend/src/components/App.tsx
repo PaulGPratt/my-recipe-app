@@ -76,7 +76,7 @@ function App() {
               <span>Loading...</span>
             ) : (
               <ScrollArea className="h-full w-full rounded-md border">
-                <div className="p-4 flex">
+                <div className="p-4 gap-2 flex flex-col">
                   {recipeList?.Recipes.map((item) => (
                     <button
                       key={item.id}
@@ -84,21 +84,26 @@ function App() {
                       onClick={() => { }}
                     >
                       <div className="flex w-full flex-col gap-1">
-                        <div className="font-semibold">{item.title}</div>
+                        <div className="flex items-center gap-2">
+                          <div className="font-semibold">{item.title}</div>
+
+                          <div className="flex items-center gap-2 ml-auto">
+                            {item.cook_temp_deg_f.Valid ? (
+                              <div className="flex">
+                                <Flame /> {item.cook_temp_deg_f.Int16}°F
+                              </div>
+                            ) : null}
+                            {item.cook_time_minutes.Valid ? (
+                              <div className="flex">
+                                <Timer /> {item.cook_time_minutes.Int16}min
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
+
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        {item.cook_temp_deg_f.Valid ? (
-                          <div className="flex">
-                            <Flame /> {item.cook_temp_deg_f.Int16}°F
-                          </div>
-                        ) : null}
-                        {item.cook_time_minutes.Valid ? (
-                          <div className="flex">
-                            <Timer /> {item.cook_time_minutes.Int16}min
-                          </div>
-                        ) : null}
-                      </div>
+
 
                       {/* Todo: hide these until the recipe is selected */}
                       <div className="text-m text-muted-foreground">
@@ -108,7 +113,7 @@ function App() {
                         {item.instructions}
                       </div>
 
-                      
+
                     </button>
                   ))}
                 </div>
