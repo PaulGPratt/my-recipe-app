@@ -5,7 +5,8 @@ import {
   RouterProvider,
   Navigate,
 } from "react-router-dom";
-import Recipes from "./components/recipes";
+import Recipe from "./routes/recipe";
+import Recipes from "./routes/recipes";
 import "./index.css";
 
 const router = createBrowserRouter([
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
     path: "/my-recipe-app/recipes",
     element: <Recipes/>,
   },
+  {
+    path: "/my-recipe-app/recipes/:id",
+    element: <Recipe/>
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

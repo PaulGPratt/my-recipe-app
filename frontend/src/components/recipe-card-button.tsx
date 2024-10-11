@@ -37,14 +37,6 @@ const RecipeCardButton: React.FC<RecipeCardButtonProps> = ({ item }) => {
                     </div>
                 </div>
             </div>
-
-            {/* Todo: hide these until the recipe is selected */}
-            <div className="text-m text-muted-foreground">
-                {item.ingredients}
-            </div>
-            <div className="text-m text-muted-foreground">
-                {item.instructions}
-            </div>
         </button>
     );
 };

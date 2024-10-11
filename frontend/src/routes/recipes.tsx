@@ -1,11 +1,11 @@
 import { SetStateAction, useEffect, useState } from "react";
 import Client, { Environment, Local, api } from "../client";
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ThemeProvider } from "./theme-provider";
+import { ThemeProvider } from "../components/theme-provider";
 import { Flame, Search, Timer } from "lucide-react";
-import { Input } from "./ui/input";
-import RecipeCardButton from "./recipe-card-button";
-import { ModeToggle } from "./mode-toggle";
+import { Input } from "../components/ui/input";
+import RecipeCardButton from "../components/recipe-card-button";
+import { ModeToggle } from "../components/mode-toggle";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
