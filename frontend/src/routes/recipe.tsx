@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Client, { Environment, Local, api } from "../client";
+import MarkdownEditor from "../components/markdown-editor";
+import { MilkdownProvider } from "@milkdown/react";
 import { Flame, Timer } from "lucide-react";
 
 /**
@@ -21,6 +23,8 @@ function Recipe() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [recipe, setRecipe] = useState<api.Recipe>();
+    const [ingredients, setIngredients] = useState<string>("");
+    const [instructions, setInstructions] = useState<string>("");
 
     useEffect(() => {
         const fetchRecipes = async () => {
@@ -29,7 +33,8 @@ function Recipe() {
                 // Fetch the note from the backend
                 const recipeResponse = await client.api.GetRecipe(id);
                 setRecipe(recipeResponse)
-
+                setIngredients(recipeResponse.ingredients)
+                setInstructions(recipeResponse.instructions)
                 console.log(recipeResponse)
             } catch (err) {
                 console.error(err);
@@ -43,32 +48,36 @@ function Recipe() {
         <> {isLoading ? (
             <span>Loading...</span>
         ) : (
-            <div className="flex flex-col flex-grow items-start gap-2 rounded-lg border p-3 text-left text-xl transition-all">
+            <div className="flex flex-col flex-grow items-start gap-2 rounded-lg border p-3 transition-all">
                 <div className="flex w-full flex-col gap-1">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 text-2xl">
                         <div className="font-semibold">{recipe?.title}</div>
 
-                        <div className="flex items-center gap-2 ml-auto">
-                            {recipe?.cook_temp_deg_f.Valid && (
-                                <div className="flex">
-                                    <Flame /> {recipe?.cook_temp_deg_f.Int16}°F
-                                </div>
-                            )}
+                        <div className="flex items-center gap-x-2 ml-auto flex-wrap justify-end">
                             {recipe?.cook_time_minutes.Valid && (
                                 <div className="flex">
-                                    <Timer /> {recipe?.cook_time_minutes.Int16}min
+                                    <Timer size={32}/> {recipe?.cook_time_minutes.Int16}min
+                                </div>
+                            )}
+                            {recipe?.cook_temp_deg_f.Valid && (
+                                <div className="flex">
+                                    <Flame size={32}/> {recipe?.cook_temp_deg_f.Int16}°F
                                 </div>
                             )}
                         </div>
                     </div>
                 </div>
-
-                {/* Todo: hide these until the recipe is selected */}
-                <div className="text-m text-muted-foreground">
-                    {recipe?.ingredients}
+                <div className="text-xl font-semibold">Ingredients</div>
+                <div className="text-lg text-foreground">
+                    <MilkdownProvider>
+                        <MarkdownEditor content={ingredients} setContent={setIngredients} />
+                    </MilkdownProvider>
                 </div>
-                <div className="text-m text-muted-foreground">
-                    {recipe?.instructions}
+                <div className="text-xl font-semibold">Instructions</div>
+                <div className="text-lg text-foreground">
+                    <MilkdownProvider>
+                        <MarkdownEditor content={instructions} setContent={setInstructions} />
+                    </MilkdownProvider>
                 </div>
             </div>
         )}
