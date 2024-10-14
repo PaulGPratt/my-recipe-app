@@ -3,9 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import Client, { Environment, Local, api } from "../client";
 import MarkdownEditor from "../components/markdown-editor";
 import { MilkdownProvider } from "@milkdown/react";
-import { ChevronLeft, Flame, Pencil, Timer } from "lucide-react";
+import { ChevronLeft, Flame, Timer } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
-import { Button, buttonVariants } from "../components/ui/button";
+import { Button } from "../components/ui/button";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
