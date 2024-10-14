@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { Flame, Timer } from 'lucide-react';
 import { api } from '../client';
 
 interface RecipeCardButtonProps {
@@ -22,19 +21,6 @@ const RecipeCardButton: React.FC<RecipeCardButtonProps> = ({ item }) => {
             <div className="flex w-full flex-col gap-1">
                 <div className="flex items-center gap-2">
                     <div className="font-semibold">{item.title}</div>
-
-                    <div className="flex items-center gap-2 ml-auto">
-                        {item.cook_temp_deg_f.Valid && (
-                            <div className="flex">
-                                <Flame /> {item.cook_temp_deg_f.Int16}°F
-                            </div>
-                        )}
-                        {item.cook_time_minutes.Valid && (
-                            <div className="flex">
-                                <Timer /> {item.cook_time_minutes.Int16}min
-                            </div>
-                        )}
-                    </div>
                 </div>
             </div>
         </button>

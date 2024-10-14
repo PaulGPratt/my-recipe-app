@@ -57,56 +57,32 @@ function Recipes() {
     fetchRecipes();
   }, []);
 
-  // const saveDocument = async () => {
-  //   try {
-  //     // Send POST request to the backend for saving the note
-  //     const response = await client.note.SaveNote({
-  //       text: content,
-  //       cover_url: coverImage,
-  //       // If we have an id then we are updating an existing note, otherwise we are creating a new one
-  //       id: queryParamID || uuidv4(),
-  //     });
-
-  //     // Append the id to the url
-  //     const url = new URL(window.location.href);
-  //     url.searchParams.set("id", response.id);
-  //     window.history.pushState(null, "", url.toString());
-
-  //     // We now have saved note with an ID, we can now show the sharing modal
-  //     setShowSharingModal(true);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      
-      <main className="h-full ">
-        <div className="mx-auto h-full max-w-4xl pb-4 flex flex-col">
-          <div className="px-4 py-4 flex gap-2">
-            <div className="relative flex-grow">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search" className="pl-8" value={searchQuery}
-                onChange={handleSearchChange} />
-            </div>
-            <ModeToggle/>
+
+      <main className="h-full mx-auto max-w-4xl">
+        <div className="px-4 py-4 flex gap-2">
+          <div className="relative flex-grow">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Search" className="pl-8" value={searchQuery}
+              onChange={handleSearchChange} />
           </div>
-          {isLoading ? (
-            <span>Loading...</span>
-          ) : (
-            <ScrollArea className="h-full w-full">
-              <div className="px-4 gap-2 flex flex-col">
-                {filteredRecipes?.map((item) => (
-                  <RecipeCardButton
-                    key={item.id}
-                    item={item}
-                  />
-                ))}
-              </div>
-            </ScrollArea>
-          )}
+          <ModeToggle />
         </div>
+        {isLoading ? (
+          <span>Loading...</span>
+        ) : (
+          <ScrollArea className="h-full w-full">
+            <div className="px-4 gap-2 flex flex-col">
+              {filteredRecipes?.map((item) => (
+                <RecipeCardButton
+                  key={item.id}
+                  item={item}
+                />
+              ))}
+            </div>
+          </ScrollArea>
+        )}
       </main>
     </ThemeProvider>
   );

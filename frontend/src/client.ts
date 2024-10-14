@@ -68,8 +68,8 @@ export namespace api {
         title: string
         ingredients: string
         instructions: string
-        "cook_temp_deg_f": sql.NullInt16
-        "cook_time_minutes": sql.NullInt16
+        "cook_temp_deg_f": number
+        "cook_time_minutes": number
     }
 
     export interface RecipeListResponse {
@@ -93,6 +93,12 @@ export namespace api {
             // Now make the actual call to the API
             const resp = await this.baseClient.callAPI("GET", `/api/recipes`)
             return await resp.json() as RecipeListResponse
+        }
+
+        public async SaveRecipe(params: Recipe): Promise<Recipe> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callAPI("POST", `/recipes`, JSON.stringify(params))
+            return await resp.json() as Recipe
         }
     }
 }
@@ -125,21 +131,6 @@ export namespace note {
             const resp = await this.baseClient.callAPI("POST", `/note`, JSON.stringify(params))
             return await resp.json() as Note
         }
-    }
-}
-
-export namespace sql {
-    /**
-     * NullInt16 represents an int16 that may be null.
-     * NullInt16 implements the [Scanner] interface so
-     * it can be used as a scan destination, similar to [NullString].
-     */
-    export interface NullInt16 {
-        Int16: number
-        /**
-         * Valid is true if Int16 is not NULL
-         */
-        Valid: boolean
     }
 }
 
