@@ -6,6 +6,7 @@ import { MilkdownProvider } from "@milkdown/react";
 import { ChevronLeft, Flame, Timer } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from "../components/ui/button";
+import { useToast } from "../hooks/use-toast";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -20,6 +21,7 @@ const getRequestClient = () => {
 function Recipe() {
     const client = getRequestClient();
     const navigate = useNavigate();
+    const { toast } = useToast()
 
     // Get the 'id' from the route parameters
     const { id } = useParams();
@@ -39,7 +41,6 @@ function Recipe() {
                 setRecipe(recipeResponse)
                 setIngredients(recipeResponse.ingredients)
                 setInstructions(recipeResponse.instructions)
-                console.log(recipeResponse)
             } catch (err) {
                 console.error(err);
             }
@@ -55,11 +56,11 @@ function Recipe() {
     const editRecipe = async () => {
         setIsEditMode(true);
     }
+    
 
     const saveRecipe = async () => {
         try {
             setIsEditMode(false);
-
             // Send POST request to the backend for saving the note
             const response = await client.api.SaveRecipe({
                 id: id || uuidv4(),
@@ -69,11 +70,12 @@ function Recipe() {
                 cook_temp_deg_f: recipe?.cook_temp_deg_f ?? 0,
                 cook_time_minutes: recipe?.cook_time_minutes ?? 0,
             });
-
-            // Append the id to the url
-            const url = new URL(window.location.href);
-            url.searchParams.set("id", response.id);
-            window.history.pushState(null, "", url.toString());
+            toast({
+                description: "Your recipe has been saved.",
+              })
+            if(!id) {
+                navigate(`/my-recipe-app/recipes/${response.id}`);
+            }
         } catch (err) {
             console.error(err);
         }
@@ -84,16 +86,16 @@ function Recipe() {
             <span>Loading...</span>
         ) : (
             <div className="h-full mx-auto max-w-4xl">
-                <div className="flex py-2 justify-between">
-                    <Button variant="outline" onClick={handleBack}><ChevronLeft /> Back to Recipes</Button>
+                <div className="flex p-3 justify-between">
+                    <Button variant="secondary" onClick={handleBack}><ChevronLeft /> Back to Recipes</Button>
                     {isEditMode ? (
-                        <Button variant="outline" onClick={saveRecipe}>Save</Button>
+                        <Button variant="secondary" onClick={saveRecipe}>Save</Button>
                     ) : (
-                        <Button variant="outline" onClick={editRecipe}>Edit</Button>
+                        <Button variant="secondary" onClick={editRecipe}>Edit</Button>
                     )}
                 </div>
 
-                <div className="flex flex-col flex-grow items-start gap-2 rounded-lg border p-3 transition-all">
+                <div className="flex flex-col flex-grow items-start gap-2 p-3 transition-all">
                     <div className="flex w-full flex-col gap-1">
                         <div className="flex items-center gap-2 text-2xl">
                             <div className="font-semibold">{recipe?.title}</div>
