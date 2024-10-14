@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Client, { Environment, Local, api } from "../client";
 import MarkdownEditor from "../components/markdown-editor";
 import { MilkdownProvider } from "@milkdown/react";
-import { Flame, Timer } from "lucide-react";
+import { ChevronLeft, Flame, Pencil, Timer } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
-import { Button } from "../components/ui/button";
+import { Button, buttonVariants } from "../components/ui/button";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -19,11 +19,13 @@ const getRequestClient = () => {
 };
 function Recipe() {
     const client = getRequestClient();
+    const navigate = useNavigate();
 
     // Get the 'id' from the route parameters
     const { id } = useParams();
 
     const [isLoading, setIsLoading] = useState(true);
+    const [isEditMode, setIsEditMode] = useState(false);
     const [recipe, setRecipe] = useState<api.Recipe>();
     const [ingredients, setIngredients] = useState<string>("");
     const [instructions, setInstructions] = useState<string>("");
@@ -46,8 +48,18 @@ function Recipe() {
         fetchRecipes();
     }, [id]);
 
+    const handleBack = () => {
+        navigate(`/my-recipe-app/recipes/`);
+    };
+
+    const editRecipe = async () => {
+        setIsEditMode(true);
+    }
+
     const saveRecipe = async () => {
         try {
+            setIsEditMode(false);
+
             // Send POST request to the backend for saving the note
             const response = await client.api.SaveRecipe({
                 id: id || uuidv4(),
@@ -72,6 +84,15 @@ function Recipe() {
             <span>Loading...</span>
         ) : (
             <div className="h-full mx-auto max-w-4xl">
+                <div className="flex py-2 justify-between">
+                    <Button variant="outline" onClick={handleBack}><ChevronLeft /> Back to Recipes</Button>
+                    {isEditMode ? (
+                        <Button variant="outline" onClick={saveRecipe}>Save</Button>
+                    ) : (
+                        <Button variant="outline" onClick={editRecipe}>Edit</Button>
+                    )}
+                </div>
+
                 <div className="flex flex-col flex-grow items-start gap-2 rounded-lg border p-3 transition-all">
                     <div className="flex w-full flex-col gap-1">
                         <div className="flex items-center gap-2 text-2xl">
@@ -90,17 +111,17 @@ function Recipe() {
                     <div className="text-xl font-semibold">Ingredients</div>
                     <div className="text-lg text-foreground">
                         <MilkdownProvider>
-                            <MarkdownEditor content={ingredients} setContent={setIngredients} />
+                            <MarkdownEditor content={ingredients} setContent={setIngredients} isEditable={isEditMode} />
                         </MilkdownProvider>
                     </div>
                     <div className="text-xl font-semibold">Instructions</div>
                     <div className="text-lg text-foreground">
                         <MilkdownProvider>
-                            <MarkdownEditor content={instructions} setContent={setInstructions} />
+                            <MarkdownEditor content={instructions} setContent={setInstructions} isEditable={isEditMode} />
                         </MilkdownProvider>
                     </div>
                 </div>
-                <Button onClick={saveRecipe}>Save</Button>
+
             </div>
 
         )}

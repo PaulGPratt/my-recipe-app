@@ -1,6 +1,6 @@
-import { FC } from "react";
+import { FC, useEffect, useRef } from "react";
 import { Milkdown, useEditor } from "@milkdown/react";
-import { defaultValueCtx, Editor, rootCtx } from "@milkdown/core";
+import { defaultValueCtx, Editor, editorViewOptionsCtx, rootCtx } from "@milkdown/core";
 import { listener, listenerCtx } from "@milkdown/plugin-listener";
 import { commonmark } from "@milkdown/preset-commonmark";
 import { history } from "@milkdown/plugin-history";
@@ -12,7 +12,10 @@ const defaultContent = `
 const MarkdownEditor: FC<{
   content: string | null;
   setContent: (text: string) => void;
-}> = ({ content, setContent }) => {
+  isEditable: boolean;
+}> = ({ content, setContent, isEditable }) => {
+  const editable = useRef(isEditable);
+  
   useEditor((root) =>
     Editor.make()
       .config((ctx) => {
@@ -21,11 +24,19 @@ const MarkdownEditor: FC<{
         ctx.get(listenerCtx).markdownUpdated((_, markdown) => {
           setContent(markdown);
         });
+        ctx.update(editorViewOptionsCtx, prev => ({
+          ...prev,
+          editable: () => editable.current
+        }))
       })
       .use(listener)
       .use(commonmark)
       .use(history)
   );
+
+  useEffect(() => {
+    editable.current  = isEditable;
+  }, [isEditable])
 
   return <Milkdown />;
 };
