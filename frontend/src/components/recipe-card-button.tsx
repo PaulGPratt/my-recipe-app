@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { api } from '../client';
+import { Button } from './ui/button';
 
 interface RecipeCardButtonProps {
     item: api.Recipe;
@@ -13,17 +14,14 @@ const RecipeCardButton: React.FC<RecipeCardButtonProps> = ({ item }) => {
     };
 
     return (
-        <button
+        <Button
             key={item.id}
-            className="flex flex-col flex-grow items-start gap-2 rounded-lg border p-3 text-left text-xl transition-all hover:bg-accent"
-            onClick={handleClick}
-        >
-            <div className="flex w-full flex-col gap-1">
-                <div className="flex items-center gap-2">
-                    <div className="font-semibold text-2xl">{item.title}</div>
-                </div>
-            </div>
-        </button>
+            size="xl"
+            variant="outline"
+            className="justify-start"
+            onClick={handleClick}>
+            {item.title}
+        </Button>
     );
 };
 
