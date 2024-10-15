@@ -7,6 +7,8 @@ import { ChevronLeft, Flame, Timer } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from "../components/ui/button";
 import { useToast } from "../hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Separator } from "../components/ui/separator";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -83,46 +85,56 @@ function Recipe() {
 
     return (
         <div className="h-full mx-auto max-w-4xl">
-            <div className="flex p-4 justify-between">
-                <Button variant="outline" onClick={handleBack}><ChevronLeft /> Back to Recipes</Button>
+            <div className="flex p-4 gap-4 justify-center">
+                <Button size="xl" className="pl-4" onClick={handleBack}><ChevronLeft /> Back to Recipes</Button>
                 {isEditMode ? (
-                    <Button variant="outline" onClick={saveRecipe}>Save</Button>
+                    <Button variant="outline" size="xl" onClick={saveRecipe}>Save</Button>
                 ) : (
-                    <Button variant="outline" onClick={editRecipe}>Edit</Button>
+                    <Button variant="outline" size="xl" onClick={editRecipe}>Edit</Button>
                 )}
             </div>
 
             {isLoading ? (
                 <span>Loading...</span>
             ) : (
-                <div className="flex flex-col flex-grow items-start gap-2 px-4 pb-4 transition-all">
-                    <div className="flex w-full flex-col gap-1">
-                        <div className="flex items-center gap-2 text-2xl">
-                            <div className="font-semibold">{recipe?.title}</div>
-
-                            <div className="flex items-center gap-x-2 ml-auto flex-wrap justify-end">
-                                <div className="flex">
-                                    <Timer size={32} /> {recipe?.cook_time_minutes}min
-                                </div>
-                                <div className="flex">
-                                    <Flame size={32} /> {recipe?.cook_temp_deg_f}°F
+                <Card className="rounded-none">
+                    <CardHeader className="pt-4 pb-0 px-4">
+                        <CardTitle>
+                        <div className="flex flex-col flex-grow items-center gap-2 justify-center">
+                                <div className="text-2xl">{recipe?.title}</div>
+                                <div className="flex items-center gap-x-2 text-2xl">
+                                    <div className="flex">
+                                        <Timer size={32} /> {recipe?.cook_time_minutes}min
+                                    </div>
+                                    <div className="flex">
+                                        <Flame size={32} /> {recipe?.cook_temp_deg_f}°F
+                                    </div>
                                 </div>
                             </div>
+                            <Separator className="my-4" />
+                        </CardTitle>
+                    </CardHeader>
+
+                    <CardContent className="px-4">
+                    
+                        <div className="flex flex-col flex-grow items-start gap-2 transition-all">
+                            
+                            <div className="text-2xl font-semibold">Ingredients</div>
+                            <div className={"text-xl text-foreground w-full p-2 border " + (isEditMode ? '' : 'border-transparent')}>
+                                <MilkdownProvider>
+                                    <MarkdownEditor content={ingredients} setContent={setIngredients} isEditable={isEditMode} />
+                                </MilkdownProvider>
+                            </div>
+                            <Separator className="my-2" />
+                            <div className="text-2xl font-semibold">Instructions</div>
+                            <div className={"text-xl text-foreground w-full p-2 border " + (isEditMode ? '' : 'border-transparent')}>
+                                <MilkdownProvider>
+                                    <MarkdownEditor content={instructions} setContent={setInstructions} isEditable={isEditMode} />
+                                </MilkdownProvider>
+                            </div>
                         </div>
-                    </div>
-                    <div className="text-xl font-semibold">Ingredients</div>
-                    <div className={"text-lg text-foreground w-full p-2 border " + (isEditMode ? '' : 'border-transparent')}>
-                        <MilkdownProvider>
-                            <MarkdownEditor content={ingredients} setContent={setIngredients} isEditable={isEditMode} />
-                        </MilkdownProvider>
-                    </div>
-                    <div className="text-xl font-semibold">Instructions</div>
-                    <div className={"text-lg text-foreground w-full p-2 border " + (isEditMode ? '' : 'border-transparent')}>
-                        <MilkdownProvider>
-                            <MarkdownEditor content={instructions} setContent={setInstructions} isEditable={isEditMode} />
-                        </MilkdownProvider>
-                    </div>
-                </div>
+                    </CardContent>
+                </Card>
 
             )}
 

@@ -20,7 +20,7 @@ const RecipeCardButton: React.FC<RecipeCardButtonProps> = ({ item }) => {
         >
             <div className="flex w-full flex-col gap-1">
                 <div className="flex items-center gap-2">
-                    <div className="font-semibold">{item.title}</div>
+                    <div className="font-semibold text-2xl">{item.title}</div>
                 </div>
             </div>
         </button>
