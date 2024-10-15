@@ -10,11 +10,16 @@ import Recipes from "./routes/recipes";
 import "./index.css";
 import { Toaster } from "./components/ui/toaster";
 import { ThemeProvider } from "./components/theme-provider";
+import Calendar from "./routes/calendar";
 
 const router = createBrowserRouter([
   {
     path: "/my-recipe-app",
     element: <Navigate to="/my-recipe-app/recipes" replace />,
+  },
+  {
+    path: "/my-recipe-app/calendar",
+    element: <Calendar />,
   },
   {
     path: "/my-recipe-app/recipes",
