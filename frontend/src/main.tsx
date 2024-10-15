@@ -9,6 +9,7 @@ import Recipe from "./routes/recipe";
 import Recipes from "./routes/recipes";
 import "./index.css";
 import { Toaster } from "./components/ui/toaster";
+import { ThemeProvider } from "./components/theme-provider";
 
 const router = createBrowserRouter([
   {
@@ -17,17 +18,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/my-recipe-app/recipes",
-    element: <Recipes/>,
+    element: <Recipes />,
   },
   {
     path: "/my-recipe-app/recipes/:id",
-    element: <Recipe/>
+    element: <Recipe />
   }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
-    <Toaster />
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <RouterProvider router={router} />
+      <Toaster />
+    </ThemeProvider>
   </React.StrictMode>
 );

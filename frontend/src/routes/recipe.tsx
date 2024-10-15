@@ -56,7 +56,7 @@ function Recipe() {
     const editRecipe = async () => {
         setIsEditMode(true);
     }
-    
+
 
     const saveRecipe = async () => {
         try {
@@ -72,8 +72,8 @@ function Recipe() {
             });
             toast({
                 description: "Your recipe has been saved.",
-              })
-            if(!id) {
+            })
+            if (!id) {
                 navigate(`/my-recipe-app/recipes/${response.id}`);
             }
         } catch (err) {
@@ -82,20 +82,20 @@ function Recipe() {
     };
 
     return (
-        <> {isLoading ? (
-            <span>Loading...</span>
-        ) : (
-            <div className="h-full mx-auto max-w-4xl">
-                <div className="flex p-3 justify-between">
-                    <Button variant="secondary" onClick={handleBack}><ChevronLeft /> Back to Recipes</Button>
-                    {isEditMode ? (
-                        <Button variant="secondary" onClick={saveRecipe}>Save</Button>
-                    ) : (
-                        <Button variant="secondary" onClick={editRecipe}>Edit</Button>
-                    )}
-                </div>
+        <div className="h-full mx-auto max-w-4xl">
+            <div className="flex p-4 justify-between">
+                <Button variant="outline" onClick={handleBack}><ChevronLeft /> Back to Recipes</Button>
+                {isEditMode ? (
+                    <Button variant="outline" onClick={saveRecipe}>Save</Button>
+                ) : (
+                    <Button variant="outline" onClick={editRecipe}>Edit</Button>
+                )}
+            </div>
 
-                <div className="flex flex-col flex-grow items-start gap-2 p-3 transition-all">
+            {isLoading ? (
+                <span>Loading...</span>
+            ) : (
+                <div className="flex flex-col flex-grow items-start gap-2 px-4 pb-4 transition-all">
                     <div className="flex w-full flex-col gap-1">
                         <div className="flex items-center gap-2 text-2xl">
                             <div className="font-semibold">{recipe?.title}</div>
@@ -111,23 +111,22 @@ function Recipe() {
                         </div>
                     </div>
                     <div className="text-xl font-semibold">Ingredients</div>
-                    <div className="text-lg text-foreground">
+                    <div className={"text-lg text-foreground w-full p-2 border " + (isEditMode ? '' : 'border-transparent')}>
                         <MilkdownProvider>
                             <MarkdownEditor content={ingredients} setContent={setIngredients} isEditable={isEditMode} />
                         </MilkdownProvider>
                     </div>
                     <div className="text-xl font-semibold">Instructions</div>
-                    <div className="text-lg text-foreground">
+                    <div className={"text-lg text-foreground w-full p-2 border " + (isEditMode ? '' : 'border-transparent')}>
                         <MilkdownProvider>
                             <MarkdownEditor content={instructions} setContent={setInstructions} isEditable={isEditMode} />
                         </MilkdownProvider>
                     </div>
                 </div>
 
-            </div>
+            )}
 
-        )}
-        </>
+        </div>
     );
 }
 

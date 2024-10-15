@@ -1,7 +1,6 @@
 import { SetStateAction, useEffect, useState } from "react";
 import Client, { Environment, Local, api } from "../client";
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ThemeProvider } from "../components/theme-provider";
 import { Search } from "lucide-react";
 import { Input } from "../components/ui/input";
 import RecipeCardButton from "../components/recipe-card-button";
@@ -22,9 +21,6 @@ function Recipes() {
   // Get the request client to make requests to the Encore backend
   const client = getRequestClient();
 
-  // const urlParams = new URLSearchParams(window.location.search);
-
-  const [isLoading, setIsLoading] = useState(true);
   const [recipeList, setRecipeList] = useState<api.RecipeListResponse>();
 
   // State for search query and filtered recipes
@@ -52,16 +48,13 @@ function Recipes() {
       } catch (err) {
         console.error(err);
       }
-      setIsLoading(false);
     };
     fetchRecipes();
   }, []);
 
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-
       <main className="h-full mx-auto max-w-4xl">
-        <div className="px-4 py-4 flex gap-2">
+        <div className="p-4 flex gap-2">
           <div className="relative flex-grow">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Search" className="pl-8" value={searchQuery}
@@ -69,22 +62,17 @@ function Recipes() {
           </div>
           <ModeToggle />
         </div>
-        {isLoading ? (
-          <span>Loading...</span>
-        ) : (
-          <ScrollArea className="h-full w-full">
-            <div className="px-4 gap-2 flex flex-col">
-              {filteredRecipes?.map((item) => (
-                <RecipeCardButton
-                  key={item.id}
-                  item={item}
-                />
-              ))}
-            </div>
+        <ScrollArea className="h-full w-full">
+          <div className="px-4 gap-2 flex flex-col">
+            {filteredRecipes?.map((item) => (
+              <RecipeCardButton
+                key={item.id}
+                item={item}
+              />
+            ))}
+          </div>
           </ScrollArea>
-        )}
       </main>
-    </ThemeProvider>
   );
 }
 
