@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { api } from '../client';
 import { Button } from './ui/button';
+import { ChevronRight } from 'lucide-react';
 
 interface RecipeCardButtonProps {
     item: api.Recipe;
@@ -17,10 +18,10 @@ const RecipeCardButton: React.FC<RecipeCardButtonProps> = ({ item }) => {
         <Button
             key={item.id}
             size="bae"
-            variant="outline"
-            className="justify-start"
+            className="justify-between pr-2"
             onClick={handleClick}>
             {item.title}
+            <ChevronRight size={30} />
         </Button>
     );
 };

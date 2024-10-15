@@ -90,7 +90,7 @@ function Recipe() {
     return (
         <div className="h-full mx-auto max-w-4xl">
             <div className="flex p-4 gap-4 justify-center">
-                <Button size="bae" className="pl-4" onClick={handleBack}><ChevronLeft /> Back to Recipes</Button>
+                <Button size="bae" className="pl-2" onClick={handleBack}><ChevronLeft size={30}/> Back to Recipes</Button>
                 {isEditMode ? (
                     <Button variant="outline" size="bae" onClick={saveRecipe}>Save</Button>
                 ) : (
