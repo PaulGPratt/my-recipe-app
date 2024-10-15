@@ -86,11 +86,11 @@ function Recipe() {
     return (
         <div className="h-full mx-auto max-w-4xl">
             <div className="flex p-4 gap-4 justify-center">
-                <Button size="xl" className="pl-4" onClick={handleBack}><ChevronLeft /> Back to Recipes</Button>
+                <Button size="bae" className="pl-4" onClick={handleBack}><ChevronLeft /> Back to Recipes</Button>
                 {isEditMode ? (
-                    <Button variant="outline" size="xl" onClick={saveRecipe}>Save</Button>
+                    <Button variant="outline" size="bae" onClick={saveRecipe}>Save</Button>
                 ) : (
-                    <Button variant="outline" size="xl" onClick={editRecipe}>Edit</Button>
+                    <Button variant="outline" size="bae" onClick={editRecipe}>Edit</Button>
                 )}
             </div>
 
@@ -101,13 +101,13 @@ function Recipe() {
                     <CardHeader className="pt-4 pb-0 px-4">
                         <CardTitle>
                         <div className="flex flex-col flex-grow items-center gap-2 justify-center">
-                                <div className="text-2xl">{recipe?.title}</div>
-                                <div className="flex items-center gap-x-2 text-2xl">
+                                <div className="text-4xl">{recipe?.title}</div>
+                                <div className="flex items-center gap-x-2 text-3xl">
                                     <div className="flex">
-                                        <Timer size={32} /> {recipe?.cook_time_minutes}min
+                                        <Timer size={36} /> {recipe?.cook_time_minutes}min
                                     </div>
                                     <div className="flex">
-                                        <Flame size={32} /> {recipe?.cook_temp_deg_f}°F
+                                        <Flame size={36} /> {recipe?.cook_temp_deg_f}°F
                                     </div>
                                 </div>
                             </div>
@@ -119,15 +119,15 @@ function Recipe() {
                     
                         <div className="flex flex-col flex-grow items-start gap-2 transition-all">
                             
-                            <div className="text-2xl font-semibold">Ingredients</div>
-                            <div className={"text-xl text-foreground w-full p-2 border " + (isEditMode ? '' : 'border-transparent')}>
+                            <div className="text-3xl font-semibold">Ingredients</div>
+                            <div className={"text-2xl text-foreground w-full p-2 border " + (isEditMode ? '' : 'border-transparent')}>
                                 <MilkdownProvider>
                                     <MarkdownEditor content={ingredients} setContent={setIngredients} isEditable={isEditMode} />
                                 </MilkdownProvider>
                             </div>
                             <Separator className="my-2" />
-                            <div className="text-2xl font-semibold">Instructions</div>
-                            <div className={"text-xl text-foreground w-full p-2 border " + (isEditMode ? '' : 'border-transparent')}>
+                            <div className="text-3xl font-semibold">Instructions</div>
+                            <div className={"text-2xl text-foreground w-full p-2 border " + (isEditMode ? '' : 'border-transparent')}>
                                 <MilkdownProvider>
                                     <MarkdownEditor content={instructions} setContent={setInstructions} isEditable={isEditMode} />
                                 </MilkdownProvider>

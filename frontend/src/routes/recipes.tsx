@@ -56,11 +56,11 @@ function Recipes() {
       <main className="h-full mx-auto max-w-4xl">
         <div className="p-4 flex gap-2">
           <div className="relative flex-grow">
-            <Search className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
-            <Input placeholder="Search" className="pl-10 h-12 text-lg" value={searchQuery}
+            <Search className="absolute left-3 top-3 h-6 w-6 text-muted-foreground" />
+            <Input placeholder="Search" className="pl-11 h-12 text-2xl" value={searchQuery}
               onChange={handleSearchChange} />
           </div>
-          <ModeToggle />
+          {/* <ModeToggle /> */}
         </div>
         <ScrollArea className="h-full w-full">
           <div className="px-4 gap-2 flex flex-col">
