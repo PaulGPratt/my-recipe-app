@@ -33,6 +33,8 @@ function Recipe() {
     const [recipe, setRecipe] = useState<api.Recipe>();
     const [ingredients, setIngredients] = useState<string>("");
     const [instructions, setInstructions] = useState<string>("");
+    const [showCookTemp, setShowCookTemp] = useState<boolean>(false);
+    const [showCookTime, setShowCookTime] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchRecipes = async () => {
@@ -40,9 +42,11 @@ function Recipe() {
             try {
                 // Fetch the note from the backend
                 const recipeResponse = await client.api.GetRecipe(id);
-                setRecipe(recipeResponse)
-                setIngredients(recipeResponse.ingredients)
-                setInstructions(recipeResponse.instructions)
+                setRecipe(recipeResponse);
+                setIngredients(recipeResponse.ingredients);
+                setInstructions(recipeResponse.instructions);
+                setShowCookTemp(recipeResponse.cook_temp_deg_f > 0);
+                setShowCookTime(recipeResponse.cook_time_minutes > 0);
             } catch (err) {
                 console.error(err);
             }
@@ -100,25 +104,32 @@ function Recipe() {
                 <Card className="rounded-none">
                     <CardHeader className="pt-4 pb-0 px-4">
                         <CardTitle>
-                        <div className="flex flex-col flex-grow items-center gap-2 justify-center">
+                            <div className="flex flex-col flex-grow items-center justify-center">
                                 <div className="text-4xl">{recipe?.title}</div>
-                                <div className="flex items-center gap-x-2 text-3xl">
-                                    <div className="flex">
-                                        <Timer size={36} /> {recipe?.cook_time_minutes}min
+
+                                {(showCookTemp || showCookTime) && (
+                                    <div className="flex items-center pt-2 gap-x-2 text-3xl">
+                                        {showCookTime && (
+                                            <div className="flex">
+                                                <Timer size={36} /> {recipe?.cook_time_minutes}min
+                                            </div>
+                                        )}
+                                        {showCookTemp && (
+                                            <div className="flex">
+                                                <Flame size={36} /> {recipe?.cook_temp_deg_f}°F
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="flex">
-                                        <Flame size={36} /> {recipe?.cook_temp_deg_f}°F
-                                    </div>
-                                </div>
+                                )}
                             </div>
                             <Separator className="my-4" />
                         </CardTitle>
                     </CardHeader>
 
                     <CardContent className="px-4">
-                    
+
                         <div className="flex flex-col flex-grow items-start gap-2 transition-all">
-                            
+
                             <div className="text-3xl font-semibold">Ingredients</div>
                             <div className={"text-2xl text-foreground w-full p-2 border " + (isEditMode ? '' : 'border-transparent')}>
                                 <MilkdownProvider>
