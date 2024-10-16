@@ -70,6 +70,7 @@ export namespace api {
         instructions: string
         "cook_temp_deg_f": number
         "cook_time_minutes": number
+        tags: string[]
     }
 
     export interface RecipeListResponse {

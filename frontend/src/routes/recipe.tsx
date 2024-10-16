@@ -75,6 +75,7 @@ function Recipe() {
                 ingredients: ingredients,
                 cook_temp_deg_f: recipe?.cook_temp_deg_f ?? 0,
                 cook_time_minutes: recipe?.cook_time_minutes ?? 0,
+                tags: recipe?.tags ?? ["Bread"],
             });
             toast({
                 description: "Your recipe has been saved.",
