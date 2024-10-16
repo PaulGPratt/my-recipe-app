@@ -9,8 +9,8 @@ export function TopNav() {
             href: "/my-recipe-app/recipes",
         },
         {
-            name: "Calendar",
-            href: "/my-recipe-app/calendar",
+            name: "Plan",
+            href: "/my-recipe-app/plan",
         }
     ];
 
