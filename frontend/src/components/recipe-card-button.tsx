@@ -17,10 +17,10 @@ const RecipeCardButton: React.FC<RecipeCardButtonProps> = ({ item }) => {
     return (
         <Button
             key={item.id}
-            className="justify-between pr-2"
+            className="justify-between pr-2 text-left text-wrap"
             onClick={handleClick}>
             {item.title}
-            <ChevronRight size={30} />
+            <ChevronRight size={30} className='ml-4'/>
         </Button>
     );
 };
