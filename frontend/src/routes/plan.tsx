@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import TopNav from "../components/top-nav";
 import { format, addMonths } from 'date-fns';
-import { Separator } from '../components/ui/separator';
 
 const CURRENT_MONTH_INDEX = 0;
 
-function Calendar() {
+function Plan() {
     const [monthOffsets, setMonthOffsets] = useState<number[]>([
         CURRENT_MONTH_INDEX - 1,
         CURRENT_MONTH_INDEX,
@@ -115,4 +114,4 @@ function Calendar() {
     );
 }
 
-export default Calendar;
+export default Plan;
