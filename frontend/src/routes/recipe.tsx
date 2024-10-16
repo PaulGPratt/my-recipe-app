@@ -105,7 +105,7 @@ function Recipe() {
                     <CardHeader className="pt-4 pb-0 px-4">
                         <CardTitle>
                             <div className="flex flex-col flex-grow items-center justify-center">
-                                <div className="text-4xl">{recipe?.title}</div>
+                                <div className="text-4xl text-center">{recipe?.title}</div>
 
                                 {(showCookTemp || showCookTime) && (
                                     <div className="flex items-center pt-2 gap-x-2 text-3xl">

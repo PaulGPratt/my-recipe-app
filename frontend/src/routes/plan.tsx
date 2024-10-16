@@ -102,16 +102,13 @@ function Calendar() {
             <TopNav></TopNav>
             <div className="h-full px-4 overflow-y-scroll no-scrollbar" ref={scrollContainerRef}>
                 {monthOffsets.map((offset, index) => (
-                    <div className='h-24'>
-                        <Separator></Separator>
                         <div
-                            className='text-2xl'
+                            className='text-2xl p-2 mb-4 h-24 border'
                             key={offset}
                             ref={(el) => (monthRefs.current[index] = el)}
                         >
                             {renderMonth(offset)}
                         </div>
-                    </div>
                 ))}
             </div>
         </div>
