@@ -68,7 +68,7 @@ function Recipes() {
         {/* <ModeToggle /> */}
       </div>
       <ScrollArea className="h-full w-full">
-        <div className="px-4 gap-2 flex flex-col">
+        <div className="px-4 mb-4 gap-2 flex flex-col">
           {filteredRecipes?.map((item) => (
             <RecipeCardButton
               key={item.id}

@@ -44,7 +44,7 @@ function Recipe() {
                 // Fetch the note from the backend
                 const recipeResponse = await client.api.GetRecipe(id);
                 setRecipe(recipeResponse);
-                setTags(recipeResponse.tags);
+                setTags(recipeResponse.tags ?? []);
                 setIngredients(recipeResponse.ingredients);
                 setInstructions(recipeResponse.instructions);
                 setShowCookTemp(recipeResponse.cook_temp_deg_f > 0);
@@ -69,6 +69,8 @@ function Recipe() {
     const saveRecipe = async () => {
         try {
             setIsEditMode(false);
+            const filteredTags = tags.filter((tag) => tag != undefined && tag != null && tag != "");
+            setTags(filteredTags);
             // Send POST request to the backend for saving the note
             const response = await client.api.SaveRecipe({
                 id: id || uuidv4(),
@@ -77,7 +79,7 @@ function Recipe() {
                 ingredients: ingredients,
                 cook_temp_deg_f: recipe?.cook_temp_deg_f ?? 0,
                 cook_time_minutes: recipe?.cook_time_minutes ?? 0,
-                tags: tags,
+                tags: filteredTags,
             });
             toast({
                 description: "Your recipe has been saved.",
@@ -88,6 +90,15 @@ function Recipe() {
         } catch (err) {
             console.error(err);
         }
+    };
+
+    const addTag = async () => {
+        setTags([...tags, "Tag"]);
+    }
+
+    const handleTagChange = (index: number, event: { target: { value: any; }; }) => {
+        tags[index] = event.target.value;
+        setTags([...tags]);
     };
 
     return (
@@ -109,17 +120,28 @@ function Recipe() {
                         <CardTitle>
                             <div className="flex flex-col flex-grow items-center justify-center">
                                 <div className="text-4xl text-center">{recipe?.title}</div>
-                                {(tags?.length > 0 || isEditMode) && (
+                                {(tags?.length > 0 && !isEditMode) && (
                                     <div className="flex pt-2 text-xl gap-2">
                                         {tags?.map((tag, index) => (
-                                            <div key={tag + index} className="rounded-full border-2 border-primary px-3 py-0.5 text-lg" >{tag}</div>
+                                            <div key={tag + index} className="rounded-full border border-primary px-3 py-0.5 text-lg font-normal" >{tag}</div>
                                         ))}
-
-                                        {isEditMode && (
-                                            <Button size="icon" className="rounded-full"><Plus></Plus></Button>
-                                        )}
                                     </div>
                                 )}
+
+                                {isEditMode && (
+                                    <div className="w-full flex-wrap flex pt-2 text-xl gap-2 justify-center">
+                                        {tags?.map((tag, index) => (
+                                            <input
+                                                key={tag + index}
+                                                value={tag}
+                                                onChange={(event) => handleTagChange(index, event)}
+                                                className="rounded-full border border-input px-3 py-0.5 text-lg bg-transparent font-normal">
+                                            </input>
+                                        ))}
+                                        <Button size="icon" className="rounded-full" onClick={addTag}><Plus></Plus></Button>
+                                    </div>
+                                )}
+
 
                                 {(showCookTemp || showCookTime) && (
                                     <div className="flex items-center pt-2 gap-x-2 text-3xl">
