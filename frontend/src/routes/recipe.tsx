@@ -90,11 +90,11 @@ function Recipe() {
     return (
         <div className="h-full mx-auto max-w-4xl">
             <div className="flex p-4 gap-4 justify-center">
-                <Button size="bae" className="pl-2" onClick={handleBack}><ChevronLeft size={30}/> Back to Recipes</Button>
+                <Button className="pl-2" onClick={handleBack}><ChevronLeft size={30}/> Back to Recipes</Button>
                 {isEditMode ? (
-                    <Button variant="outline" size="bae" onClick={saveRecipe}>Save</Button>
+                    <Button onClick={saveRecipe}>Save</Button>
                 ) : (
-                    <Button variant="outline" size="bae" onClick={editRecipe}>Edit</Button>
+                    <Button onClick={editRecipe}>Edit</Button>
                 )}
             </div>
 
@@ -131,14 +131,14 @@ function Recipe() {
                         <div className="flex flex-col flex-grow items-start gap-2 transition-all">
 
                             <div className="text-3xl font-semibold">Ingredients</div>
-                            <div className={"text-2xl text-foreground w-full p-2 border " + (isEditMode ? '' : 'border-transparent')}>
+                            <div className={"text-2xl text-foreground w-full"}>
                                 <MilkdownProvider>
                                     <MarkdownEditor content={ingredients} setContent={setIngredients} isEditable={isEditMode} />
                                 </MilkdownProvider>
                             </div>
                             <Separator className="my-2" />
                             <div className="text-3xl font-semibold">Instructions</div>
-                            <div className={"text-2xl text-foreground w-full p-2 border " + (isEditMode ? '' : 'border-transparent')}>
+                            <div className={"text-2xl text-foreground w-full"}>
                                 <MilkdownProvider>
                                     <MarkdownEditor content={instructions} setContent={setInstructions} isEditable={isEditMode} />
                                 </MilkdownProvider>

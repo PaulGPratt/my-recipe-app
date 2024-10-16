@@ -17,7 +17,6 @@ const RecipeCardButton: React.FC<RecipeCardButtonProps> = ({ item }) => {
     return (
         <Button
             key={item.id}
-            size="bae"
             className="justify-between pr-2"
             onClick={handleClick}>
             {item.title}
