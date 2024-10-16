@@ -33,7 +33,10 @@ function Recipes() {
 
   // Filter recipes based on search query
   const filteredRecipes = recipeList?.Recipes.filter((recipe) =>
-    recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
+    recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    recipe.tags?.some((tag) =>
+      tag.toLowerCase().includes(searchQuery.toLowerCase())
+    )
   );
 
   useEffect(() => {

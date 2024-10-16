@@ -73,8 +73,14 @@ export namespace api {
         tags: string[]
     }
 
+    export interface RecipeCard {
+        id: string
+        title: string
+        tags: string[]
+    }
+
     export interface RecipeListResponse {
-        Recipes: Recipe[]
+        Recipes: RecipeCard[]
     }
 
     export class ServiceClient {

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Client, { Environment, Local, api } from "../client";
 import MarkdownEditor from "../components/markdown-editor";
 import { MilkdownProvider } from "@milkdown/react";
-import { ChevronLeft, Flame, Timer } from "lucide-react";
+import { ChevronLeft, Flame, Plus, Timer } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from "../components/ui/button";
 import { useToast } from "../hooks/use-toast";
@@ -31,6 +31,7 @@ function Recipe() {
     const [isLoading, setIsLoading] = useState(true);
     const [isEditMode, setIsEditMode] = useState(false);
     const [recipe, setRecipe] = useState<api.Recipe>();
+    const [tags, setTags] = useState<string[]>([]);
     const [ingredients, setIngredients] = useState<string>("");
     const [instructions, setInstructions] = useState<string>("");
     const [showCookTemp, setShowCookTemp] = useState<boolean>(false);
@@ -43,6 +44,7 @@ function Recipe() {
                 // Fetch the note from the backend
                 const recipeResponse = await client.api.GetRecipe(id);
                 setRecipe(recipeResponse);
+                setTags(recipeResponse.tags);
                 setIngredients(recipeResponse.ingredients);
                 setInstructions(recipeResponse.instructions);
                 setShowCookTemp(recipeResponse.cook_temp_deg_f > 0);
@@ -75,7 +77,7 @@ function Recipe() {
                 ingredients: ingredients,
                 cook_temp_deg_f: recipe?.cook_temp_deg_f ?? 0,
                 cook_time_minutes: recipe?.cook_time_minutes ?? 0,
-                tags: recipe?.tags ?? ["Bread"],
+                tags: tags,
             });
             toast({
                 description: "Your recipe has been saved.",
@@ -91,7 +93,7 @@ function Recipe() {
     return (
         <div className="h-full mx-auto max-w-4xl">
             <div className="flex p-4 gap-4 justify-center">
-                <Button className="pl-2" onClick={handleBack}><ChevronLeft size={30}/> Back to Recipes</Button>
+                <Button className="pl-2" onClick={handleBack}><ChevronLeft size={30} /> Back to Recipes</Button>
                 {isEditMode ? (
                     <Button onClick={saveRecipe}>Save</Button>
                 ) : (
@@ -107,6 +109,17 @@ function Recipe() {
                         <CardTitle>
                             <div className="flex flex-col flex-grow items-center justify-center">
                                 <div className="text-4xl text-center">{recipe?.title}</div>
+                                {(tags?.length > 0 || isEditMode) && (
+                                    <div className="flex pt-2 text-xl gap-2">
+                                        {tags?.map((tag, index) => (
+                                            <div key={tag + index} className="rounded-full border-2 border-primary px-3 py-0.5 text-lg" >{tag}</div>
+                                        ))}
+
+                                        {isEditMode && (
+                                            <Button size="icon" className="rounded-full"><Plus></Plus></Button>
+                                        )}
+                                    </div>
+                                )}
 
                                 {(showCookTemp || showCookTime) && (
                                     <div className="flex items-center pt-2 gap-x-2 text-3xl">
