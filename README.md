@@ -12,7 +12,7 @@ This is a custom recipe app, built primarily for my wife, who is a low-vision in
 - **Frontend**: React is used to build an intuitive and responsive user interface.
 - **Backend**: Go powers the backend, ensuring efficient performance.
 - **Database**: PostgreSQL is used to store and manage recipe data.
-- **Deployment**: Built on top of the Encore platform for simplified deployment and scalability.
+- **Deployment**: Built on top of the Encore platform for simplified deployment.
 
 ## Future Plans
 The app starts with a collection of my wife's favorite recipes, and future updates will include additional features based on her personal needs and feedback. This iterative approach ensures the app evolves in a way that best supports her daily use.
