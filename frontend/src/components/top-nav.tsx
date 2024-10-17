@@ -24,10 +24,10 @@ export function TopNav() {
                     to={example.href}
                     key={example.href}
                     className={cn(
-                        "flex h-10 items-center justify-center rounded-full px-6 text-center transition-colors hover:text-primary",
+                        "flex h-10 items-center justify-center rounded-full px-6 text-center transition-colors hover:text-primary-foreground",
                         pathname?.startsWith(example.href) ||
                             (index === 0 && pathname === "/")
-                            ? "bg-muted font-semibold text-primary"
+                            ? "bg-secondary font-semibold text-primary-foreground"
                             : "text-muted-foreground"
                     )}
                 >

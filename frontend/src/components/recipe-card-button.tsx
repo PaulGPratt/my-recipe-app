@@ -17,17 +17,18 @@ const RecipeCardButton: React.FC<RecipeCardButtonProps> = ({ item }) => {
     return (
         <Button
             key={item.id}
-            className="justify-between pr-1 py-4 text-left text-wrap"
+            variant="secondary"
+            className="justify-between pr-1 text-left text-wrap"
             onClick={handleClick}>
-            <div className='flex flex-col '>
+            <div className='flex flex-col font-sim'>
                 {item.title}
-                {item.tags?.length > 0 && (
+                {/* {item.tags?.length > 0 && (
                     <div className='flex pt-2'>
                         {item.tags?.map((tag, index) => (
                             <div key={tag + index} className="rounded-full border border-primary px-3 py-0.5 text-lg" >{tag}</div>
                         ))}
                     </div>
-                )}
+                )} */}
             </div>
 
             <div className='min-w-8 ml-4'><ChevronRight size={30} /></div>

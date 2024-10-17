@@ -103,7 +103,7 @@ function Recipe() {
 
     return (
         <div className="h-full mx-auto max-w-4xl">
-            <div className="flex p-4 gap-4 justify-center">
+            <div className="flex p-4 gap-4 justify-between">
                 <Button className="pl-2" onClick={handleBack}><ChevronLeft size={30} /> Back to Recipes</Button>
                 {isEditMode ? (
                     <Button onClick={saveRecipe}>Save</Button>
@@ -120,7 +120,7 @@ function Recipe() {
                         <CardTitle>
                             <div className="flex flex-col flex-grow items-center justify-center">
                                 <div className="text-4xl text-center">{recipe?.title}</div>
-                                {(tags?.length > 0 && !isEditMode) && (
+                                {/* {(tags?.length > 0 && !isEditMode) && (
                                     <div className="flex pt-2 text-xl gap-2">
                                         {tags?.map((tag, index) => (
                                             <div key={tag + index} className="rounded-full border border-primary px-3 py-0.5 text-lg font-normal" >{tag}</div>
@@ -140,7 +140,7 @@ function Recipe() {
                                         ))}
                                         <Button size="icon" className="rounded-full" onClick={addTag}><Plus></Plus></Button>
                                     </div>
-                                )}
+                                )} */}
 
 
                                 {(showCookTemp || showCookTime) && (
