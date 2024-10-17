@@ -17,10 +17,10 @@ const RecipeCardButton: React.FC<RecipeCardButtonProps> = ({ item }) => {
     return (
         <Button
             key={item.id}
-            variant="secondary"
+            variant="default"
             className="justify-between pr-1 text-left text-wrap"
             onClick={handleClick}>
-            <div className='flex flex-col font-sim'>
+            <div className='flex flex-col font-semibold'>
                 {item.title}
                 {/* {item.tags?.length > 0 && (
                     <div className='flex pt-2'>
