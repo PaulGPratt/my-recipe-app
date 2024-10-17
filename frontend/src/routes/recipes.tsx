@@ -41,13 +41,9 @@ function Recipes() {
 
   useEffect(() => {
     const fetchRecipes = async () => {
-      // If we do not have an id then we are creating a new note, nothing needs to be fetched
       try {
-        // Fetch the note from the backend
         const recipeResponse = await client.api.GetRecipes();
         setRecipeList(recipeResponse)
-
-        console.log(recipeResponse)
       } catch (err) {
         console.error(err);
       }
