@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Client, { Environment, Local, api } from "../client";
 import MarkdownEditor from "../components/markdown-editor";
 import { MilkdownProvider } from "@milkdown/react";
-import { ChevronLeft, Flame, Plus, Timer } from "lucide-react";
+import { ChevronLeft, Flame, Timer } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from "../components/ui/button";
 import { useToast } from "../hooks/use-toast";
@@ -34,8 +34,8 @@ function Recipe() {
     const [tags, setTags] = useState<string[]>([]);
     const [ingredients, setIngredients] = useState<string>("");
     const [instructions, setInstructions] = useState<string>("");
-    const [showCookTemp, setShowCookTemp] = useState<boolean>(false);
-    const [showCookTime, setShowCookTime] = useState<boolean>(false);
+    const [cookTime, setCookTime] = useState<number>(0);
+    const [cookTemp, setCookTemp] = useState<number>(0);
 
     useEffect(() => {
         const fetchRecipes = async () => {
@@ -47,8 +47,8 @@ function Recipe() {
                 setTags(recipeResponse.tags ?? []);
                 setIngredients(recipeResponse.ingredients);
                 setInstructions(recipeResponse.instructions);
-                setShowCookTemp(recipeResponse.cook_temp_deg_f > 0);
-                setShowCookTime(recipeResponse.cook_time_minutes > 0);
+                setCookTemp(recipeResponse.cook_temp_deg_f);
+                setCookTime(recipeResponse.cook_time_minutes);
             } catch (err) {
                 console.error(err);
             }
@@ -77,8 +77,8 @@ function Recipe() {
                 title: recipe?.title ?? '',
                 instructions: instructions,
                 ingredients: ingredients,
-                cook_temp_deg_f: recipe?.cook_temp_deg_f ?? 0,
-                cook_time_minutes: recipe?.cook_time_minutes ?? 0,
+                cook_temp_deg_f: cookTemp,
+                cook_time_minutes: cookTime,
                 tags: filteredTags,
             });
             toast({
@@ -100,6 +100,14 @@ function Recipe() {
         tags[index] = event.target.value;
         setTags([...tags]);
     };
+
+    const handleCookTimeChange = (event: { target: { value: any; }; }) => {
+        setCookTime(Number(event.target.value))
+    }
+
+    const handleCookTempChange = (event: { target: { value: any; }; }) => {
+        setCookTemp(Number(event.target.value))
+    }
 
     return (
         <div className="h-full mx-auto max-w-4xl">
@@ -143,18 +151,38 @@ function Recipe() {
                                 )} */}
 
 
-                                {(showCookTemp || showCookTime) && (
+                                {(!isEditMode && (cookTime > 0 || cookTemp > 0)) && (
                                     <div className="flex items-center pt-2 gap-x-2 text-3xl">
-                                        {showCookTime && (
+                                        {cookTime > 0 && (
                                             <div className="flex">
-                                                <Timer size={36} /> {recipe?.cook_time_minutes}min
+                                                <Timer size={36} /> {cookTime}min
                                             </div>
                                         )}
-                                        {showCookTemp && (
+                                        {cookTemp > 0 && (
                                             <div className="flex">
-                                                <Flame size={36} /> {recipe?.cook_temp_deg_f}°F
+                                                <Flame size={36} /> {cookTemp}°F
                                             </div>
                                         )}
+                                    </div>
+                                )}
+                                {isEditMode && (
+                                    <div className="flex items-center pt-2 gap-x-2 text-3xl">
+                                        <div className="flex">
+                                            <Timer size={36} />
+                                            <input
+                                                value={cookTime}
+                                                onChange={handleCookTimeChange}
+                                                className="border rounded-md mx-1 px-1 w-16 bg-transparent text-center">
+                                            </input>min
+                                        </div>
+                                        <div className="flex">
+                                            <Flame size={36} />
+                                            <input
+                                                value={cookTemp}
+                                                onChange={handleCookTempChange}
+                                                className="border rounded-md mx-1 px-1 w-16 bg-transparent text-center">
+                                            </input>°F
+                                        </div>
                                     </div>
                                 )}
                             </div>
