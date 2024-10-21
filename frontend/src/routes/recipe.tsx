@@ -3,12 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import Client, { Environment, Local, api } from "../client";
 import MarkdownEditor from "../components/markdown-editor";
 import { MilkdownProvider } from "@milkdown/react";
-import { ChevronLeft, Flame, Timer } from "lucide-react";
+import { ChevronLeft, Flame, Plus, Timer } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from "../components/ui/button";
 import { useToast } from "../hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Separator } from "../components/ui/separator";
+import { Input } from "../components/ui/input";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -64,6 +65,17 @@ function Recipe() {
         setIsEditMode(true);
     }
 
+    const cancelEdit = async () => {
+        setIsEditMode(false);
+        if (recipe) {
+            setTags(recipe.tags);
+            setIngredients(recipe.ingredients);
+            setInstructions(recipe.instructions);
+            setCookTemp(recipe.cook_temp_deg_f);
+            setCookTime(recipe.cook_time_minutes);
+        }
+    }
+
     const saveRecipe = async () => {
         try {
             setIsEditMode(false);
@@ -98,12 +110,27 @@ function Recipe() {
         setCookTemp(Number(event.target.value))
     }
 
+    const addTag = async () => {
+        setTags([...tags, "Tag"]);
+    }
+
+    const handleTagChange = (index: number, event: { target: { value: any; }; }) => {
+        tags[index] = event.target.value;
+        if (tags[index] === undefined || tags[index] === null || tags[index] === "") {
+            tags.splice(index, 1);
+        }
+        setTags([...tags]);
+    };
+
     return (
         <div className="h-full mx-auto max-w-4xl">
             <div className="flex p-4 gap-4 justify-between">
-                <Button className="pl-2" onClick={handleBack}><ChevronLeft size={30} /> Back to Recipes</Button>
+                <Button className="pl-2" onClick={handleBack}><ChevronLeft size={30} /> Recipes</Button>
                 {isEditMode ? (
-                    <Button onClick={saveRecipe}>Save</Button>
+                    <div className="flex gap-2">
+                        <Button onClick={cancelEdit}>Cancel</Button>
+                        <Button variant="default" onClick={saveRecipe}>Save</Button>
+                    </div>
                 ) : (
                     <Button onClick={editRecipe}>Edit</Button>
                 )}
@@ -117,7 +144,26 @@ function Recipe() {
                         <CardTitle>
                             <div className="flex flex-col flex-grow items-center justify-center">
                                 <div className="text-4xl text-center">{recipe?.title}</div>
-
+                                {(tags?.length > 0 && !isEditMode) && (
+                                    <div className="flex pt-2 text-xl gap-2">
+                                        {tags?.map((tag, index) => (
+                                            <div key={tag + index} className="rounded-full border-2 border-primary-foreground px-3 text-lg" >{tag}</div>
+                                        ))}
+                                    </div>
+                                )}
+                                {isEditMode && (
+                                    <div className="w-full flex-wrap flex pt-2 text-xl gap-2 justify-center">
+                                        {tags?.map((tag, index) => (
+                                            <Input
+                                                key={tag + index}
+                                                defaultValue={tag}
+                                                onBlur={(event) => handleTagChange(index, event)}
+                                                className="rounded-full px-3 text-lg w-36">
+                                            </Input>
+                                        ))}
+                                        <Button size="icon" className="rounded-full" onClick={addTag}><Plus></Plus></Button>
+                                    </div>
+                                )}
                                 {(!isEditMode && (cookTime > 0 || cookTemp > 0)) && (
                                     <div className="flex items-center pt-2 gap-x-2 text-3xl">
                                         {cookTime > 0 && (
@@ -136,19 +182,19 @@ function Recipe() {
                                     <div className="flex items-center pt-2 gap-x-2 text-3xl">
                                         <div className="flex">
                                             <Timer size={36} />
-                                            <input
+                                            <Input
                                                 value={cookTime}
                                                 onChange={handleCookTimeChange}
-                                                className="border rounded-md mx-1 px-1 w-16 bg-transparent text-center">
-                                            </input>min
+                                                className="mx-1 px-1 w-16 text-center text-3xl">
+                                            </Input>min
                                         </div>
                                         <div className="flex">
                                             <Flame size={36} />
-                                            <input
+                                            <Input
                                                 value={cookTemp}
                                                 onChange={handleCookTempChange}
-                                                className="border rounded-md mx-1 px-1 w-16 bg-transparent text-center">
-                                            </input>°F
+                                                className="mx-1 px-1 w-16 text-center text-3xl">
+                                            </Input>°F
                                         </div>
                                     </div>
                                 )}

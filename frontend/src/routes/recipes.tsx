@@ -61,8 +61,8 @@ function Recipes() {
           <Input placeholder="Search" className="pl-11 h-12 text-2xl" value={searchQuery}
             onChange={handleSearchChange} />
         </div>
-        {/* <ModeToggle /> */}
       </div>
+
       <ScrollArea className="h-full w-full">
         <div className="px-4 mb-4 gap-2 flex flex-col">
           {filteredRecipes?.map((item) => (
