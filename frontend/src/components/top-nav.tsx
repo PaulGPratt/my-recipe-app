@@ -27,7 +27,7 @@ export function TopNav() {
                         "flex h-10 items-center justify-center rounded-full px-6 text-center transition-colors hover:text-primary-foreground",
                         pathname?.startsWith(example.href) ||
                             (index === 0 && pathname === "/")
-                            ? "bg-secondary font-semibold text-primary-foreground"
+                            ? "bg-primary font-semibold text-primary-foreground"
                             : "text-muted-foreground"
                     )}
                 >
