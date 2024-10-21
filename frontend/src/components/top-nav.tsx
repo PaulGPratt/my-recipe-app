@@ -5,7 +5,7 @@ import React from "react";
 const TopNav = React.forwardRef<
     HTMLDivElement,
     React.HTMLAttributes<HTMLDivElement>
->(({ className }) => {
+>(({ className }, ref) => {
     const navItems = [
         {
             name: "Recipes",
@@ -21,7 +21,9 @@ const TopNav = React.forwardRef<
     const { pathname } = location;
 
     return (
-        <div className={cn("p-4 flex items-center text-2xl", className)}>
+        <div
+            className={cn("p-4 flex items-center text-2xl", className)}
+            ref={ref}>
             {navItems.map((example, index) => (
                 <Link
                     to={example.href}
