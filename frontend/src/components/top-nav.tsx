@@ -1,8 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "../lib/utils";
+import React from "react";
 
-export function TopNav() {
-
+const TopNav = React.forwardRef<
+    HTMLDivElement,
+    React.HTMLAttributes<HTMLDivElement>
+>(({ className }) => {
     const navItems = [
         {
             name: "Recipes",
@@ -18,7 +21,7 @@ export function TopNav() {
     const { pathname } = location;
 
     return (
-        <div className="p-4 flex items-center text-2xl">
+        <div className={cn("p-4 flex items-center text-2xl", className)}>
             {navItems.map((example, index) => (
                 <Link
                     to={example.href}
@@ -36,6 +39,6 @@ export function TopNav() {
             ))}
         </div>
     )
-}
+})
 
 export default TopNav;
