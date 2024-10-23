@@ -18,6 +18,11 @@ const getRequestClient = () => {
     : new Client(Environment("staging"));
 };
 
+export interface TagRecipe {
+  tag: string,
+  recipes: api.RecipeCard[],
+}
+
 function Recipes() {
   // Get the request client to make requests to the Encore backend
   const client = getRequestClient();
@@ -25,6 +30,7 @@ function Recipes() {
   const [recipeList, setRecipeList] = useState<api.RecipeCard[]>([]);
   const [filteredRecipeList, setFilteredRecipeList] = useState<api.RecipeCard[]>([]);
   const [tagList, setTagList] = useState<string[]>([]);
+  const [tagRecipes, setTagRecipes] = useState<TagRecipe[]>([]);
 
   // State for search query and filtered recipes
   const [searchQuery, setSearchQuery] = useState('');
@@ -57,11 +63,13 @@ function Recipes() {
 
         const tags = recipeResponse.Recipes.reduce((acc, recipe) => {
           return acc.concat(recipe.tags ?? []);
-        }, ["All"]);
+        }, ["All", "Uncategorized"]);
 
         const orderedTags = Array.from(new Set(tags)).sort((a, b) => {
           if (a === "All") return -1;
           if (b === "All") return 1;
+          if (a === "Uncategorized") return 1;
+          if (b === "Uncategorized") return -1;
           return a.localeCompare(b);
         });
 
@@ -75,6 +83,31 @@ function Recipes() {
     fetchRecipes();
   }, []);
 
+  const calculateTagRecipes = () => {
+    const localTagList = tagList.filter(x => activeTag === "All" || (x.toLowerCase() === activeTag.toLowerCase() && x !== "Uncategorized"))
+    const tagRecipes = localTagList
+      .filter(tag => tag != "All")
+      .map((tag) => {
+        var recipes = recipeList.filter(recipe => recipe.tags?.some(x => x.toLowerCase() === tag.toLowerCase()))
+        return {
+          tag: tag,
+          recipes: recipes
+        } as TagRecipe
+      });
+
+    if (activeTag === "All" || activeTag === "Uncategorized") {
+      const untagged = {
+        tag: "Uncategorized",
+        recipes: recipeList.filter(recipe => !recipe.tags || recipe.tags.length === 0)
+      } as TagRecipe;
+      tagRecipes.push(untagged);
+    }
+
+    setTagRecipes(tagRecipes);
+  }
+
+
+
   const handleTagClick = ((tag: string) => {
     setActiveTag(tag);
   });
@@ -82,6 +115,7 @@ function Recipes() {
   useEffect(() => {
     if (recipeList.length > 0) {
       setFilteredRecipes();
+      calculateTagRecipes();
     }
   }, [recipeList, searchQuery, activeTag]);
 
@@ -110,14 +144,21 @@ function Recipes() {
       </div>
 
       <ScrollArea className="h-full w-full">
-        <div className="px-4 mb-4 gap-2 flex flex-col">
-          {filteredRecipeList?.map((item) => (
-            <RecipeCardButton
-              key={item.id}
-              item={item}
-            />
-          ))}
-        </div>
+        {tagRecipes?.map((tagRecipe) => (
+          <>
+            <div className="px-4 mb-2 text-2xl font-semibold">
+              {tagRecipe.tag}
+            </div>
+            <div className="px-4 mb-4 gap-2 flex flex-col">
+              {tagRecipe.recipes?.map((recipe) => (
+                <RecipeCardButton
+                  key={recipe.id}
+                  item={recipe}
+                />
+              ))}
+            </div>
+          </>
+        ))}
       </ScrollArea>
     </div>
   );
