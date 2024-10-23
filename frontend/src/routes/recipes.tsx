@@ -28,7 +28,6 @@ function Recipes() {
   const client = getRequestClient();
 
   const [recipeList, setRecipeList] = useState<api.RecipeCard[]>([]);
-  const [filteredRecipeList, setFilteredRecipeList] = useState<api.RecipeCard[]>([]);
   const [tagList, setTagList] = useState<string[]>([]);
   const [tagRecipes, setTagRecipes] = useState<TagRecipe[]>([]);
 
@@ -40,20 +39,6 @@ function Recipes() {
   const handleSearchChange = (event: { target: { value: SetStateAction<string>; }; }) => {
     setSearchQuery(event.target.value);
   };
-
-  const setFilteredRecipes = () => {
-
-    const filteredRecipes = recipeList?.filter((recipe) =>
-      (searchQuery.length === 0 || recipe.title.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      (activeTag === "All" || recipe.tags?.some((tag) => tag.toLowerCase() === activeTag.toLowerCase()))
-    ).sort((a, b) => {
-      return a.title.localeCompare(b.title);
-    }) ?? [];
-
-    setFilteredRecipeList(filteredRecipes);
-  }
-
-
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -84,7 +69,7 @@ function Recipes() {
   }, []);
 
   const calculateTagRecipes = () => {
-    const localTagList = tagList.filter(x => activeTag === "All" || (x.toLowerCase() === activeTag.toLowerCase() && x !== "Uncategorized"))
+    const localTagList = tagList.filter(x => (activeTag === "All" || x.toLowerCase() === activeTag.toLowerCase()) && x !== "Uncategorized")
     const tagRecipes = localTagList
       .filter(tag => tag != "All")
       .map((tag) => {
@@ -114,7 +99,6 @@ function Recipes() {
 
   useEffect(() => {
     if (recipeList.length > 0) {
-      setFilteredRecipes();
       calculateTagRecipes();
     }
   }, [recipeList, searchQuery, activeTag]);
