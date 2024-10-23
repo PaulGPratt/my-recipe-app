@@ -73,7 +73,11 @@ function Recipes() {
     const tagRecipes = localTagList
       .filter(tag => tag != "All")
       .map((tag) => {
-        var recipes = recipeList.filter(recipe => recipe.tags?.some(x => x.toLowerCase() === tag.toLowerCase()))
+        var recipes = recipeList
+          .filter(recipe => recipe.tags?.some(x => x.toLowerCase() === tag.toLowerCase()))
+          .sort((a, b) => {
+            return a.title.localeCompare(b.title);
+          })
         return {
           tag: tag,
           recipes: recipes
@@ -83,7 +87,11 @@ function Recipes() {
     if (activeTag === "All" || activeTag === "Uncategorized") {
       const untagged = {
         tag: "Uncategorized",
-        recipes: recipeList.filter(recipe => !recipe.tags || recipe.tags.length === 0)
+        recipes: recipeList
+          .filter(recipe => !recipe.tags || recipe.tags.length === 0)
+          .sort((a, b) => {
+            return a.title.localeCompare(b.title);
+          })
       } as TagRecipe;
       tagRecipes.push(untagged);
     }
