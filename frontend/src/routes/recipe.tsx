@@ -6,7 +6,6 @@ import { MilkdownProvider } from "@milkdown/react";
 import { ChevronLeft, Flame, Plus, Timer } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from "../components/ui/button";
-import { useToast } from "../hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Separator } from "../components/ui/separator";
 import { Input } from "../components/ui/input";
@@ -24,7 +23,6 @@ const getRequestClient = () => {
 function Recipe() {
     const client = getRequestClient();
     const navigate = useNavigate();
-    const { toast } = useToast()
 
     // Get the 'id' from the route parameters
     const { id } = useParams();
@@ -91,9 +89,6 @@ function Recipe() {
                 cook_time_minutes: cookTime,
                 tags: filteredTags,
             });
-            toast({
-                description: "Your recipe has been saved.",
-            })
             if (!id) {
                 navigate(`/my-recipe-app/recipes/${response.id}`);
             }

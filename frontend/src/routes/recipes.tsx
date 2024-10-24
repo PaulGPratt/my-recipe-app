@@ -44,11 +44,15 @@ function Recipes() {
     const fetchRecipes = async () => {
       try {
         const recipeResponse = await client.api.GetRecipes();
-        setRecipeList(recipeResponse.Recipes);
+        const localRecipeList = recipeResponse.Recipes.map(x => ({
+          ...x,
+          tags: x.tags && x.tags.length ? x.tags : ["Uncategorized"]
+        }));
+        setRecipeList(localRecipeList);
 
-        const tags = recipeResponse.Recipes.reduce((acc, recipe) => {
+        let tags = localRecipeList.reduce((acc, recipe) => {
           return acc.concat(recipe.tags ?? []);
-        }, ["All", "Uncategorized"]);
+        }, ["All"]);
 
         const orderedTags = Array.from(new Set(tags)).sort((a, b) => {
           if (a === "All") return -1;
@@ -69,7 +73,7 @@ function Recipes() {
   }, []);
 
   const calculateTagRecipes = () => {
-    const localTagList = tagList.filter(x => (activeTag === "All" || x.toLowerCase() === activeTag.toLowerCase()) && x !== "Uncategorized")
+    const localTagList = tagList.filter(x => activeTag === "All" || x.toLowerCase() === activeTag.toLowerCase())
     const tagRecipes = localTagList
       .filter(tag => tag != "All")
       .map((tag) => {
@@ -84,21 +88,8 @@ function Recipes() {
         } as TagRecipe
       });
 
-    if (activeTag === "All" || activeTag === "Uncategorized") {
-      const untagged = {
-        tag: "Uncategorized",
-        recipes: recipeList
-          .filter(recipe => !recipe.tags || recipe.tags.length === 0)
-          .sort((a, b) => {
-            return a.title.localeCompare(b.title);
-          })
-      } as TagRecipe;
-      tagRecipes.push(untagged);
-    }
-
     setTagRecipes(tagRecipes);
   }
-
 
 
   const handleTagClick = ((tag: string) => {
@@ -138,7 +129,7 @@ function Recipes() {
       <ScrollArea className="h-full w-full">
         {tagRecipes?.map((tagRecipe) => (
           <>
-            <div className="px-4 mb-2 text-2xl font-semibold">
+            <div className="px-4 mb-2 text-2xl text-muted-foreground">
               {tagRecipe.tag}
             </div>
             <div className="px-4 mb-4 gap-2 flex flex-col">
