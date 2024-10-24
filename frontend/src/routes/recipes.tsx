@@ -131,9 +131,9 @@ function Recipes() {
         {tagRecipes?.map((tagRecipe) => (
           <>
             <div className="px-4 mb-2 text-2xl  flex gap-2 items-center">
-              <div className="flex-grow"><Separator className="bg-muted-foreground"></Separator></div>
+              <div className="flex-grow"><Separator className="bg-muted-foreground" /></div>
               <span className="text-muted-foreground">{tagRecipe.tag}</span>
-              <div className="flex-grow"><Separator className="bg-muted-foreground"></Separator></div>
+              <div className="flex-grow"><Separator className="bg-muted-foreground" /></div>
             </div>
             <div className="px-4 mb-6 gap-2 flex flex-col">
               {tagRecipe.recipes?.map((recipe) => (
