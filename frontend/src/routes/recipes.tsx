@@ -6,6 +6,7 @@ import { Input } from "../components/ui/input";
 import RecipeCardButton from "../components/recipe-card-button";
 import TopNav from "../components/top-nav";
 import { Button } from "../components/ui/button";
+import { Separator } from "../components/ui/separator";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -129,10 +130,12 @@ function Recipes() {
       <ScrollArea className="h-full w-full">
         {tagRecipes?.map((tagRecipe) => (
           <>
-            <div className="px-4 mb-2 text-2xl text-muted-foreground">
-              {tagRecipe.tag}
+            <div className="px-4 mb-2 text-2xl  flex gap-2 items-center">
+              <div className="flex-grow"><Separator className="bg-muted-foreground"></Separator></div>
+              <span className="text-muted-foreground">{tagRecipe.tag}</span>
+              <div className="flex-grow"><Separator className="bg-muted-foreground"></Separator></div>
             </div>
-            <div className="px-4 mb-4 gap-2 flex flex-col">
+            <div className="px-4 mb-6 gap-2 flex flex-col">
               {tagRecipe.recipes?.map((recipe) => (
                 <RecipeCardButton
                   key={recipe.id}
