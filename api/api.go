@@ -27,7 +27,7 @@ var secrets struct {
 const analyzeRecipePrompt = `Analyze the attached recipe image. Respond with the provided schema using the following guidelines:
 
 Ingredients: Each ingredient should:
-Begin with an asterisk (*)
+Begin with an asterisk followed by a space '* '
 End with a newline (press 'Enter' after each ingredient)
 
 Instructions: Each instruction should:
@@ -190,48 +190,47 @@ func SaveRecipe(ctx context.Context, recipe *Recipe) (*Recipe, error) {
 func UploadRecipe(ctx context.Context, ru FileUploadRequest) (*Recipe, error) {
 	var recipe *Recipe
 
-	for _, file := range ru.Files {
-
-		// Analyze the image
-		recipe, err := analyzeImageToRecipe(ctx, file)
-		if err != nil {
-			return nil, fmt.Errorf("error analyzing image: %w", err)
-		}
-
-		// Save the recipe
-		savedRecipe, err := SaveRecipe(ctx, recipe)
-		if err != nil {
-			return nil, fmt.Errorf("error saving recipe to database: %w", err)
-		}
-
-		recipe = savedRecipe
+	recipe, err := analyzeImageToRecipe(ctx, ru.Files)
+	if err != nil {
+		return nil, fmt.Errorf("error analyzing images: %w", err)
 	}
 
-	return recipe, nil
+	// Save the recipe
+	savedRecipe, err := SaveRecipe(ctx, recipe)
+	if err != nil {
+		return nil, fmt.Errorf("error saving recipe to database: %w", err)
+	}
+
+	return savedRecipe, nil
 }
 
-func analyzeImageToRecipe(ctx context.Context, file FileUpload) (*Recipe, error) {
-	// Convert image to base64
-	dataURL := fmt.Sprintf("data:%s;base64,%s", file.MimeType, file.Content)
+func analyzeImageToRecipe(ctx context.Context, files []FileUpload) (*Recipe, error) {
+
+	var messagesContent []Content
+
+	promptContent := Content{
+		Type: "text",
+		Text: analyzeRecipePrompt,
+	}
+	messagesContent = append(messagesContent, promptContent)
+
+	for _, file := range files {
+		imageContent := Content{
+			Type: "image_url",
+			ImageURL: &ImageURL{
+				URL: fmt.Sprintf("data:%s;base64,%s", file.MimeType, file.Content),
+			},
+		}
+		messagesContent = append(messagesContent, imageContent)
+	}
 
 	// Construct the request body
 	reqBody := OpenAIRequest{
 		Model: "gpt-4o-mini",
 		Messages: []Message{
 			{
-				Role: "user",
-				Content: []Content{
-					{
-						Type: "text",
-						Text: analyzeRecipePrompt,
-					},
-					{
-						Type: "image_url",
-						ImageURL: &ImageURL{
-							URL: dataURL,
-						},
-					},
-				},
+				Role:    "user",
+				Content: messagesContent,
 			},
 		},
 		MaxTokens: 1000,

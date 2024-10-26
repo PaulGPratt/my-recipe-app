@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FileIcon } from "lucide-react";
+import { ChevronLeft, FileIcon } from "lucide-react";
 import Client, { Environment, Local, api } from "../client";
+import { useNavigate } from "react-router-dom";
 
 const getRequestClient = () => {
     return import.meta.env.DEV
@@ -14,9 +15,14 @@ const getRequestClient = () => {
 
 export default function Upload() {
     const client = getRequestClient();
+    const navigate = useNavigate();
 
     const [isUploading, setIsUploading] = useState<boolean>(false);
     const [filesData, setFilesData] = useState<api.FileUpload[]>([]);
+
+    const handleBack = () => {
+        navigate(`/my-recipe-app/recipes/`);
+    };
 
     const handleFilesUpload = (event: any) => {
         const files = Array.from(event.target.files || []); // Convert to array with fallback for null
@@ -47,8 +53,7 @@ export default function Upload() {
             const response = await client.api.UploadRecipe({
                 files: filesData
             } as api.FileUploadRequest);
-
-            console.log("Upload successful:", response);
+            navigate(`/my-recipe-app/recipes/${response.id}`);
         } catch (error) {
             console.error("Upload failed:", error);
         } finally {
@@ -57,25 +62,21 @@ export default function Upload() {
     }
 
     return (
-        <Card>
-            <CardContent className="p-6 space-y-4">
-                <div className="border-2 border-dashed border-gray-200 rounded-lg flex flex-col gap-1 p-6 items-center">
-                    <FileIcon className="w-12 h-12" />
-                    <span className="text-sm font-medium text-gray-500">Drag and drop a file or click to browse</span>
-                    <span className="text-xs text-gray-500">PDF, image, video, or audio</span>
-                </div>
-                <div className="space-y-2 text-sm">
-                    <Label htmlFor="file" className="text-sm font-medium">
-                        File
+        <div className="p-4">
+            <Button className="mb-4" onClick={handleBack}><ChevronLeft size={30} /> Recipes</Button>
+            <Card >
+                <CardTitle className="p-4">
+                    <Label htmlFor="file" className="text-2xl">
+                        Upload Files
                     </Label>
-                    <Input id="file" type="file" accept="image/*" multiple onChange={handleFilesUpload} />
-                </div>
-            </CardContent>
-            <CardFooter>
-                <Button size="lg" onClick={uploadToApi} disabled={isUploading}>
-                    {isUploading ? "Uploading..." : "Upload"}
-                </Button>
-            </CardFooter>
-        </Card>
+                </CardTitle>
+                <CardContent className="p-4 pt-0 flex items-center gap-2">
+                    <Input id="file" type="file" accept="image/*" multiple onChange={handleFilesUpload} className="h-12 text-2xl" />
+                    <Button variant="default" onClick={uploadToApi} disabled={isUploading || filesData.length === 0}>
+                        {isUploading ? "Uploading..." : "Upload"}
+                    </Button>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

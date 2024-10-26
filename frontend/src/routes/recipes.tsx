@@ -1,12 +1,13 @@
 import { SetStateAction, useEffect, useState } from "react";
 import Client, { Environment, Local, api } from "../client";
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search } from "lucide-react";
+import { Search, Image } from "lucide-react";
 import { Input } from "../components/ui/input";
 import RecipeCardButton from "../components/recipe-card-button";
 import TopNav from "../components/top-nav";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
+import { useNavigate } from "react-router-dom";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -27,6 +28,7 @@ export interface TagRecipe {
 function Recipes() {
   // Get the request client to make requests to the Encore backend
   const client = getRequestClient();
+  const navigate = useNavigate();
 
   const [recipeList, setRecipeList] = useState<api.RecipeCard[]>([]);
   const [tagList, setTagList] = useState<string[]>([]);
@@ -40,6 +42,10 @@ function Recipes() {
   const handleSearchChange = (event: { target: { value: SetStateAction<string>; }; }) => {
     setSearchQuery(event.target.value);
   };
+
+  const handleUpload = () => {
+    navigate(`/my-recipe-app/upload/`);
+};
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -107,6 +113,10 @@ function Recipes() {
   return (
     <div className="h-full mx-auto max-w-4xl flex flex-col ">
       <TopNav className="hidden"></TopNav>
+      <div className="p-4 text-4xl flex justify-between">
+        Natalie's Recipes
+        <Button variant="outline" onClick={handleUpload}>Upload <Image className="ml-2" /></Button>
+      </div>
       <div className="flex px-4 pt-4 hidden">
         <div className="relative flex-grow">
           <Search className="absolute left-3 top-3 h-6 w-6 text-muted-foreground" />
