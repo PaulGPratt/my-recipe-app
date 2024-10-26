@@ -62,16 +62,19 @@ export default function Upload() {
     }
 
     return (
-        <div className="h-full mx-auto max-w-4xl p-4">
-            <Button className="mb-4" onClick={handleBack}><ChevronLeft size={30} /> Recipes</Button>
+        <div className="h-full mx-auto max-w-4xl ">
+            <div className="p-4">
+                <Button onClick={handleBack}><ChevronLeft size={30} /> Recipes</Button>
+            </div>
             <Card className="rounded-none" >
-                <CardTitle className="p-4 pb-2">
+                <CardTitle className="px-4 py-2">
                     <Label htmlFor="file" className="text-2xl font-semibold">
                         Add Recipe from Pictures
                     </Label>
                 </CardTitle>
                 <CardContent className="p-4 pt-0 flex items-center gap-2">
-                    <Input id="file" type="file" accept="image/*" multiple onChange={handleFilesUpload} className="cursor-pointer file:cursor-pointer h-12 text-2xl file:mr-3 file:text-xl file:font-semibold file:bg-primary file:text-primary-foreground file:rounded-md file:shadow file:hover:bg-primary/90" />
+                    <Input id="file" type="file" accept="image/*" multiple onChange={handleFilesUpload}
+                        className="cursor-pointer file:cursor-pointer h-12 text-2xl file:mr-3 file:text-xl file:font-semibold file:bg-primary file:text-primary-foreground file:rounded-md file:shadow file:hover:bg-primary/90" />
                     <Button variant="default" onClick={uploadToApi} disabled={isUploading || filesData.length === 0}>
                         {isUploading ? "Uploading..." : "Add"}
                     </Button>
