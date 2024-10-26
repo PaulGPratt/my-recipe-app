@@ -66,7 +66,7 @@ export default function Upload() {
             <div className="p-4">
                 <Button onClick={handleBack}><ChevronLeft size={30} /> Recipes</Button>
             </div>
-            <Card className="rounded-none py-4" >
+            <Card className="rounded-none pt-4" >
                 <CardTitle className="px-4 pb-4">
                     <Label htmlFor="file" className="text-4xl font-semibold">
                         Add Recipe from Pictures
