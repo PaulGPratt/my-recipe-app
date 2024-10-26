@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"encore.dev/storage/sqldb"
+	"encore.dev/types/uuid"
 )
 
 // Define a database named 'recipe', using the database migrations
@@ -22,6 +23,18 @@ var db = sqldb.NewDatabase("recipe", sqldb.DatabaseConfig{
 var secrets struct {
 	OpenApiKey string
 }
+
+const analyzeRecipePrompt = `Analyze the attached recipe image. Respond with the provided schema using the following guidelines:
+
+Ingredients: Each ingredient should:
+Begin with an asterisk (*)
+End with a newline (press 'Enter' after each ingredient)
+
+Instructions: Each instruction should:
+Begin with an incrementing number followed by a period and a space (e.g., '1. ')
+End with a newline (press 'Enter' after each instruction)
+
+Tags: Assign a single tag from the following list, if relevant: [Bread, Breakfast, Dessert, Dinner, Dressing, Mix, Snack]. If none apply, leave the tag field empty.`
 
 type Recipe struct {
 	Id              string   `json:"id"`
@@ -173,6 +186,30 @@ func SaveRecipe(ctx context.Context, recipe *Recipe) (*Recipe, error) {
 	return recipe, nil
 }
 
+//encore:api public method=POST path=/recipes/upload
+func UploadRecipe(ctx context.Context, ru FileUploadRequest) (*Recipe, error) {
+	var recipe *Recipe
+
+	for _, file := range ru.Files {
+
+		// Analyze the image
+		recipe, err := analyzeImageToRecipe(ctx, file)
+		if err != nil {
+			return nil, fmt.Errorf("error analyzing image: %w", err)
+		}
+
+		// Save the recipe
+		savedRecipe, err := SaveRecipe(ctx, recipe)
+		if err != nil {
+			return nil, fmt.Errorf("error saving recipe to database: %w", err)
+		}
+
+		recipe = savedRecipe
+	}
+
+	return recipe, nil
+}
+
 func analyzeImageToRecipe(ctx context.Context, file FileUpload) (*Recipe, error) {
 	// Convert image to base64
 	dataURL := fmt.Sprintf("data:%s;base64,%s", file.MimeType, file.Content)
@@ -186,7 +223,7 @@ func analyzeImageToRecipe(ctx context.Context, file FileUpload) (*Recipe, error)
 				Content: []Content{
 					{
 						Type: "text",
-						Text: "Please analyze this recipe image. Extract the details in the form of the provided schema.",
+						Text: analyzeRecipePrompt,
 					},
 					{
 						Type: "image_url",
@@ -285,34 +322,18 @@ func analyzeImageToRecipe(ctx context.Context, file FileUpload) (*Recipe, error)
 
 	fmt.Printf("%+v\n", openAIResp)
 
-	// Parse the response into a Recipe struct
 	recipe, err := parseRecipeResponse(openAIResp)
-
-	return SaveRecipe(ctx, &recipe)
-}
-
-//encore:api public method=POST path=/recipes/upload
-func UploadRecipe(ctx context.Context, ru FileUploadRequest) (*Recipe, error) {
-	var recipe *Recipe
-
-	for _, file := range ru.Files {
-
-		// Analyze the image
-		recipe, err := analyzeImageToRecipe(ctx, file)
-		if err != nil {
-			return nil, fmt.Errorf("error analyzing image: %w", err)
-		}
-
-		// Save the recipe
-		savedRecipe, err := SaveRecipe(ctx, recipe)
-		if err != nil {
-			return nil, fmt.Errorf("error saving recipe to database: %w", err)
-		}
-
-		recipe = savedRecipe
+	if err != nil {
+		return nil, fmt.Errorf("error parsing recipe: %v", err)
 	}
 
-	return recipe, nil
+	recipeId, err := uuid.NewV4()
+	if err != nil {
+		return nil, fmt.Errorf("error generating uuid: %w", err)
+	}
+	recipe.Id = recipeId.String()
+
+	return SaveRecipe(ctx, &recipe)
 }
 
 func parseRecipeResponse(response OpenAIResponse) (Recipe, error) {
@@ -328,5 +349,5 @@ func parseRecipeResponse(response OpenAIResponse) (Recipe, error) {
 		return Recipe{}, fmt.Errorf("error parsing recipe: %v", err)
 	}
 
-	return recipe, nil
+	return recipe, err
 }
