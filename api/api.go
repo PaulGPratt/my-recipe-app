@@ -54,9 +54,36 @@ type FileUploadRequest struct {
 }
 
 type OpenAIRequest struct {
-	Model     string    `json:"model"`
-	Messages  []Message `json:"messages"`
-	MaxTokens int       `json:"max_tokens"`
+	Model          string         `json:"model"`
+	Messages       []Message      `json:"messages"`
+	MaxTokens      int            `json:"max_tokens"`
+	ResponseFormat ResponseFormat `json:"response_format"`
+}
+
+type ResponseFormat struct {
+	Type       string     `json:"type"` // e.g., "json_schema"
+	JSONSchema JSONSchema `json:"json_schema"`
+}
+
+type JSONSchema struct {
+	Name   string `json:"name"` // e.g., "math_response"
+	Schema Schema `json:"schema"`
+	Strict bool   `json:"strict"`
+}
+
+type Schema struct {
+	Type                 string              `json:"type"` // e.g., "object"
+	Properties           map[string]Property `json:"properties"`
+	Required             []string            `json:"required"`
+	AdditionalProperties bool                `json:"additionalProperties"`
+}
+
+type Property struct {
+	Type                 string              `json:"type"`            // e.g., "array", "object", "string"
+	Items                *Property           `json:"items,omitempty"` // Pointer for nested structure
+	Properties           map[string]Property `json:"properties,omitempty"`
+	Required             []string            `json:"required,omitempty"`
+	AdditionalProperties bool                `json:"additionalProperties,omitempty"`
 }
 
 type Message struct {
@@ -159,7 +186,7 @@ func analyzeImageToRecipe(ctx context.Context, file FileUpload) (*Recipe, error)
 				Content: []Content{
 					{
 						Type: "text",
-						Text: "Please analyze this recipe image. Extract the recipe name, ingredients, and cooking instructions.",
+						Text: "Please analyze this recipe image. Extract the details in the form of the provided schema.",
 					},
 					{
 						Type: "image_url",
@@ -170,7 +197,45 @@ func analyzeImageToRecipe(ctx context.Context, file FileUpload) (*Recipe, error)
 				},
 			},
 		},
-		MaxTokens: 300,
+		MaxTokens: 1000,
+		ResponseFormat: ResponseFormat{
+			Type: "json_schema",
+			JSONSchema: JSONSchema{
+				Name: "recipe_response",
+				Schema: Schema{
+					Type: "object",
+					Properties: map[string]Property{
+						"id": {
+							Type: "string",
+						},
+						"title": {
+							Type: "string",
+						},
+						"ingredients": {
+							Type: "string",
+						},
+						"instructions": {
+							Type: "string",
+						},
+						"cook_temp_deg_f": {
+							Type: "integer",
+						},
+						"cook_time_minutes": {
+							Type: "integer",
+						},
+						"tags": {
+							Type: "array",
+							Items: &Property{
+								Type: "string",
+							},
+						},
+					},
+					Required:             []string{"id", "title", "ingredients", "instructions", "cook_temp_deg_f", "cook_time_minutes", "tags"},
+					AdditionalProperties: false,
+				},
+				Strict: true,
+			},
+		},
 	}
 
 	// Convert request to JSON
@@ -221,9 +286,9 @@ func analyzeImageToRecipe(ctx context.Context, file FileUpload) (*Recipe, error)
 	fmt.Printf("%+v\n", openAIResp)
 
 	// Parse the response into a Recipe struct
-	// recipe := parseResponseToRecipe(openAIResp.Choices[0].Message.Content)
+	recipe, err := parseRecipeResponse(openAIResp)
 
-	return nil, nil
+	return SaveRecipe(ctx, &recipe)
 }
 
 //encore:api public method=POST path=/recipes/upload
@@ -245,6 +310,22 @@ func UploadRecipe(ctx context.Context, ru FileUploadRequest) (*Recipe, error) {
 		}
 
 		recipe = savedRecipe
+	}
+
+	return recipe, nil
+}
+
+func parseRecipeResponse(response OpenAIResponse) (Recipe, error) {
+	// Assuming the recipe data is in the first choice
+	content := response.Choices[0].Message.Content
+
+	// Create an instance of Recipe to hold the parsed data
+	var recipe Recipe
+
+	// Parse JSON content into the Recipe struct
+	err := json.Unmarshal([]byte(content), &recipe)
+	if err != nil {
+		return Recipe{}, fmt.Errorf("error parsing recipe: %v", err)
 	}
 
 	return recipe, nil
