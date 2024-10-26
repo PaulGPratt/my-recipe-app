@@ -1,7 +1,7 @@
 import { SetStateAction, useEffect, useState } from "react";
 import Client, { Environment, Local, api } from "../client";
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search, Image } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { Input } from "../components/ui/input";
 import RecipeCardButton from "../components/recipe-card-button";
 import TopNav from "../components/top-nav";
@@ -113,9 +113,9 @@ function Recipes() {
   return (
     <div className="h-full mx-auto max-w-4xl flex flex-col ">
       <TopNav className="hidden"></TopNav>
-      <div className="p-4 text-4xl flex justify-between">
-        Natalie's Recipes
-        <Button variant="outline" onClick={handleUpload}>Upload <Image className="ml-2" /></Button>
+      <div className="p-4 text-5xl flex justify-between">
+        Recipes
+        <Button variant="outline" onClick={handleUpload}><Plus className="mr-2"/> Add</Button>
       </div>
       <div className="flex px-4 pt-4 hidden">
         <div className="relative flex-grow">
@@ -125,7 +125,7 @@ function Recipes() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 px-4 py-4">
+      <div className="flex flex-wrap gap-2 px-4 pb-4 pt-2">
         {tagList?.map((tag) => (
           <Button
             size="tag"
@@ -141,7 +141,7 @@ function Recipes() {
         {tagRecipes?.map((tagRecipe) => (
           <>
             <div className="px-4 mb-2 text-2xl flex gap-2 items-center">
-              <div className="flex-grow"><Separator className="bg-muted-foreground" /></div>
+              <div className="w-2"><Separator className="bg-muted-foreground" /></div>
               <span className="text-muted-foreground">{tagRecipe.tag}</span>
               <div className="flex-grow"><Separator className="bg-muted-foreground" /></div>
             </div>
