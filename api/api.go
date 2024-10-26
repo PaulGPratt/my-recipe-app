@@ -1,8 +1,12 @@
 package api
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 
 	"encore.dev/storage/sqldb"
 )
@@ -14,6 +18,10 @@ import (
 var db = sqldb.NewDatabase("recipe", sqldb.DatabaseConfig{
 	Migrations: "./migrations",
 })
+
+var secrets struct {
+	OpenApiKey string
+}
 
 type Recipe struct {
 	Id              string   `json:"id"`
@@ -35,10 +43,44 @@ type RecipeListResponse struct {
 	Recipes []*RecipeCard
 }
 
-// type RecipeListItem struct {
-// 	Id    string `json:"id"`
-// 	Title string `json:"title"`
-// }
+type FileUpload struct {
+	Filename string `json:"filename"`
+	Content  string `json:"content"` // base64 encoded file content
+	MimeType string `json:"mime_type"`
+}
+
+type FileUploadRequest struct {
+	Files []FileUpload `json:"files"`
+}
+
+type OpenAIRequest struct {
+	Model     string    `json:"model"`
+	Messages  []Message `json:"messages"`
+	MaxTokens int       `json:"max_tokens"`
+}
+
+type Message struct {
+	Role    string    `json:"role"`
+	Content []Content `json:"content"`
+}
+
+type Content struct {
+	Type     string    `json:"type"`
+	Text     string    `json:"text,omitempty"`
+	ImageURL *ImageURL `json:"image_url,omitempty"`
+}
+
+type ImageURL struct {
+	URL string `json:"url"`
+}
+
+type OpenAIResponse struct {
+	Choices []struct {
+		Message struct {
+			Content string `json:"content"`
+		} `json:"message"`
+	} `json:"choices"`
+}
 
 //encore:api public method=GET path=/api/recipes/:id
 func GetRecipe(ctx context.Context, id string) (*Recipe, error) {
@@ -101,5 +143,109 @@ func SaveRecipe(ctx context.Context, recipe *Recipe) (*Recipe, error) {
 	}
 
 	// Otherwise, we return the recipe to indicate that the save was successful.
+	return recipe, nil
+}
+
+func analyzeImageToRecipe(ctx context.Context, file FileUpload) (*Recipe, error) {
+	// Convert image to base64
+	dataURL := fmt.Sprintf("data:%s;base64,%s", file.MimeType, file.Content)
+
+	// Construct the request body
+	reqBody := OpenAIRequest{
+		Model: "gpt-4o-mini",
+		Messages: []Message{
+			{
+				Role: "user",
+				Content: []Content{
+					{
+						Type: "text",
+						Text: "Please analyze this recipe image. Extract the recipe name, ingredients, and cooking instructions.",
+					},
+					{
+						Type: "image_url",
+						ImageURL: &ImageURL{
+							URL: dataURL,
+						},
+					},
+				},
+			},
+		},
+		MaxTokens: 300,
+	}
+
+	// Convert request to JSON
+	jsonData, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling request: %w", err)
+	}
+
+	// Create HTTP request
+	req, err := http.NewRequestWithContext(ctx, "POST", "https://api.openai.com/v1/chat/completions", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+
+	// Set headers
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", secrets.OpenApiKey))
+
+	// Make the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("error making request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	// Read response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response: %w", err)
+	}
+
+	// Check if status code is not 200
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(body))
+	}
+
+	// Parse response
+	var openAIResp OpenAIResponse
+	if err := json.Unmarshal(body, &openAIResp); err != nil {
+		return nil, fmt.Errorf("error parsing response: %w", err)
+	}
+
+	if len(openAIResp.Choices) == 0 {
+		return nil, fmt.Errorf("no response from OpenAI API")
+	}
+
+	fmt.Printf("%+v\n", openAIResp)
+
+	// Parse the response into a Recipe struct
+	// recipe := parseResponseToRecipe(openAIResp.Choices[0].Message.Content)
+
+	return nil, nil
+}
+
+//encore:api public method=POST path=/recipes/upload
+func UploadRecipe(ctx context.Context, ru FileUploadRequest) (*Recipe, error) {
+	var recipe *Recipe
+
+	for _, file := range ru.Files {
+
+		// Analyze the image
+		recipe, err := analyzeImageToRecipe(ctx, file)
+		if err != nil {
+			return nil, fmt.Errorf("error analyzing image: %w", err)
+		}
+
+		// Save the recipe
+		savedRecipe, err := SaveRecipe(ctx, recipe)
+		if err != nil {
+			return nil, fmt.Errorf("error saving recipe to database: %w", err)
+		}
+
+		recipe = savedRecipe
+	}
+
 	return recipe, nil
 }

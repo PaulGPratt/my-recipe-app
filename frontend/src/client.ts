@@ -31,7 +31,6 @@ export function PreviewEnv(pr: number | string): BaseURL {
  */
 export default class Client {
     public readonly api: api.ServiceClient
-    public readonly note: note.ServiceClient
 
 
     /**
@@ -43,7 +42,6 @@ export default class Client {
     constructor(target: BaseURL, options?: ClientOptions) {
         const base = new BaseClient(target, options ?? {})
         this.api = new api.ServiceClient(base)
-        this.note = new note.ServiceClient(base)
     }
 }
 
@@ -63,6 +61,20 @@ export interface ClientOptions {
 }
 
 export namespace api {
+    export interface FileUpload {
+        filename: string
+        /**
+         * base64 encoded file content
+         */
+        content: string
+
+        "mime_type": string
+    }
+
+    export interface FileUploadRequest {
+        files: FileUpload[]
+    }
+
     export interface Recipe {
         id: string
         title: string
@@ -107,36 +119,11 @@ export namespace api {
             const resp = await this.baseClient.callAPI("POST", `/recipes`, JSON.stringify(params))
             return await resp.json() as Recipe
         }
-    }
-}
 
-export namespace note {
-    /**
-     * Type that represents a note.
-     */
-    export interface Note {
-        id: string
-        text: string
-        "cover_url": string
-    }
-
-    export class ServiceClient {
-        private baseClient: BaseClient
-
-        constructor(baseClient: BaseClient) {
-            this.baseClient = baseClient
-        }
-
-        public async GetNote(id: string): Promise<Note> {
+        public async UploadRecipe(params: FileUploadRequest): Promise<Recipe> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("GET", `/note/${encodeURIComponent(id)}`)
-            return await resp.json() as Note
-        }
-
-        public async SaveNote(params: Note): Promise<Note> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("POST", `/note`, JSON.stringify(params))
-            return await resp.json() as Note
+            const resp = await this.baseClient.callAPI("POST", `/recipes/upload`, JSON.stringify(params))
+            return await resp.json() as Recipe
         }
     }
 }

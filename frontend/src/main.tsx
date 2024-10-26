@@ -11,6 +11,7 @@ import "./index.css";
 import { Toaster } from "./components/ui/toaster";
 import { ThemeProvider } from "./components/theme-provider";
 import Plan from "./routes/plan";
+import Upload from "./routes/upload";
 
 const router = createBrowserRouter([
   {
@@ -28,7 +29,11 @@ const router = createBrowserRouter([
   {
     path: "/my-recipe-app/recipes/:id",
     element: <Recipe />
-  }
+  },
+  {
+    path: "/my-recipe-app/upload",
+    element: <Upload />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
