@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, FileIcon } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import Client, { Environment, Local, api } from "../client";
 import { useNavigate } from "react-router-dom";
 
