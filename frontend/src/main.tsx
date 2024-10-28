@@ -12,6 +12,7 @@ import { Toaster } from "./components/ui/toaster";
 import { ThemeProvider } from "./components/theme-provider";
 import Plan from "./routes/plan";
 import Upload from "./routes/upload";
+import RecipeQuill from "./routes/recipe-quill";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
   {
     path: "/my-recipe-app/recipes/:id",
     element: <Recipe />
+  },
+  {
+    path: "/my-recipe-app/recipes/quill/:id",
+    element: <RecipeQuill />
   },
   {
     path: "/my-recipe-app/upload",
