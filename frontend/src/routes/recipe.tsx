@@ -138,7 +138,6 @@ function Recipe() {
                     <div className="flex gap-2">
                         <Button onClick={cancelEdit}>Cancel</Button>
                         <Button variant="default" onClick={saveRecipe}>Save</Button>
-                        <Button variant="destructive" onClick={deleteRecipe}>Delete</Button>
                     </div>
                 ) : (
                     <Button onClick={editRecipe}>Edit</Button>
@@ -214,7 +213,7 @@ function Recipe() {
 
                     <CardContent className="px-4">
 
-                        <div className="flex flex-col flex-grow items-start gap-2 transition-all">
+                        <div className="flex flex-col flex-grow items-start gap-2 transition-all ">
 
                             <div className="text-3xl font-semibold">Ingredients</div>
                             <div className={"text-2xl text-foreground w-full"}>
@@ -230,6 +229,13 @@ function Recipe() {
                                 </MilkdownProvider>
                             </div>
                         </div>
+
+                        {isEditMode && (
+                            <div className="flex flex-col pt-6">
+                                <Button variant="destructive" onClick={deleteRecipe}>Delete Recipe</Button>
+                            </div>
+                            
+                        )}
                     </CardContent>
                 </Card>
 

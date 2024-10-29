@@ -73,7 +73,9 @@ const analyzeRecipePrompt = `Analyze the attached recipe images. Respond with th
 
 Preserve as much of the original text of the recipe as possible except where it violates these formatting guidelines.
 
-Use **bold** for emphasis where indicated by the recipe image.
+Use **bold** for emphasis where indicated by the recipe image
+
+Fully write out fractions(e.g., 1/2 instead of ½)
 
 Ingredients: Formatted in Markdown as one or more unordered lists (some recipes have multiple ingredient lists)
 Each ingredient should:
