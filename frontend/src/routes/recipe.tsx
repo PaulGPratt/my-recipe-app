@@ -97,6 +97,19 @@ function Recipe() {
         }
     };
 
+    const deleteRecipe = async () => {
+        if (!id) {
+            return;
+        }
+
+        try {
+            await client.api.DeleteRecipe(id)
+            navigate(`/my-recipe-app/recipes/`);
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
     const handleCookTimeChange = (event: { target: { value: any; }; }) => {
         setCookTime(Number(event.target.value))
     }
@@ -125,6 +138,7 @@ function Recipe() {
                     <div className="flex gap-2">
                         <Button onClick={cancelEdit}>Cancel</Button>
                         <Button variant="default" onClick={saveRecipe}>Save</Button>
+                        <Button variant="destructive" onClick={deleteRecipe}>Delete</Button>
                     </div>
                 ) : (
                     <Button onClick={editRecipe}>Edit</Button>

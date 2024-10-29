@@ -102,6 +102,10 @@ export namespace api {
             this.baseClient = baseClient
         }
 
+        public async DeleteRecipe(id: string): Promise<void> {
+            await this.baseClient.callAPI("DELETE", `/api/recipes/${encodeURIComponent(id)}`)
+        }
+
         public async GetRecipe(id: string): Promise<Recipe> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callAPI("GET", `/api/recipes/${encodeURIComponent(id)}`)
