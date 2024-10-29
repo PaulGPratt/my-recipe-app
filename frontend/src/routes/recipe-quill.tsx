@@ -7,10 +7,9 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Separator } from "../components/ui/separator";
 import { Input } from "../components/ui/input";
-import QuillEditor from "react-quill";
+import 'react-quill/dist/quill.bubble.css';
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from "react-quill";
-import QuillEditorWrapper from "../components/quill-editor";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -124,9 +123,7 @@ function RecipeQuill() {
         return isEditMode
             ? {
                 toolbar: [
-                    [{ header: [1, 2, false] }],
-                    ['bold', 'italic', 'underline'],
-                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['bold', 'underline', { list: 'ordered' }, { list: 'bullet' }],
                 ],
             }
             : { toolbar: false };
@@ -216,14 +213,14 @@ function RecipeQuill() {
                     <CardContent className="px-4">
 
                         <div className="flex flex-col flex-grow items-start gap-2 transition-all">
-
-                            <div className="text-3xl font-semibold">Ingredients</div>
+                            <div className="text-3xl font-semibold">Instructions</div>
                             <ReactQuill
                                 key={isEditMode ? 'edit-ingredients' : 'read-ingredients'} // Force rerender on mode change
                                 defaultValue={ingredients} // Use defaultValue for initial content
                                 onChange={setIngredients}
                                 readOnly={!isEditMode} // Toggle read-only mode
                                 modules={modules} // Toggle modules based on edit mode
+                                theme="snow"
                             />
                             <Separator className="my-2" />
                             <div className="text-3xl font-semibold">Instructions</div>
@@ -233,6 +230,7 @@ function RecipeQuill() {
                                 onChange={setInstructions}
                                 readOnly={!isEditMode} // Toggle read-only mode
                                 modules={modules} // Toggle modules based on edit mode
+                                theme="bubble"
                             />
                         </div>
                     </CardContent>
