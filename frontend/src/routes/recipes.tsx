@@ -8,6 +8,7 @@ import TopNav from "../components/top-nav";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
 import { useNavigate } from "react-router-dom";
+import { getCookie, setCookie } from "../utils/cookieUtils";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -49,35 +50,45 @@ function Recipes() {
 
   useEffect(() => {
     const fetchRecipes = async () => {
+      
+      const cachedRecipeList = getCookie(`recipe_list_response`);
+      if (cachedRecipeList) {
+          setRecipeListState(JSON.parse(cachedRecipeList));
+      }
+      
       try {
-        const recipeResponse = await client.api.GetRecipes();
-        const localRecipeList = recipeResponse.Recipes.map(x => ({
-          ...x,
-          tags: x.tags && x.tags.length ? x.tags : ["Uncategorized"]
-        }));
-        setRecipeList(localRecipeList);
-
-        let tags = localRecipeList.reduce((acc, recipe) => {
-          return acc.concat(recipe.tags ?? []);
-        }, ["All"]);
-
-        const orderedTags = Array.from(new Set(tags)).sort((a, b) => {
-          if (a === "All") return -1;
-          if (b === "All") return 1;
-          if (a === "Uncategorized") return 1;
-          if (b === "Uncategorized") return -1;
-          return a.localeCompare(b);
-        });
-
-        setTagList(orderedTags);
-        setActiveTag("All");
-
+        const freshRecipeList = await client.api.GetRecipes();
+        setRecipeListState(freshRecipeList);
+        setCookie(`recipe_list_response`, JSON.stringify(freshRecipeList), 1);
       } catch (err) {
         console.error(err);
       }
     };
     fetchRecipes();
   }, []);
+
+  const setRecipeListState = (recipeResponse: api.RecipeListResponse) => {
+    const localRecipeList = recipeResponse.Recipes.map(x => ({
+      ...x,
+      tags: x.tags && x.tags.length ? x.tags : ["Uncategorized"]
+    }));
+    setRecipeList(localRecipeList);
+
+    let tags = localRecipeList.reduce((acc, recipe) => {
+      return acc.concat(recipe.tags ?? []);
+    }, ["All"]);
+
+    const orderedTags = Array.from(new Set(tags)).sort((a, b) => {
+      if (a === "All") return -1;
+      if (b === "All") return 1;
+      if (a === "Uncategorized") return 1;
+      if (b === "Uncategorized") return -1;
+      return a.localeCompare(b);
+    });
+
+    setTagList(orderedTags);
+    setActiveTag("All");
+  }
 
   const calculateTagRecipes = () => {
     const localTagList = tagList.filter(x => activeTag === "All" || x.toLowerCase() === activeTag.toLowerCase())

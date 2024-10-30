@@ -9,6 +9,7 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Separator } from "../components/ui/separator";
 import { Input } from "../components/ui/input";
+import { setCookie, getCookie } from '../utils/cookieUtils';
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -37,23 +38,38 @@ function Recipe() {
     const [cookTemp, setCookTemp] = useState<number>(0);
 
     useEffect(() => {
-        const fetchRecipes = async () => {
+
+        const loadRecipes = async () => {
             if (!id) return;
+
+            const cachedRecipe = getCookie(`recipe_${id}`);
+            if (cachedRecipe) {
+                setRecipeState(JSON.parse(cachedRecipe));
+            }
+
             try {
-                const recipeResponse = await client.api.GetRecipe(id);
-                setRecipe(recipeResponse);
-                setTags(recipeResponse.tags ?? []);
-                setIngredients(recipeResponse.ingredients);
-                setInstructions(recipeResponse.instructions);
-                setCookTemp(recipeResponse.cook_temp_deg_f);
-                setCookTime(recipeResponse.cook_time_minutes);
+                const freshRecipe = await client.api.GetRecipe(id);
+                setRecipeState(freshRecipe);
+                setCookie(`recipe_${id}`, JSON.stringify(freshRecipe), 1);
             } catch (err) {
                 console.error(err);
             }
             setIsLoading(false);
         };
-        fetchRecipes();
+
+        loadRecipes();
     }, [id]);
+
+
+
+    const setRecipeState = (recipeResponse: api.Recipe) => {
+        setRecipe(recipeResponse);
+        setTags(recipeResponse.tags ?? []);
+        setIngredients(recipeResponse.ingredients);
+        setInstructions(recipeResponse.instructions);
+        setCookTemp(recipeResponse.cook_temp_deg_f);
+        setCookTime(recipeResponse.cook_time_minutes);
+    }
 
     const handleBack = () => {
         navigate(`/my-recipe-app/recipes/`);
@@ -234,7 +250,7 @@ function Recipe() {
                             <div className="flex flex-col pt-6">
                                 <Button variant="destructive" onClick={deleteRecipe}>Delete Recipe</Button>
                             </div>
-                            
+
                         )}
                     </CardContent>
                 </Card>
