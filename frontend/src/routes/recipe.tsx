@@ -45,6 +45,7 @@ function Recipe() {
             const cachedRecipe = getCookie(`recipe_${id}`);
             if (cachedRecipe) {
                 setRecipeState(JSON.parse(cachedRecipe));
+                setIsLoading(false);
             }
 
             try {
