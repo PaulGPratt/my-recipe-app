@@ -113,10 +113,6 @@ function Recipes() {
   return (
     <div className="h-full mx-auto max-w-4xl flex flex-col ">
       <TopNav className="hidden"></TopNav>
-      <div className="p-4 text-5xl flex justify-between">
-        Recipes
-        <Button variant="outline" onClick={handleUpload}><Plus className="mr-2"/> Add</Button>
-      </div>
       <div className="flex px-4 pt-4 hidden">
         <div className="relative flex-grow">
           <Search className="absolute left-3 top-3 h-6 w-6 text-muted-foreground" />
@@ -125,7 +121,7 @@ function Recipes() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 px-4 pb-4 pt-2">
+      <div className="flex flex-wrap gap-2 p-4">
         {tagList?.map((tag) => (
           <Button
             size="tag"
@@ -138,6 +134,9 @@ function Recipes() {
       </div>
 
       <ScrollArea className="h-full w-full">
+      <div className="absolute bottom-4 right-4">
+        <Button variant="outline" onClick={handleUpload}><Plus className="mr-2"/> Recipe</Button>
+      </div>
         {tagRecipes?.map((tagRecipe) => (
           <>
             <div className="px-4 mb-2 text-2xl flex gap-2 items-center">
@@ -155,6 +154,7 @@ function Recipes() {
             </div>
           </>
         ))}
+        <div className="pb-14"></div>
       </ScrollArea>
     </div>
   );
