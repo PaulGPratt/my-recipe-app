@@ -8,7 +8,7 @@ import TopNav from "../components/top-nav";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
 import { useNavigate } from "react-router-dom";
-import { getCookie, setCookie } from "../utils/cookieUtils";
+import { setLocalStorage, getLocalStorage } from '../utils/localStorage';
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -51,7 +51,7 @@ function Recipes() {
   useEffect(() => {
     const fetchRecipes = async () => {
       
-      const cachedRecipeList = getCookie(`recipe_list_response`);
+      const cachedRecipeList = getLocalStorage(`recipe_list_response`);
       if (cachedRecipeList) {
           setRecipeListState(JSON.parse(cachedRecipeList));
       }
@@ -59,7 +59,7 @@ function Recipes() {
       try {
         const freshRecipeList = await client.api.GetRecipes();
         setRecipeListState(freshRecipeList);
-        setCookie(`recipe_list_response`, JSON.stringify(freshRecipeList), 1);
+        setLocalStorage(`recipe_list_response`, JSON.stringify(freshRecipeList), 1);
       } catch (err) {
         console.error(err);
       }
