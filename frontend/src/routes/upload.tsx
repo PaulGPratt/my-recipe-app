@@ -120,7 +120,7 @@ export default function Upload() {
                         placeholder="Insert your recipe text here."
                         value={recipeText}
                         onChange={handleChangeRecipeText} 
-                        disabled={!isUploading}/>
+                        disabled={isUploading}/>
                     <div>
                         <Button variant="default" onClick={submitTextToApi} disabled={isUploading || recipeText.trim().length < 1}>
                             {isUploading ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Add from Text"}
