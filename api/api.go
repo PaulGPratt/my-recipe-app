@@ -46,6 +46,10 @@ type FileUploadRequest struct {
 	Files []FileUpload `json:"files"`
 }
 
+type GenerateFromTextRequest struct {
+	Text string `json:"text"`
+}
+
 //encore:api public method=GET path=/api/recipes/:id
 func GetRecipe(ctx context.Context, id string) (*Recipe, error) {
 	recipe := &Recipe{Id: id}
@@ -120,13 +124,37 @@ func DeleteRecipe(ctx context.Context, id string) error {
 	return nil
 }
 
-//encore:api public method=POST path=/recipes/upload
-func UploadRecipe(ctx context.Context, ru FileUploadRequest) (*Recipe, error) {
+//encore:api public method=POST path=/recipes/generate-from-images
+func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*Recipe, error) {
 	var recipe *Recipe
 
-	recipe, err := AnalyzeImageToRecipe(ctx, ru.Files)
+	recipe, err := AnalyzeImageToRecipe(ctx, req.Files)
 	if err != nil {
 		return nil, fmt.Errorf("error analyzing images: %w", err)
+	}
+
+	recipeId, err := uuid.NewV4()
+	if err != nil {
+		return nil, fmt.Errorf("error generating uuid: %w", err)
+	}
+	recipe.Id = recipeId.String()
+
+	// Save the recipe
+	savedRecipe, err := SaveRecipe(ctx, recipe)
+	if err != nil {
+		return nil, fmt.Errorf("error saving recipe to database: %w", err)
+	}
+
+	return savedRecipe, nil
+}
+
+//encore:api public method=POST path=/recipes/generate-from-text
+func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Recipe, error) {
+	var recipe *Recipe
+
+	recipe, err := AnalyzeTextToRecipe(ctx, req.Text)
+	if err != nil {
+		return nil, fmt.Errorf("error analyzing text: %w", err)
 	}
 
 	recipeId, err := uuid.NewV4()

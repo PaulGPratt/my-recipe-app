@@ -69,7 +69,16 @@ var secrets struct {
 	OpenApiKey string
 }
 
-const analyzeRecipePrompt = `Analyze the attached recipe images. Respond with the provided schema using the following guidelines:
+const analyzeImagePrompt = `Analyze the attached recipe images. Respond with the provided schema using the following guidelines:` + promptBase
+const analyzeTextPrompt = analyzeTextPromptHeader + promptBase + analyzeTextPromptFooter
+const analyzeTextPromptHeader = `Analyze the included recipe text. Respond with the provided schema using the following guidelines:`
+const analyzeTextPromptFooter = `
+
+The recipe text is as follows:
+
+`
+
+const promptBase = `
 
 Preserve as much of the original text of the recipe as possible except where it violates these formatting guidelines.
 
@@ -95,7 +104,7 @@ func AnalyzeImageToRecipe(ctx context.Context, files []FileUpload) (*Recipe, err
 
 	promptContent := Content{
 		Type: "text",
-		Text: analyzeRecipePrompt,
+		Text: analyzeImagePrompt + promptBase,
 	}
 	messagesContent = append(messagesContent, promptContent)
 
@@ -109,7 +118,43 @@ func AnalyzeImageToRecipe(ctx context.Context, files []FileUpload) (*Recipe, err
 		messagesContent = append(messagesContent, imageContent)
 	}
 
-	// Construct the request body
+	reqBody := constructOpenAIRequestBody(messagesContent)
+	openAIResp, err := submitRequestToOpenAI(ctx, reqBody)
+	if err != nil {
+		return nil, fmt.Errorf("error submitting recipe to OpenAI: %v", err)
+	}
+
+	recipe, err := parseRecipeResponse(openAIResp)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing recipe: %v", err)
+	}
+
+	return &recipe, nil
+}
+
+func AnalyzeTextToRecipe(ctx context.Context, text string) (*Recipe, error) {
+	messagesContent := []Content{
+		{
+			Type: "text",
+			Text: analyzeTextPrompt + text,
+		},
+	}
+
+	reqBody := constructOpenAIRequestBody(messagesContent)
+	openAIResp, err := submitRequestToOpenAI(ctx, reqBody)
+	if err != nil {
+		return nil, fmt.Errorf("error submitting recipe to OpenAI: %v", err)
+	}
+
+	recipe, err := parseRecipeResponse(openAIResp)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing recipe: %v", err)
+	}
+
+	return &recipe, nil
+}
+
+func constructOpenAIRequestBody(messagesContent []Content) OpenAIRequest {
 	reqBody := OpenAIRequest{
 		Model: "gpt-4o-mini",
 		Messages: []Message{
@@ -159,6 +204,10 @@ func AnalyzeImageToRecipe(ctx context.Context, files []FileUpload) (*Recipe, err
 		},
 	}
 
+	return reqBody
+}
+
+func submitRequestToOpenAI(ctx context.Context, reqBody OpenAIRequest) (*OpenAIResponse, error) {
 	// Convert request to JSON
 	jsonData, err := json.Marshal(reqBody)
 	if err != nil {
@@ -204,17 +253,10 @@ func AnalyzeImageToRecipe(ctx context.Context, files []FileUpload) (*Recipe, err
 		return nil, fmt.Errorf("no response from OpenAI API")
 	}
 
-	fmt.Printf("%+v\n", openAIResp)
-
-	recipe, err := parseRecipeResponse(openAIResp)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing recipe: %v", err)
-	}
-
-	return &recipe, nil
+	return &openAIResp, nil
 }
 
-func parseRecipeResponse(response OpenAIResponse) (Recipe, error) {
+func parseRecipeResponse(response *OpenAIResponse) (Recipe, error) {
 	// Assuming the recipe data is in the first choice
 	content := response.Choices[0].Message.Content
 

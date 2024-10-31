@@ -75,6 +75,10 @@ export namespace api {
         files: FileUpload[]
     }
 
+    export interface GenerateFromTextRequest {
+        text: string
+    }
+
     export interface Recipe {
         id: string
         title: string
@@ -106,6 +110,18 @@ export namespace api {
             await this.baseClient.callAPI("DELETE", `/api/recipes/${encodeURIComponent(id)}`)
         }
 
+        public async GenerateFromImages(params: FileUploadRequest): Promise<Recipe> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callAPI("POST", `/recipes/generate-from-images`, JSON.stringify(params))
+            return await resp.json() as Recipe
+        }
+
+        public async GenerateFromText(params: GenerateFromTextRequest): Promise<Recipe> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callAPI("POST", `/recipes/generate-from-text`, JSON.stringify(params))
+            return await resp.json() as Recipe
+        }
+
         public async GetRecipe(id: string): Promise<Recipe> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callAPI("GET", `/api/recipes/${encodeURIComponent(id)}`)
@@ -121,12 +137,6 @@ export namespace api {
         public async SaveRecipe(params: Recipe): Promise<Recipe> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callAPI("POST", `/recipes`, JSON.stringify(params))
-            return await resp.json() as Recipe
-        }
-
-        public async UploadRecipe(params: FileUploadRequest): Promise<Recipe> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("POST", `/recipes/upload`, JSON.stringify(params))
             return await resp.json() as Recipe
         }
     }
