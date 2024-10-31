@@ -9,7 +9,7 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Separator } from "../components/ui/separator";
 import { Input } from "../components/ui/input";
-import { setCookie, getCookie } from '../utils/cookieUtils';
+import { setLocalStorage, getLocalStorage } from '../utils/localStorage';
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -42,7 +42,7 @@ function Recipe() {
         const loadRecipes = async () => {
             if (!id) return;
 
-            const cachedRecipe = getCookie(`recipe_${id}`);
+            const cachedRecipe = getLocalStorage(`recipe_${id}`);
             if (cachedRecipe) {
                 setRecipeState(JSON.parse(cachedRecipe));
                 setIsLoading(false);
@@ -51,7 +51,7 @@ function Recipe() {
             try {
                 const freshRecipe = await client.api.GetRecipe(id);
                 setRecipeState(freshRecipe);
-                setCookie(`recipe_${id}`, JSON.stringify(freshRecipe), 1);
+                setLocalStorage(`recipe_${id}`, JSON.stringify(freshRecipe), 1);
             } catch (err) {
                 console.error(err);
             }
