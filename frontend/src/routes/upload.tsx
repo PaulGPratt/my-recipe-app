@@ -3,7 +3,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 import Client, { Environment, Local, api } from "../client";
 import { useNavigate } from "react-router-dom";
 
@@ -67,17 +67,24 @@ export default function Upload() {
                 <Button onClick={handleBack}><ChevronLeft size={30} /> Recipes</Button>
             </div>
             <Card className="rounded-none pt-4" >
-                <CardTitle className="px-4 pb-4">
-                    <Label htmlFor="file" className="text-4xl font-semibold">
+                <CardTitle className="px-4 pb-2">
+                    <Label htmlFor="file" className="text-2xl font-semibold">
                         Add Recipe from Pictures
                     </Label>
                 </CardTitle>
-                <CardContent className="p-4 pt-0 flex items-center gap-2">
+                <CardContent className="p-4 pt-0 flex flex-col gap-4">
                     <Input id="file" type="file" accept="image/*" multiple onChange={handleFilesUpload}
-                        className="border-0 p-0 cursor-pointer file:cursor-pointer h-12 text-2xl file:mr-3 file:min-h-12 file:px-4 file:py-2 f font-semibold file:text-2xl file:font-semibold file:bg-secondary file:text-secondary-foreground file:rounded-md file:shadow file:hover:bg-secondary/80" />
-                    <Button variant="default" onClick={uploadToApi} disabled={isUploading || filesData.length === 0}>
-                        {isUploading ? "Uploading..." : "Add"}
-                    </Button>
+                        className="p-0 cursor-pointer file:cursor-pointer h-13 text-2xl file:mr-3 file:px-4 file:py-2 f font-semibold file:text-2xl file:font-semibold file:bg-secondary file:text-secondary-foreground file:shadow file:hover:bg-secondary/80" />
+                    <div>
+                        <Button variant="default" onClick={uploadToApi} disabled={isUploading || filesData.length === 0}>
+                            {isUploading ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Submit"}
+                        </Button>
+                    </div>
+                    {isUploading && (
+                        <div className="text-2xl">
+                            You will be redirected to the new recipe once adding is complete.
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </div>
