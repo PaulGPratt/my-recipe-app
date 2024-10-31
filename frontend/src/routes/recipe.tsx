@@ -51,7 +51,7 @@ function Recipe() {
             try {
                 const freshRecipe = await client.api.GetRecipe(id);
                 setRecipeState(freshRecipe);
-                setLocalStorage(`recipe_${id}`, JSON.stringify(freshRecipe), 1);
+                setLocalStorage(`recipe_${id}`, JSON.stringify(freshRecipe));
             } catch (err) {
                 console.error(err);
             }

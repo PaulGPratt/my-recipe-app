@@ -59,7 +59,7 @@ function Recipes() {
       try {
         const freshRecipeList = await client.api.GetRecipes();
         setRecipeListState(freshRecipeList);
-        setLocalStorage(`recipe_list_response`, JSON.stringify(freshRecipeList), 1);
+        setLocalStorage(`recipe_list_response`, JSON.stringify(freshRecipeList));
       } catch (err) {
         console.error(err);
       }
