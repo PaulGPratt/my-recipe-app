@@ -3,7 +3,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, ChevronLeft, Loader2 } from "lucide-react";
 import Client, { Environment, Local, api } from "../client";
 import { useNavigate } from "react-router-dom";
 import { Textarea } from "../components/ui/textarea";
@@ -83,17 +83,20 @@ export default function Upload() {
 
     return (
         <div className="h-full mx-auto max-w-4xl ">
-            <div className="p-4">
-                <Button onClick={handleBack}><ChevronLeft size={30} /> Recipes</Button>
+            <div className="p-2 flex flex-row gap-2">
+                <Button size="icon" variant="ghost" onClick={handleBack} role="link"><ArrowLeft size={30} /></Button>
+                <div className="text-4xl">
+                    Add Recipe
+                </div>
             </div>
             <Card className="rounded-none pt-4" >
                 <CardTitle className="px-4 pb-2">
                     <Label htmlFor="file" className="text-2xl font-semibold">
-                        Add Recipe from Pictures
+                        From Images:
                     </Label>
                 </CardTitle>
                 <CardContent className="p-4 pt-0 flex flex-col gap-4">
-                    <Input id="file" type="file" accept="image/*" capture="environment" multiple onChange={handleFilesUpload}
+                    <Input id="file" type="file" accept="image/*;capture=camera" multiple onChange={handleFilesUpload}
                         className="p-0 cursor-pointer file:cursor-pointer h-13 text-2xl file:mr-3 file:px-4 file:py-2 f font-semibold file:text-2xl file:font-semibold file:bg-secondary file:text-secondary-foreground file:shadow file:hover:bg-secondary/80" />
                     <div>
                         <Button variant="default" onClick={submitImagesToApi} disabled={isUploading || filesData.length === 0}>
@@ -110,7 +113,7 @@ export default function Upload() {
             <Card className="rounded-none pt-4" >
                 <CardTitle className="px-4 pb-2">
                     <Label htmlFor="recipeText" className="text-2xl font-semibold">
-                        Add Recipe from Text
+                        From Text:
                     </Label>
                 </CardTitle>
                 <CardContent className="p-4 pt-0 flex flex-col gap-4">
@@ -119,8 +122,8 @@ export default function Upload() {
                         className="text-xl"
                         placeholder="Insert your recipe text here."
                         value={recipeText}
-                        onChange={handleChangeRecipeText} 
-                        disabled={isUploading}/>
+                        onChange={handleChangeRecipeText}
+                        disabled={isUploading} />
                     <div>
                         <Button variant="default" onClick={submitTextToApi} disabled={isUploading || recipeText.trim().length < 1}>
                             {isUploading ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Add from Text"}
