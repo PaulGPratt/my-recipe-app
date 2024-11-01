@@ -93,7 +93,7 @@ export default function Upload() {
                     </Label>
                 </CardTitle>
                 <CardContent className="p-4 pt-0 flex flex-col gap-4">
-                    <Input id="file" type="file" accept="image/*" multiple onChange={handleFilesUpload}
+                    <Input id="file" type="file" accept="image/*" capture="environment" multiple onChange={handleFilesUpload}
                         className="p-0 cursor-pointer file:cursor-pointer h-13 text-2xl file:mr-3 file:px-4 file:py-2 f font-semibold file:text-2xl file:font-semibold file:bg-secondary file:text-secondary-foreground file:shadow file:hover:bg-secondary/80" />
                     <div>
                         <Button variant="default" onClick={submitImagesToApi} disabled={isUploading || filesData.length === 0}>
