@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Client, { Environment, Local, api } from "../client";
 import MarkdownEditor from "../components/markdown-editor";
 import { MilkdownProvider } from "@milkdown/react";
-import { ArrowLeft, EllipsisVertical, FilePenLine, Flame, Plus, Save, Timer, X } from "lucide-react";
+import { ArrowLeft, EllipsisVertical, Flame, Pencil, Plus, Save, Timer, X } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
@@ -158,7 +158,7 @@ function Recipe() {
                             <div className="flex flex-col flex-grow items-center justify-center">
                                 <div className="flex flex-row w-full justify-between">
                                     <Button size="icon" variant="ghost" onClick={handleBack} role="link"><ArrowLeft size={30}/></Button>
-                                    <div className="text-4xl text-center">{recipe?.title}</div>
+                                    <div className="text-4xl text-center px-4">{recipe?.title}</div>
                                     {isEditMode ? (
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
@@ -174,7 +174,16 @@ function Recipe() {
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     ) : (
-                                        <Button size="icon" variant="ghost" onClick={editRecipe}><FilePenLine size={30}/></Button>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button size="icon" variant="ghost"><EllipsisVertical size={30}/></Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuItem onClick={editRecipe} className="text-xl">
+                                                    <Pencil className="mr-2" /> Edit
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     )}
                                 </div>
 
