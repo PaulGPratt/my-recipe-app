@@ -3,13 +3,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import Client, { Environment, Local, api } from "../client";
 import MarkdownEditor from "../components/markdown-editor";
 import { MilkdownProvider } from "@milkdown/react";
-import { ChevronLeft, Flame, Plus, Timer } from "lucide-react";
+import { ArrowLeft, EllipsisVertical, FilePenLine, Flame, Plus, Save, Timer, X } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Separator } from "../components/ui/separator";
 import { Input } from "../components/ui/input";
 import { setLocalStorage, getLocalStorage } from '../utils/localStorage';
+import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
+import { DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -149,26 +151,33 @@ function Recipe() {
 
     return (
         <div className="h-full mx-auto max-w-4xl">
-            <div className="flex p-4 gap-4 justify-between">
-                <Button className="pl-2" onClick={handleBack}><ChevronLeft size={30} /> Recipes</Button>
-                {isEditMode ? (
-                    <div className="flex gap-2">
-                        <Button onClick={cancelEdit}>Cancel</Button>
-                        <Button variant="default" onClick={saveRecipe}>Save</Button>
-                    </div>
-                ) : (
-                    <Button onClick={editRecipe}>Edit</Button>
-                )}
-            </div>
-
-            {isLoading ? (
-                <span>Loading...</span>
-            ) : (
+            {!isLoading && (
                 <Card className="rounded-none">
-                    <CardHeader className="pt-4 pb-0 px-4">
+                    <CardHeader className="pt-2 pb-0 px-2">
                         <CardTitle>
                             <div className="flex flex-col flex-grow items-center justify-center">
-                                <div className="text-4xl text-center">{recipe?.title}</div>
+                                <div className="flex flex-row w-full justify-between">
+                                    <Button size="icon" variant="ghost" onClick={handleBack} role="link"><ArrowLeft size={30}/></Button>
+                                    <div className="text-4xl text-center">{recipe?.title}</div>
+                                    {isEditMode ? (
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button size="icon" variant="ghost"><EllipsisVertical size={30}/></Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuItem onClick={saveRecipe} className="text-xl">
+                                                    <Save className="mr-2" /> Save
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={cancelEdit} className="text-xl">
+                                                    <X className="mr-2" /> Cancel
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    ) : (
+                                        <Button size="icon" variant="ghost" onClick={editRecipe}><FilePenLine size={30}/></Button>
+                                    )}
+                                </div>
+
                                 {(tags?.length > 0 && !isEditMode) && (
                                     <div className="flex pt-2 text-xl gap-2">
                                         {tags?.map((tag, index) => (
