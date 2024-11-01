@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import Client, { Environment, Local, api } from "../client";
 import { useNavigate } from "react-router-dom";
 import { Textarea } from "../components/ui/textarea";
+import { Separator } from "../components/ui/separator";
 
 const getRequestClient = () => {
     return import.meta.env.DEV
@@ -90,45 +91,49 @@ export default function Upload() {
                 </div>
             </div>
             <Card className="rounded-none pt-4" >
-                <CardTitle className="px-4 pb-2">
+                <CardContent className="p-4 pt-0 flex flex-col">
                     <Label htmlFor="file" className="text-2xl font-semibold">
                         From Images:
                     </Label>
-                </CardTitle>
-                <CardContent className="p-4 pt-0 flex flex-col gap-4">
                     <Input id="file" type="file" accept="image/*;capture=camera" multiple onChange={handleFilesUpload}
-                        className="p-0 cursor-pointer file:cursor-pointer h-13 text-2xl file:mr-3 file:px-4 file:py-2 f font-semibold file:text-2xl file:font-semibold file:bg-secondary file:text-secondary-foreground file:shadow file:hover:bg-secondary/80" />
-                    <div>
-                        <Button variant="default" onClick={submitImagesToApi} disabled={isUploading || filesData.length === 0}>
-                            {isUploading ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Add from Images"}
-                        </Button>
-                    </div>
+                        className="p-0 my-2 cursor-pointer file:cursor-pointer h-13 text-2xl file:mr-3 file:px-4 file:py-2 f font-semibold file:text-2xl file:font-semibold file:bg-secondary file:text-secondary-foreground file:shadow file:hover:bg-secondary/80" />
+                    {filesData.length !== 0 && (
+                        <div>
+                            <Button variant="default" onClick={submitImagesToApi} disabled={isUploading}>
+                                {isUploading ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Submit Images"}
+                            </Button>
+                        </div>
+                    )}
+
                     {isUploading && (
                         <div className="text-2xl">
                             You will be redirected to the new recipe once adding is complete.
                         </div>
                     )}
-                </CardContent>
-            </Card>
-            <Card className="rounded-none pt-4" >
-                <CardTitle className="px-4 pb-2">
+
+
+                    <div className="my-4 text-2xl flex gap-2 items-center">
+                        <div className="flex-grow"><Separator className="bg-muted-foreground" /></div>
+                        <span className="text-muted-foreground">OR</span>
+                        <div className="flex-grow"><Separator className="bg-muted-foreground" /></div>
+                    </div>
+
+
                     <Label htmlFor="recipeText" className="text-2xl font-semibold">
                         From Text:
                     </Label>
-                </CardTitle>
-                <CardContent className="p-4 pt-0 flex flex-col gap-4">
                     <Textarea
                         id="recipeText"
-                        className="text-xl"
+                        className="text-xl my-2"
                         placeholder="Insert your recipe text here."
                         value={recipeText}
                         onChange={handleChangeRecipeText}
                         disabled={isUploading} />
-                    <div>
-                        <Button variant="default" onClick={submitTextToApi} disabled={isUploading || recipeText.trim().length < 1}>
-                            {isUploading ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Add from Text"}
+                    {recipeText.trim().length > 0 && (<div>
+                        <Button variant="default" onClick={submitTextToApi} disabled={isUploading}>
+                            {isUploading ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Submit Text"}
                         </Button>
-                    </div>
+                    </div>)}
                     {isUploading && (
                         <div className="text-2xl">
                             You will be redirected to the new recipe once adding is complete.
