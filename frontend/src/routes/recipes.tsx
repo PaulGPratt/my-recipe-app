@@ -38,24 +38,30 @@ function Recipes() {
   // State for search query and filtered recipes
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTag, setActiveTag] = useState<string>("All");
+  const [showSearch, setShowSearch] = useState<boolean>(false);
 
   // Handler for search input change
   const handleSearchChange = (event: { target: { value: SetStateAction<string>; }; }) => {
     setSearchQuery(event.target.value);
   };
 
-  const handleUpload = () => {
+  const handleAdd = () => {
     navigate(`/my-recipe-app/upload/`);
-};
+  };
+
+  const toggleShowSearch = () => {
+    setSearchQuery("");
+    setShowSearch(!showSearch);
+  }
 
   useEffect(() => {
     const fetchRecipes = async () => {
-      
+
       const cachedRecipeList = getLocalStorage(`recipe_list_response`);
       if (cachedRecipeList) {
-          setRecipeListState(JSON.parse(cachedRecipeList));
+        setRecipeListState(JSON.parse(cachedRecipeList));
       }
-      
+
       try {
         const freshRecipeList = await client.api.GetRecipes();
         setRecipeListState(freshRecipeList);
@@ -92,7 +98,8 @@ function Recipes() {
 
   const calculateTagRecipes = () => {
     const localTagList = tagList.filter(x => activeTag === "All" || x.toLowerCase() === activeTag.toLowerCase())
-    const tagRecipes = localTagList
+
+    let tagRecipes = localTagList
       .filter(tag => tag != "All")
       .map((tag) => {
         var recipes = recipeList
@@ -105,6 +112,15 @@ function Recipes() {
           recipes: recipes
         } as TagRecipe
       });
+
+      if(searchQuery.length > 0) {
+        tagRecipes = tagRecipes.map(x => {
+          return {
+            tag: x.tag,
+            recipes: x.recipes.filter(recipe => recipe.title.toLowerCase().includes(searchQuery.toLowerCase()))
+          } as TagRecipe
+        }).filter(x => x.recipes.length > 0)
+      }
 
     setTagRecipes(tagRecipes);
   }
@@ -124,15 +140,30 @@ function Recipes() {
   return (
     <div className="h-full mx-auto max-w-4xl flex flex-col ">
       <TopNav className="hidden"></TopNav>
-      <div className="flex px-4 pt-4 hidden">
-        <div className="relative flex-grow">
-          <Search className="absolute left-3 top-3 h-6 w-6 text-muted-foreground" />
-          <Input placeholder="Search recipes" className="pl-11 h-12 text-2xl" value={searchQuery}
-            onChange={handleSearchChange} />
+
+      <div className="flex p-4 pb-0 justify-between">
+        <div className="flex gap-4 items-center">
+          <Button size="icon" variant="default" className="text-2xl font-semibold">N</Button>
+          <div className="text-2xl font-semibold">Natalie's Recipes</div>
+        </div>
+        <div className="flex gap-2">
+          <Button size="icon" variant="ghost" onClick={toggleShowSearch}><Search /></Button>
+          <Button size="icon" variant="ghost" onClick={handleAdd}><Plus /></Button>
         </div>
       </div>
+      {showSearch && (
+        <div className="flex px-4 pt-4">
+          <div className="relative flex-grow">
+            <Search className="absolute left-3 top-3 h-6 w-6 text-muted-foreground" />
+            <Input placeholder="Search recipes" className="pl-11 h-12 text-2xl" value={searchQuery}
+              onChange={handleSearchChange} />
+          </div>
+        </div>
+      )}
+
 
       <div className="flex flex-wrap gap-2 p-4">
+
         {tagList?.map((tag) => (
           <Button
             size="tag"
@@ -145,11 +176,8 @@ function Recipes() {
       </div>
 
       <ScrollArea className="h-full w-full">
-      <div className="absolute bottom-4 right-4">
-        <Button variant="outline" onClick={handleUpload}><Plus className="mr-2"/> Recipe</Button>
-      </div>
         {tagRecipes?.map((tagRecipe) => (
-          <>
+          <div key={tagRecipe.tag}>
             <div className="px-4 mb-2 text-2xl flex gap-2 items-center">
               <div className="w-2"><Separator className="bg-muted-foreground" /></div>
               <span className="text-muted-foreground">{tagRecipe.tag}</span>
@@ -163,7 +191,7 @@ function Recipes() {
                 />
               ))}
             </div>
-          </>
+          </div>
         ))}
         <div className="pb-14"></div>
       </ScrollArea>

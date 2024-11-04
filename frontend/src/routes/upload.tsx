@@ -84,9 +84,9 @@ export default function Upload() {
 
     return (
         <div className="h-full mx-auto max-w-4xl ">
-            <div className="p-2 flex flex-row gap-2">
+            <div className="p-4 flex flex-row gap-4 items-center">
                 <Button size="icon" variant="ghost" onClick={handleBack} role="link"><ArrowLeft size={30} /></Button>
-                <div className="text-4xl">
+                <div className="text-2xl font-semibold">
                     Add Recipe
                 </div>
             </div>
