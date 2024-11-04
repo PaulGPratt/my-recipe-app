@@ -143,7 +143,7 @@ function Recipes() {
 
       <div className="flex p-4 pb-0 justify-between">
         <div className="flex gap-4 items-center">
-          <Button size="icon" variant="default" className="text-2xl font-semibold">N</Button>
+          <Button size="icon" variant="default" className="text-2xl font-bold">N</Button>
           <div className="text-2xl font-semibold">Natalie's Recipes</div>
         </div>
         <div className="flex gap-2">

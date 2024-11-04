@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Client, { Environment, Local, api } from "../client";
 import MarkdownEditor from "../components/markdown-editor";
 import { MilkdownProvider } from "@milkdown/react";
-import { ArrowLeft, EllipsisVertical, Flame, Pencil, Plus, Save, Timer, X } from "lucide-react";
+import { ArrowLeft, EllipsisVertical, Flame, Pencil, Plus, Save, Timer, Trash, X } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
@@ -157,12 +157,12 @@ function Recipe() {
                         <CardTitle>
                             <div className="flex flex-col flex-grow items-center justify-center">
                                 <div className="flex flex-row w-full justify-between">
-                                    <Button size="icon" variant="ghost" onClick={handleBack} role="link"><ArrowLeft size={30}/></Button>
+                                    <Button size="icon" variant="ghost" onClick={handleBack} role="link"><ArrowLeft size={30} /></Button>
                                     <div className="text-4xl text-center px-4">{recipe?.title}</div>
                                     {isEditMode ? (
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button size="icon" variant="ghost"><EllipsisVertical size={30}/></Button>
+                                                <Button size="icon" variant="ghost"><EllipsisVertical size={30} /></Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent>
                                                 <DropdownMenuItem onClick={saveRecipe} className="text-xl">
@@ -176,7 +176,7 @@ function Recipe() {
                                     ) : (
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button size="icon" variant="ghost"><EllipsisVertical size={30}/></Button>
+                                                <Button size="icon" variant="ghost"><EllipsisVertical size={30} /></Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent>
                                                 <DropdownMenuItem onClick={editRecipe} className="text-xl">
@@ -266,8 +266,10 @@ function Recipe() {
                         </div>
 
                         {isEditMode && (
-                            <div className="flex flex-col pt-6">
-                                <Button variant="destructive" onClick={deleteRecipe}>Delete Recipe</Button>
+                            <div className="flex pt-6 justify-center">
+                                <div className="flex justify-center">
+                                    <Button variant="destructive" onClick={deleteRecipe}><Trash className="mr-2"></Trash> Delete Recipe</Button>
+                                </div>
                             </div>
 
                         )}
