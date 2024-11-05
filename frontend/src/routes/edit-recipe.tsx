@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 import Client, { Environment, Local, api } from "../client";
 import { Button } from "../components/ui/button";
-import { ArrowLeft, Flame, Plus, Save, Timer, Trash, X } from "lucide-react";
+import { ArrowLeft, Flame, Plus, Save, Timer, Trash } from "lucide-react";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { MilkdownProvider } from "@milkdown/react";
@@ -97,7 +97,7 @@ function EditRecipe() {
             const filteredTags = tags.filter((tag) => tag != undefined && tag != null && tag != "");
             setTags(filteredTags);
 
-            const response = await client.api.SaveRecipe({
+            await client.api.SaveRecipe({
                 id: id || uuidv4(),
                 title: recipeTitle,
                 instructions: instructions,
