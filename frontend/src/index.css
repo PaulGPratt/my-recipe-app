@@ -30,8 +30,14 @@ body {
   @apply w-full h-full;
 }
 
-.ProseMirror :focus {
-  outline: var(--primary)
+.ProseMirrorEdit {
+  .ProseMirror {
+    @apply rounded-md border-2 border-input bg-transparent px-3 py-1;
+
+    :focus {
+      outline: var(--primary)
+    }
+  }
 }
 
 .milkdown li {
@@ -130,13 +136,16 @@ body {
 }
 
 @layer utilities {
+
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
 
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
 }

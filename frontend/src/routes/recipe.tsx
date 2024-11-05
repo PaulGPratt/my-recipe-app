@@ -79,7 +79,8 @@ function Recipe() {
     };
 
     const editRecipe = async () => {
-        setIsEditMode(true);
+        navigate(`/my-recipe-app/recipes/` + id + '/edit');
+        // setIsEditMode(true);
     }
 
     const cancelEdit = async () => {
