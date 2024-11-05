@@ -10,6 +10,7 @@ import MarkdownEditor from "../components/markdown-editor";
 import { useEffect, useState } from "react";
 import { getLocalStorage, setLocalStorage } from "../utils/localStorage";
 import { ScrollArea } from "../components/ui/scroll-area";
+import { Separator } from "../components/ui/separator";
 
 const getRequestClient = () => {
     return import.meta.env.DEV
@@ -135,10 +136,11 @@ function EditRecipe() {
                     <Button size="icon" variant="ghost" onClick={saveRecipe}><Save /></Button>
                 </div>
             </div>
+            <Separator />
 
             {!isLoading && (
                 <ScrollArea className="h-full w-full">
-                    <div className="p-4 pt-0">
+                    <div className="p-4">
                         <Label htmlFor="title" className="text-2xl font-semibold">Recipe Name</Label>
                         <Input
                             id="title"

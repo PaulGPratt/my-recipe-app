@@ -3,13 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import Client, { Environment, Local, api } from "../client";
 import MarkdownEditor from "../components/markdown-editor";
 import { MilkdownProvider } from "@milkdown/react";
-import { ArrowLeft, EllipsisVertical, Flame, Pencil, Timer } from "lucide-react";
+import { ArrowLeft, Flame, Pencil, Timer } from "lucide-react";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Separator } from "../components/ui/separator";
 import { setLocalStorage, getLocalStorage } from '../utils/localStorage';
-import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
-import { DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
+import { ScrollArea } from "../components/ui/scroll-area";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -80,74 +78,61 @@ function Recipe() {
     }
 
     return (
-        <div className="h-full mx-auto max-w-4xl">
+        <div className="h-full mx-auto max-w-4xl flex flex-col">
+
+            <div className="flex p-4 gap-4 justify-between">
+                <Button size="icon" variant="ghost" onClick={handleBack} role="link"><ArrowLeft size={30} /></Button>
+                <div className="flex flex-grow items-center">
+                    {!isLoading && (<div className="text-2xl font-semibold">{recipe?.title}</div>)}
+                </div>
+                <Button size="icon" variant="ghost" onClick={editRecipe}><Pencil /></Button>
+
+            </div>
+            <Separator />
+
             {!isLoading && (
-                <Card className="rounded-none">
-                    <CardHeader className="pt-2 pb-0 px-2">
-                        <CardTitle>
-                            <div className="flex flex-col flex-grow items-center justify-center">
-                                <div className="flex flex-row w-full justify-between">
-                                    <Button size="icon" variant="ghost" onClick={handleBack} role="link"><ArrowLeft size={30} /></Button>
-                                    <div className="text-4xl text-center px-4">{recipe?.title}</div>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button size="icon" variant="ghost"><EllipsisVertical size={30} /></Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent>
-                                            <DropdownMenuItem onClick={editRecipe} className="text-xl">
-                                                <Pencil className="mr-2" /> Edit
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-
-                                {(tags?.length > 0) && (
-                                    <div className="flex pt-2 text-xl gap-2">
-                                        {tags?.map((tag, index) => (
-                                            <div key={tag + index} className="rounded-full border-2 border-primary-foreground px-3 text-lg" >{tag}</div>
-                                        ))}
-                                    </div>
-                                )}
-                                {(cookTime > 0 || cookTemp > 0) && (
-                                    <div className="flex items-center pt-2 gap-x-2 text-3xl">
-                                        {cookTime > 0 && (
-                                            <div className="flex">
-                                                <Timer size={36} /> {cookTime}min
-                                            </div>
-                                        )}
-                                        {cookTemp > 0 && (
-                                            <div className="flex">
-                                                <Flame size={36} /> {cookTemp}°F
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
+                <ScrollArea className="h-full w-full">
+                    <div className="px-4 pt-4 pb-2 text-3xl flex flex-row items-center justify-center gap-x-2">
+                        {(tags?.length > 0) && (
+                            <div className="flex gap-2">
+                                {tags?.map((tag, index) => (
+                                    <div key={tag + index} className="rounded-full border-2 border-input px-3 bg-secondary text-secondary-foreground text-xl font-semibold" >{tag}</div>
+                                ))}
                             </div>
-                            <Separator className="my-4" />
-                        </CardTitle>
-                    </CardHeader>
+                        )}
+                    </div>
+                    <div className="px-4 text-3xl flex flex-row items-center justify-center gap-x-2 font-semibold">
 
-                    <CardContent className="px-4">
-
-                        <div className="flex flex-col flex-grow items-start gap-2 transition-all ">
-
-                            <div className="text-3xl font-semibold">Ingredients</div>
-                            <div className={"text-2xl text-foreground w-full"}>
-                                <MilkdownProvider>
-                                    <MarkdownEditor content={ingredients} setContent={setIngredients} isEditable={false} />
-                                </MilkdownProvider>
+                        {cookTime > 0 && (
+                            <div className="flex items-center">
+                                <Timer size={26} /> {cookTime}min
                             </div>
-                            <Separator className="my-2" />
-                            <div className="text-3xl font-semibold">Instructions</div>
-                            <div className={"text-2xl text-foreground w-full"}>
-                                <MilkdownProvider>
-                                    <MarkdownEditor content={instructions} setContent={setInstructions} isEditable={false} />
-                                </MilkdownProvider>
+                        )}
+                        {cookTemp > 0 && (
+                            <div className="flex items-center">
+                                <Flame size={26} /> {cookTemp}°F
                             </div>
+                        )}
+
+                    </div>
+                    <Separator className="m-4" />
+
+                    <div className="px-4 flex flex-col flex-grow items-start gap-2 transition-all ">
+                        <div className="text-3xl font-semibold">Ingredients</div>
+                        <div className={"text-2xl text-foreground w-full"}>
+                            <MilkdownProvider>
+                                <MarkdownEditor content={ingredients} setContent={setIngredients} isEditable={false} />
+                            </MilkdownProvider>
                         </div>
-                    </CardContent>
-                </Card>
-
+                        <Separator className="my-2" />
+                        <div className="text-3xl font-semibold">Instructions</div>
+                        <div className={"text-2xl text-foreground w-full"}>
+                            <MilkdownProvider>
+                                <MarkdownEditor content={instructions} setContent={setInstructions} isEditable={false} />
+                            </MilkdownProvider>
+                        </div>
+                    </div>
+                </ScrollArea>
             )}
 
         </div>
