@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 import Client, { Environment, Local, api } from "../client";
 import { Button } from "../components/ui/button";
-import { ArrowLeft, Flame, Save, Timer, X } from "lucide-react";
+import { ArrowLeft, Flame, Plus, Save, Timer, Trash, X } from "lucide-react";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { MilkdownProvider } from "@milkdown/react";
@@ -79,6 +79,18 @@ function EditRecipe() {
         setCookTemp(Number(event.target.value));
     }
 
+    const addTag = async () => {
+        setTags([...tags, "Tag"]);
+    }
+
+    const handleTagChange = (index: number, event: { target: { value: any; }; }) => {
+        tags[index] = event.target.value;
+        if (tags[index] === undefined || tags[index] === null || tags[index] === "") {
+            tags.splice(index, 1);
+        }
+        setTags([...tags]);
+    };
+
     const saveRecipe = async () => {
         try {
             const filteredTags = tags.filter((tag) => tag != undefined && tag != null && tag != "");
@@ -97,6 +109,19 @@ function EditRecipe() {
             console.error(err);
         }
     };
+
+    const deleteRecipe = async () => {
+        if (!id) {
+            return;
+        }
+
+        try {
+            await client.api.DeleteRecipe(id)
+            navigate(`/my-recipe-app/recipes/`);
+        } catch (err) {
+            console.error(err)
+        }
+    }
 
     return (
         <div className="h-full mx-auto max-w-4xl flex flex-col">
@@ -120,6 +145,21 @@ function EditRecipe() {
                             className="mt-2 h-12 text-2xl"
                             value={recipeTitle}
                             onChange={handleTitleChange}></Input>
+                    </div>
+
+                    <div className="p-4 pt-0">
+                        <Label className="text-2xl font-semibold">Tags</Label>
+                        <div className="w-full flex-wrap flex pt-2 gap-2">
+                            {tags?.map((tag, index) => (
+                                <Input
+                                    key={tag + index}
+                                    defaultValue={tag}
+                                    onBlur={(event) => handleTagChange(index, event)}
+                                    className="rounded-full px-3 h-10 text-2xl w-36">
+                                </Input>
+                            ))}
+                            <Button size="icon" className="rounded-full" onClick={addTag}><Plus></Plus></Button>
+                        </div>
                     </div>
 
                     <div className="p-4 pt-0 flex gap-2">
@@ -164,10 +204,14 @@ function EditRecipe() {
                             </MilkdownProvider>
                         </div>
                     </div>
+
+                    <div className="flex p-4 pt-0 justify-center">
+                        <div className="flex justify-center">
+                            <Button variant="destructive" onClick={deleteRecipe}><Trash className="mr-2"></Trash> Delete Recipe</Button>
+                        </div>
+                    </div>
                 </ScrollArea>
             )}
-
-
         </div>
     )
 }
