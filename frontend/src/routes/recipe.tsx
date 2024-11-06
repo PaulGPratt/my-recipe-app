@@ -92,9 +92,9 @@ function Recipe() {
 
             {!isLoading && (
                 <ScrollArea className="h-full w-full ">
-                    <div className="text-4xl px-4 pt-4 pb-2 font-semibold text-center">{recipe?.title}</div>
+                    <div className="text-4xl px-4 pt-4 font-semibold text-center">{recipe?.title}</div>
                     {(tags?.length > 0) && (
-                        <div className="px-4 pb-2 text-3xl flex flex-row items-center justify-center gap-x-2">
+                        <div className="px-4 pt-2 text-3xl flex flex-row items-center justify-center gap-x-2">
 
                             <div className="flex gap-2">
                                 {tags?.map((tag, index) => (
@@ -104,7 +104,8 @@ function Recipe() {
 
                         </div>
                     )}
-                    <div className="px-4 text-3xl flex flex-row items-center justify-center gap-x-2 font-semibold">
+                    {(cookTime > 0 || cookTemp > 0) && (
+                        <div className="px-4 pt-2 text-3xl flex flex-row items-center justify-center gap-x-2 font-semibold">
 
                         {cookTime > 0 && (
                             <div className="flex items-center">
@@ -116,8 +117,10 @@ function Recipe() {
                                 <Flame size={26} /> {cookTemp}°F
                             </div>
                         )}
-
                     </div>
+
+                    )}
+                    
                     <Separator className="m-4" />
 
                     <div className="px-4 flex flex-col flex-grow items-start gap-2 transition-all ">
