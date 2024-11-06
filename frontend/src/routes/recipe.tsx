@@ -91,16 +91,19 @@ function Recipe() {
             <Separator />
 
             {!isLoading && (
-                <ScrollArea className="h-full w-full">
-                    <div className="px-4 pt-4 pb-2 text-3xl flex flex-row items-center justify-center gap-x-2">
-                        {(tags?.length > 0) && (
+                <ScrollArea className="h-full w-full ">
+                    <div className="text-4xl px-4 pt-4 pb-2 font-semibold text-center">{recipe?.title}</div>
+                    {(tags?.length > 0) && (
+                        <div className="px-4 pb-2 text-3xl flex flex-row items-center justify-center gap-x-2">
+
                             <div className="flex gap-2">
                                 {tags?.map((tag, index) => (
                                     <div key={tag + index} className="rounded-full border-2 border-input px-3 bg-secondary text-secondary-foreground text-xl font-semibold" >{tag}</div>
                                 ))}
                             </div>
-                        )}
-                    </div>
+
+                        </div>
+                    )}
                     <div className="px-4 text-3xl flex flex-row items-center justify-center gap-x-2 font-semibold">
 
                         {cookTime > 0 && (
