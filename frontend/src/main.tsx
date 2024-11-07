@@ -28,11 +28,11 @@ const router = createBrowserRouter([
     element: <Recipes />,
   },
   {
-    path: "/my-recipe-app/recipes/:id",
+    path: "/my-recipe-app/recipes/:slug",
     element: <Recipe />
   },
   {
-    path: "/my-recipe-app/recipes/:id/edit",
+    path: "/my-recipe-app/recipes/:slug/edit",
     element: <EditRecipe />
   },
   {

@@ -53,15 +53,15 @@ type GenerateFromTextRequest struct {
 	Text string `json:"text"`
 }
 
-//encore:api public method=GET path=/api/recipes/:id
-func GetRecipe(ctx context.Context, id string) (*Recipe, error) {
-	recipe := &Recipe{Id: id}
+//encore:api public method=GET path=/api/recipes/:slug
+func GetRecipe(ctx context.Context, slug string) (*Recipe, error) {
+	recipe := &Recipe{Slug: slug}
 
 	err := db.QueryRow(ctx, `
-		SELECT slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags
+		SELECT id, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags
 		FROM recipe
-		WHERE id = $1
-	`, id).Scan(&recipe.Slug, &recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.Notes, &recipe.CookTempDegF, &recipe.CookTimeMinutes, &recipe.Tags)
+		WHERE slug = $1
+	`, slug).Scan(&recipe.Id, &recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.Notes, &recipe.CookTempDegF, &recipe.CookTimeMinutes, &recipe.Tags)
 
 	if err != nil {
 		return nil, err

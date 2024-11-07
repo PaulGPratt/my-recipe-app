@@ -24,7 +24,7 @@ function Recipe() {
     const navigate = useNavigate();
 
     // Get the 'id' from the route parameters
-    const { id } = useParams();
+    const { slug } = useParams();
 
     const [isLoading, setIsLoading] = useState(true);
     const [recipe, setRecipe] = useState<api.Recipe>();
@@ -38,18 +38,18 @@ function Recipe() {
     useEffect(() => {
 
         const loadRecipes = async () => {
-            if (!id) return;
+            if (!slug) return;
 
-            const cachedRecipe = getLocalStorage(`recipe_${id}`);
+            const cachedRecipe = getLocalStorage(`recipe_${slug}`);
             if (cachedRecipe) {
                 setRecipeState(JSON.parse(cachedRecipe));
                 setIsLoading(false);
             }
 
             try {
-                const freshRecipe = await client.api.GetRecipe(id);
+                const freshRecipe = await client.api.GetRecipe(slug);
                 setRecipeState(freshRecipe);
-                setLocalStorage(`recipe_${id}`, JSON.stringify(freshRecipe));
+                setLocalStorage(`recipe_${slug}`, JSON.stringify(freshRecipe));
             } catch (err) {
                 console.error(err);
             }
@@ -57,7 +57,7 @@ function Recipe() {
         };
 
         loadRecipes();
-    }, [id]);
+    }, [slug]);
 
 
 
@@ -76,7 +76,7 @@ function Recipe() {
     };
 
     const editRecipe = async () => {
-        navigate(`/my-recipe-app/recipes/` + id + '/edit');
+        navigate(`/my-recipe-app/recipes/` + slug + '/edit');
     }
 
     return (

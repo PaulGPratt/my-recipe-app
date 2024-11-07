@@ -125,9 +125,9 @@ export namespace api {
             return await resp.json() as Recipe
         }
 
-        public async GetRecipe(id: string): Promise<Recipe> {
+        public async GetRecipe(slug: string): Promise<Recipe> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("GET", `/api/recipes/${encodeURIComponent(id)}`)
+            const resp = await this.baseClient.callAPI("GET", `/api/recipes/${encodeURIComponent(slug)}`)
             return await resp.json() as Recipe
         }
 

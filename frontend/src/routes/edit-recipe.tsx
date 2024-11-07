@@ -22,11 +22,12 @@ function EditRecipe() {
     const client = getRequestClient();
     const navigate = useNavigate();
 
-    const { id } = useParams();
+    const { slug } = useParams();
 
     const [isLoading, setIsLoading] = useState(true);
+    const [recipeId, setRecipeId] = useState<string>("");
     const [recipeTitle, setRecipeTitle] = useState<string>("");
-    const [slug, setSlug] = useState<string>("");
+    const [recipeSlug, setRecipeSlug] = useState<string>("");
     const [tags, setTags] = useState<string[]>([]);
     const [ingredients, setIngredients] = useState<string>("");
     const [instructions, setInstructions] = useState<string>("");
@@ -36,30 +37,32 @@ function EditRecipe() {
 
     useEffect(() => {
         const loadRecipe = async () => {
-            if (!id) return;
+            if (!slug) return;
 
-            const cachedRecipe = getLocalStorage(`recipe_${id}`);
+            const cachedRecipe = getLocalStorage(`recipe_${slug}`);
             if (cachedRecipe) {
                 setRecipeState(JSON.parse(cachedRecipe));
                 setIsLoading(false);
             }
 
             try {
-                const freshRecipe = await client.api.GetRecipe(id);
+                const freshRecipe = await client.api.GetRecipe(slug);
                 setRecipeState(freshRecipe);
-                setLocalStorage(`recipe_${id}`, JSON.stringify(freshRecipe));
+                setLocalStorage(`recipe_${slug}`, JSON.stringify(freshRecipe));
             } catch (err) {
                 console.error(err);
             }
             setIsLoading(false);
+            
         };
 
         loadRecipe();
-    }, [id]);
+    }, [slug]);
 
     const setRecipeState = (recipeResponse: api.Recipe) => {
+        setRecipeId(recipeResponse.id);
         setRecipeTitle(recipeResponse.title);
-        setSlug(recipeResponse.slug);
+        setRecipeSlug(recipeResponse.slug);
         setTags(recipeResponse.tags ?? []);
         setIngredients(recipeResponse.ingredients);
         setInstructions(recipeResponse.instructions);
@@ -69,7 +72,7 @@ function EditRecipe() {
     }
 
     const handleBack = async () => {
-        navigate(`/my-recipe-app/recipes/` + id);
+        navigate(`/my-recipe-app/recipes/` + slug);
     }
 
     const handleTitleChange = (event: { target: { value: any; }; }) => {
@@ -77,7 +80,7 @@ function EditRecipe() {
     }
 
     const handleSlugChange = (event: { target: { value: any; }; }) => {
-        setSlug(event.target.value);
+        setRecipeSlug(event.target.value);
     }
 
     const handleCookTimeChange = (event: { target: { value: any; }; }) => {
@@ -106,8 +109,8 @@ function EditRecipe() {
             setTags(filteredTags);
 
             await client.api.SaveRecipe({
-                id: id || uuidv4(),
-                slug: slug,
+                id: recipeId || uuidv4(),
+                slug: recipeSlug,
                 title: recipeTitle,
                 instructions: instructions,
                 ingredients: ingredients,
@@ -116,18 +119,19 @@ function EditRecipe() {
                 cook_time_minutes: cookTime,
                 tags: filteredTags,
             });
+            navigate(`/my-recipe-app/recipes/` + recipeSlug);
         } catch (err) {
             console.error(err);
         }
     };
 
     const deleteRecipe = async () => {
-        if (!id) {
+        if (!recipeId) {
             return;
         }
 
         try {
-            await client.api.DeleteRecipe(id)
+            await client.api.DeleteRecipe(recipeId)
             navigate(`/my-recipe-app/recipes/`);
         } catch (err) {
             console.error(err)
@@ -164,7 +168,7 @@ function EditRecipe() {
                         <Input
                             id="title"
                             className="mt-2 h-12 text-2xl"
-                            value={slug}
+                            value={recipeSlug}
                             onChange={handleSlugChange}></Input>
                     </div>
 
