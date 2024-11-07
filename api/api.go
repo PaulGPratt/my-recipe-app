@@ -18,9 +18,11 @@ var db = sqldb.NewDatabase("recipe", sqldb.DatabaseConfig{
 
 type Recipe struct {
 	Id              string   `json:"id"`
+	Slug            string   `json:"slug"`
 	Title           string   `json:"title"`
 	Ingredients     string   `json:"ingredients"`
 	Instructions    string   `json:"instructions"`
+	Notes           string   `json:"notes"`
 	CookTempDegF    int16    `json:"cook_temp_deg_f"`
 	CookTimeMinutes int16    `json:"cook_time_minutes"`
 	Tags            []string `json:"tags"`
@@ -28,6 +30,7 @@ type Recipe struct {
 
 type RecipeCard struct {
 	Id    string   `json:"id"`
+	Slug  string   `json:"slug"`
 	Title string   `json:"title"`
 	Tags  []string `json:"tags"`
 }
@@ -55,10 +58,10 @@ func GetRecipe(ctx context.Context, id string) (*Recipe, error) {
 	recipe := &Recipe{Id: id}
 
 	err := db.QueryRow(ctx, `
-		SELECT title, ingredients, instructions, cook_temp_deg_f, cook_time_minutes, tags
+		SELECT slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags
 		FROM recipe
 		WHERE id = $1
-	`, id).Scan(&recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.CookTempDegF, &recipe.CookTimeMinutes, &recipe.Tags)
+	`, id).Scan(&recipe.Slug, &recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.CookTempDegF, &recipe.CookTimeMinutes, &recipe.Tags)
 
 	if err != nil {
 		return nil, err
@@ -70,7 +73,7 @@ func GetRecipe(ctx context.Context, id string) (*Recipe, error) {
 //encore:api public method=GET path=/api/recipes
 func GetRecipes(ctx context.Context) (*RecipeListResponse, error) {
 	rows, err := db.Query(ctx, `
-		SELECT id, title, tags
+		SELECT id, slug, title, tags
 		FROM recipe
 	`)
 	if err != nil {
@@ -81,7 +84,7 @@ func GetRecipes(ctx context.Context) (*RecipeListResponse, error) {
 	var recipes []*RecipeCard
 	for rows.Next() {
 		recipe := &RecipeCard{}
-		if err := rows.Scan(&recipe.Id, &recipe.Title, &recipe.Tags); err != nil {
+		if err := rows.Scan(&recipe.Id, &recipe.Slug, &recipe.Title, &recipe.Tags); err != nil {
 			return nil, err
 		}
 		recipes = append(recipes, recipe)
@@ -100,9 +103,9 @@ func SaveRecipe(ctx context.Context, recipe *Recipe) (*Recipe, error) {
 	// Save the recipe to the database.
 	// If the recipe already exists (i.e. CONFLICT), we update the recipe info.
 	_, err := db.Exec(ctx, `
-		INSERT INTO recipe (id, title, ingredients, instructions, cook_temp_deg_f, cook_time_minutes, tags)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
-		ON CONFLICT (id) DO UPDATE SET title=$2, ingredients=$3, instructions=$4, cook_temp_deg_f=$5, cook_time_minutes=$6, tags=$7
+		INSERT INTO recipe (id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		ON CONFLICT (id) DO UPDATE SET slug=$2, title=$3, ingredients=$4, instructions=$5, notes=$6, cook_temp_deg_f=$7, cook_time_minutes=$8, tags=$9
 	`, recipe.Id, recipe.Title, recipe.Ingredients, recipe.Instructions, recipe.CookTempDegF, recipe.CookTimeMinutes, recipe.Tags)
 
 	// If there was an error saving to the database, then we return that error.
