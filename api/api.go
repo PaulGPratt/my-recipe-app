@@ -61,7 +61,7 @@ func GetRecipe(ctx context.Context, id string) (*Recipe, error) {
 		SELECT slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags
 		FROM recipe
 		WHERE id = $1
-	`, id).Scan(&recipe.Slug, &recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.CookTempDegF, &recipe.CookTimeMinutes, &recipe.Tags)
+	`, id).Scan(&recipe.Slug, &recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.Notes, &recipe.CookTempDegF, &recipe.CookTimeMinutes, &recipe.Tags)
 
 	if err != nil {
 		return nil, err
