@@ -3,6 +3,8 @@ package api
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"strings"
 
 	"encore.dev/storage/sqldb"
 	"encore.dev/types/uuid"
@@ -142,6 +144,11 @@ func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*Recipe, er
 	}
 	recipe.Id = recipeId.String()
 
+	recipe.Slug, err = createUniqueSlug(ctx, recipe.Title)
+	if err != nil {
+		return nil, fmt.Errorf("error generating slug: %w", err)
+	}
+
 	// Save the recipe
 	savedRecipe, err := SaveRecipe(ctx, recipe)
 	if err != nil {
@@ -166,6 +173,11 @@ func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Recipe
 	}
 	recipe.Id = recipeId.String()
 
+	recipe.Slug, err = createUniqueSlug(ctx, recipe.Title)
+	if err != nil {
+		return nil, fmt.Errorf("error generating slug: %w", err)
+	}
+
 	// Save the recipe
 	savedRecipe, err := SaveRecipe(ctx, recipe)
 	if err != nil {
@@ -173,4 +185,54 @@ func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Recipe
 	}
 
 	return savedRecipe, nil
+}
+
+func createUniqueSlug(ctx context.Context, title string) (string, error) {
+	// Step 1: Slugify the title
+	reg := regexp.MustCompile(`[^a-z0-9]+`)
+	slugCandidate := reg.ReplaceAllString(strings.ToLower(title), "-")
+
+	// Step 2: Check if the plain slug already exists
+	exists, err := checkSlugExists(ctx, slugCandidate)
+	if err != nil {
+		return "", err
+	}
+	if !exists {
+		return slugCandidate, nil
+	}
+
+	// Step 3: Query for the highest suffix if the plain slug exists
+	var maxSuffix int
+	err = db.QueryRow(ctx, `
+	WITH existing_slugs AS (
+		SELECT slug 
+		FROM recipe 
+		WHERE slug = $1 OR slug LIKE $2
+	)
+	SELECT COALESCE(MAX(CAST(NULLIF(SUBSTRING(slug FROM LENGTH($1) + 2), '') AS INT)), 0) AS max_suffix
+	FROM existing_slugs
+`, slugCandidate, slugCandidate+"-%").Scan(&maxSuffix)
+
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s-%d", slugCandidate, maxSuffix+1), nil
+}
+
+func checkSlugExists(ctx context.Context, slug string) (bool, error) {
+	var exists bool
+	err := db.QueryRow(ctx, `
+		SELECT EXISTS (
+			SELECT 1
+			FROM recipe
+			WHERE slug = $1
+		)
+	`, slug).Scan(&exists)
+
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
 }

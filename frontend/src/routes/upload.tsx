@@ -60,7 +60,7 @@ export default function Upload() {
             const response = await client.api.GenerateFromImages({
                 files: filesData
             } as api.FileUploadRequest);
-            navigate(`/my-recipe-app/recipes/${response.id}`);
+            navigate(`/my-recipe-app/recipes/${response.slug}`);
         } catch (error) {
             console.error("Submit images failed:", error);
         } finally {
@@ -74,7 +74,7 @@ export default function Upload() {
             const response = await client.api.GenerateFromText({
                 text: recipeText
             } as api.GenerateFromTextRequest);
-            navigate(`/my-recipe-app/recipes/${response.id}`);
+            navigate(`/my-recipe-app/recipes/${response.slug}`);
         } catch (error) {
             console.error("Submit text failed:", error);
         } finally {
