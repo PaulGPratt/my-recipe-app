@@ -5,7 +5,7 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
   // Base path to deploy to GitHub Pages
-  base: "/my-recipe-app/",
+  base: "/",
   plugins: [react()],
   resolve: {
     alias: {

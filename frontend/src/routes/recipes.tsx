@@ -46,7 +46,7 @@ function Recipes() {
   };
 
   const handleAdd = () => {
-    navigate(`/my-recipe-app/upload/`);
+    navigate(`/upload/`);
   };
 
   const toggleShowSearch = () => {

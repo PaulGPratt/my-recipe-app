@@ -11,7 +11,7 @@ const RecipeCardButton: React.FC<RecipeCardButtonProps> = ({ item }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate(`/my-recipe-app/recipes/${item.slug}`);
+        navigate(`/recipes/${item.slug}`);
     };
 
     return (

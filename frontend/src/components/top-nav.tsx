@@ -9,11 +9,11 @@ const TopNav = React.forwardRef<
     const navItems = [
         {
             name: "Recipes",
-            href: "/my-recipe-app/recipes",
+            href: "/recipes",
         },
         {
             name: "Plan",
-            href: "/my-recipe-app/plan",
+            href: "/plan",
         }
     ];
 

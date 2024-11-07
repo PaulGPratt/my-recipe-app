@@ -24,7 +24,7 @@ export default function Upload() {
     const [recipeText, setRecipeText] = useState<string>("");
 
     const handleBack = () => {
-        navigate(`/my-recipe-app/recipes/`);
+        navigate(`/recipes/`);
     };
 
     const handleFilesUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,7 +60,7 @@ export default function Upload() {
             const response = await client.api.GenerateFromImages({
                 files: filesData
             } as api.FileUploadRequest);
-            navigate(`/my-recipe-app/recipes/${response.slug}`);
+            navigate(`/recipes/${response.slug}`);
         } catch (error) {
             console.error("Submit images failed:", error);
         } finally {
@@ -74,7 +74,7 @@ export default function Upload() {
             const response = await client.api.GenerateFromText({
                 text: recipeText
             } as api.GenerateFromTextRequest);
-            navigate(`/my-recipe-app/recipes/${response.slug}`);
+            navigate(`/recipes/${response.slug}`);
         } catch (error) {
             console.error("Submit text failed:", error);
         } finally {

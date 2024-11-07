@@ -16,27 +16,27 @@ import EditRecipe from "./routes/edit-recipe";
 
 const router = createBrowserRouter([
   {
-    path: "/my-recipe-app",
-    element: <Navigate to="/my-recipe-app/recipes" replace />,
+    path: "/",
+    element: <Navigate to="/recipes" replace />,
   },
   {
-    path: "/my-recipe-app/plan",
+    path: "/plan",
     element: <Plan />,
   },
   {
-    path: "/my-recipe-app/recipes",
+    path: "/recipes",
     element: <Recipes />,
   },
   {
-    path: "/my-recipe-app/recipes/:slug",
+    path: "/recipes/:slug",
     element: <Recipe />
   },
   {
-    path: "/my-recipe-app/recipes/:slug/edit",
+    path: "/recipes/:slug/edit",
     element: <EditRecipe />
   },
   {
-    path: "/my-recipe-app/upload",
+    path: "/upload",
     element: <Upload />,
   },
 ]);

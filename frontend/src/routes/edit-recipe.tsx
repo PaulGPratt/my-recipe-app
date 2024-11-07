@@ -75,7 +75,7 @@ function EditRecipe() {
     }
 
     const handleBack = async () => {
-        navigate(`/my-recipe-app/recipes/` + slug);
+        navigate(`/recipes/` + slug);
     }
 
     const handleTitleChange = (event: { target: { value: any; }; }) => {
@@ -144,7 +144,7 @@ function EditRecipe() {
                 cook_time_minutes: cookTime,
                 tags: filteredTags,
             });
-            navigate(`/my-recipe-app/recipes/` + recipeSlug);
+            navigate(`/recipes/` + recipeSlug);
         } catch (err) {
             console.error(err);
         }
@@ -157,7 +157,7 @@ function EditRecipe() {
 
         try {
             await client.api.DeleteRecipe(recipeId)
-            navigate(`/my-recipe-app/recipes/`);
+            navigate(`/recipes/`);
         } catch (err) {
             console.error(err)
         }

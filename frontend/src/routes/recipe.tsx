@@ -72,11 +72,11 @@ function Recipe() {
     }
 
     const handleBack = () => {
-        navigate(`/my-recipe-app/recipes/`);
+        navigate(`/recipes/`);
     };
 
     const editRecipe = async () => {
-        navigate(`/my-recipe-app/recipes/` + slug + '/edit');
+        navigate(`/recipes/` + slug + '/edit');
     }
 
     return (
