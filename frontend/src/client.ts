@@ -79,6 +79,14 @@ export namespace api {
         text: string
     }
 
+    export interface IsSlugAvailableRequest {
+        slug: string
+    }
+
+    export interface IsSlugAvailableResponse {
+        available: boolean
+    }
+
     export interface Recipe {
         id: string
         slug: string
@@ -107,6 +115,12 @@ export namespace api {
 
         constructor(baseClient: BaseClient) {
             this.baseClient = baseClient
+        }
+
+        public async CheckIfSlugIsAvailable(params: IsSlugAvailableRequest): Promise<IsSlugAvailableResponse> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callAPI("POST", `/slug/available`, JSON.stringify(params))
+            return await resp.json() as IsSlugAvailableResponse
         }
 
         public async DeleteRecipe(id: string): Promise<void> {

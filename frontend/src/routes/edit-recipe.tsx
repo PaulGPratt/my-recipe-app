@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 import Client, { Environment, Local, api } from "../client";
 import { Button, buttonVariants } from "../components/ui/button";
-import { ArrowLeft, Flame, MoveDown, Plus, Save, Timer, Trash } from "lucide-react";
+import { ArrowLeft, Flame, MoveDown, Plus, Save, Timer, Trash, TriangleAlert } from "lucide-react";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { MilkdownProvider } from "@milkdown/react";
@@ -27,6 +27,7 @@ function EditRecipe() {
     const { slug } = useParams();
 
     const [isLoading, setIsLoading] = useState(true);
+    const [slugError, setSlugError] = useState<string>("");
     const [recipeId, setRecipeId] = useState<string>("");
     const [recipeTitle, setRecipeTitle] = useState<string>("");
     const [recipeSlug, setRecipeSlug] = useState<string>("");
@@ -81,9 +82,31 @@ function EditRecipe() {
         setRecipeTitle(event.target.value);
     }
 
-    const handleSlugChange = (event: { target: { value: any; }; }) => {
-        setRecipeSlug(event.target.value);
-    }
+    const handleSlugInput = async (event: React.FocusEvent<HTMLInputElement> | React.ChangeEvent<HTMLInputElement>) => {
+        const slugVal = event.target.value;
+        
+        setSlugError("");
+        setRecipeSlug(slugVal);
+
+        // Only check if the event is a blur and the slug has changed
+        if (event.type === "blur" && slugVal !== slug) {
+            const slugPattern = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+            let isValidSlug = slugPattern.test(slugVal);
+            if (!isValidSlug) {
+                setSlugError(`Please only use lowercase letters and numbers separated by hyphens.`)
+                return;
+            }
+
+            try {
+                const availableResp = await client.api.CheckIfSlugIsAvailable({ slug: slugVal });
+                if(!availableResp.available) {
+                    setSlugError(`${slugVal} is already in use`)
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    };
 
     const handleCookTimeChange = (event: { target: { value: any; }; }) => {
         setCookTime(Number(event.target.value));
@@ -149,7 +172,7 @@ function EditRecipe() {
                     <div className="text-2xl font-semibold">Edit Recipe</div>
                 </div>
                 <div className="flex gap-2">
-                    <Button size="icon" variant="ghost" onClick={saveRecipe}><Save /></Button>
+                    <Button size="icon" variant="ghost" disabled={slugError.length > 0} onClick={saveRecipe}><Save /></Button>
                 </div>
             </div>
             <Separator />
@@ -166,12 +189,19 @@ function EditRecipe() {
                     </div>
 
                     <div className="p-4 pt-0">
-                        <Label htmlFor="title" className="text-2xl font-semibold">Link Name (ex. /recipe-name)</Label>
+                        <Label htmlFor="title" className="text-2xl font-semibold">URL Segment (ex. /recipe-name)</Label>
                         <Input
                             id="title"
                             className="mt-2 h-12 text-2xl"
                             value={recipeSlug}
-                            onChange={handleSlugChange}></Input>
+                            onChange={handleSlugInput}
+                            onBlur={handleSlugInput}></Input>
+                        {slugError.length > 0 && (
+                            <div className="flex gap-4 items-center pt-2">
+                                <TriangleAlert />
+                                <div className="text-xl">{slugError}</div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="p-4 pt-0">
@@ -268,7 +298,7 @@ function EditRecipe() {
                                         <AlertDialogAction
                                             className={cn(buttonVariants({ variant: "destructive" }))}
                                             onClick={deleteRecipe}>
-                                                Confirm
+                                            Confirm
                                         </AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>

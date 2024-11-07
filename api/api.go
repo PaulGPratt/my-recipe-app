@@ -55,6 +55,13 @@ type GenerateFromTextRequest struct {
 	Text string `json:"text"`
 }
 
+type IsSlugAvailableRequest struct {
+	Slug string `json:"slug"`
+}
+type IsSlugAvailableResponse struct {
+	Available bool `json:"available"`
+}
+
 //encore:api public method=GET path=/api/recipes/:slug
 func GetRecipe(ctx context.Context, slug string) (*Recipe, error) {
 	recipe := &Recipe{Slug: slug}
@@ -185,6 +192,16 @@ func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Recipe
 	}
 
 	return savedRecipe, nil
+}
+
+//encore:api public method=POST path=/slug/available
+func CheckIfSlugIsAvailable(ctx context.Context, req IsSlugAvailableRequest) (IsSlugAvailableResponse, error) {
+	exists, err := checkSlugExists(ctx, req.Slug)
+	if err != nil {
+		return IsSlugAvailableResponse{}, err
+	}
+
+	return IsSlugAvailableResponse{Available: !exists}, nil
 }
 
 func createUniqueSlug(ctx context.Context, title string) (string, error) {
