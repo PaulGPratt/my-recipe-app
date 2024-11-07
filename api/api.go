@@ -3,6 +3,8 @@ package api
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"strings"
 
 	"encore.dev/storage/sqldb"
 	"encore.dev/types/uuid"
@@ -18,9 +20,11 @@ var db = sqldb.NewDatabase("recipe", sqldb.DatabaseConfig{
 
 type Recipe struct {
 	Id              string   `json:"id"`
+	Slug            string   `json:"slug"`
 	Title           string   `json:"title"`
 	Ingredients     string   `json:"ingredients"`
 	Instructions    string   `json:"instructions"`
+	Notes           string   `json:"notes"`
 	CookTempDegF    int16    `json:"cook_temp_deg_f"`
 	CookTimeMinutes int16    `json:"cook_time_minutes"`
 	Tags            []string `json:"tags"`
@@ -28,6 +32,7 @@ type Recipe struct {
 
 type RecipeCard struct {
 	Id    string   `json:"id"`
+	Slug  string   `json:"slug"`
 	Title string   `json:"title"`
 	Tags  []string `json:"tags"`
 }
@@ -50,15 +55,22 @@ type GenerateFromTextRequest struct {
 	Text string `json:"text"`
 }
 
-//encore:api public method=GET path=/api/recipes/:id
-func GetRecipe(ctx context.Context, id string) (*Recipe, error) {
-	recipe := &Recipe{Id: id}
+type IsSlugAvailableRequest struct {
+	Slug string `json:"slug"`
+}
+type IsSlugAvailableResponse struct {
+	Available bool `json:"available"`
+}
+
+//encore:api public method=GET path=/api/recipes/:slug
+func GetRecipe(ctx context.Context, slug string) (*Recipe, error) {
+	recipe := &Recipe{Slug: slug}
 
 	err := db.QueryRow(ctx, `
-		SELECT title, ingredients, instructions, cook_temp_deg_f, cook_time_minutes, tags
+		SELECT id, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags
 		FROM recipe
-		WHERE id = $1
-	`, id).Scan(&recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.CookTempDegF, &recipe.CookTimeMinutes, &recipe.Tags)
+		WHERE slug = $1
+	`, slug).Scan(&recipe.Id, &recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.Notes, &recipe.CookTempDegF, &recipe.CookTimeMinutes, &recipe.Tags)
 
 	if err != nil {
 		return nil, err
@@ -70,7 +82,7 @@ func GetRecipe(ctx context.Context, id string) (*Recipe, error) {
 //encore:api public method=GET path=/api/recipes
 func GetRecipes(ctx context.Context) (*RecipeListResponse, error) {
 	rows, err := db.Query(ctx, `
-		SELECT id, title, tags
+		SELECT id, slug, title, tags
 		FROM recipe
 	`)
 	if err != nil {
@@ -81,7 +93,7 @@ func GetRecipes(ctx context.Context) (*RecipeListResponse, error) {
 	var recipes []*RecipeCard
 	for rows.Next() {
 		recipe := &RecipeCard{}
-		if err := rows.Scan(&recipe.Id, &recipe.Title, &recipe.Tags); err != nil {
+		if err := rows.Scan(&recipe.Id, &recipe.Slug, &recipe.Title, &recipe.Tags); err != nil {
 			return nil, err
 		}
 		recipes = append(recipes, recipe)
@@ -100,10 +112,10 @@ func SaveRecipe(ctx context.Context, recipe *Recipe) (*Recipe, error) {
 	// Save the recipe to the database.
 	// If the recipe already exists (i.e. CONFLICT), we update the recipe info.
 	_, err := db.Exec(ctx, `
-		INSERT INTO recipe (id, title, ingredients, instructions, cook_temp_deg_f, cook_time_minutes, tags)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
-		ON CONFLICT (id) DO UPDATE SET title=$2, ingredients=$3, instructions=$4, cook_temp_deg_f=$5, cook_time_minutes=$6, tags=$7
-	`, recipe.Id, recipe.Title, recipe.Ingredients, recipe.Instructions, recipe.CookTempDegF, recipe.CookTimeMinutes, recipe.Tags)
+		INSERT INTO recipe (id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		ON CONFLICT (id) DO UPDATE SET slug=$2, title=$3, ingredients=$4, instructions=$5, notes=$6, cook_temp_deg_f=$7, cook_time_minutes=$8, tags=$9
+	`, recipe.Id, recipe.Slug, recipe.Title, recipe.Ingredients, recipe.Instructions, recipe.Notes, recipe.CookTempDegF, recipe.CookTimeMinutes, recipe.Tags)
 
 	// If there was an error saving to the database, then we return that error.
 	if err != nil {
@@ -139,6 +151,11 @@ func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*Recipe, er
 	}
 	recipe.Id = recipeId.String()
 
+	recipe.Slug, err = createUniqueSlug(ctx, recipe.Title)
+	if err != nil {
+		return nil, fmt.Errorf("error generating slug: %w", err)
+	}
+
 	// Save the recipe
 	savedRecipe, err := SaveRecipe(ctx, recipe)
 	if err != nil {
@@ -163,6 +180,11 @@ func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Recipe
 	}
 	recipe.Id = recipeId.String()
 
+	recipe.Slug, err = createUniqueSlug(ctx, recipe.Title)
+	if err != nil {
+		return nil, fmt.Errorf("error generating slug: %w", err)
+	}
+
 	// Save the recipe
 	savedRecipe, err := SaveRecipe(ctx, recipe)
 	if err != nil {
@@ -170,4 +192,64 @@ func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Recipe
 	}
 
 	return savedRecipe, nil
+}
+
+//encore:api public method=POST path=/slug/available
+func CheckIfSlugIsAvailable(ctx context.Context, req IsSlugAvailableRequest) (IsSlugAvailableResponse, error) {
+	exists, err := checkSlugExists(ctx, req.Slug)
+	if err != nil {
+		return IsSlugAvailableResponse{}, err
+	}
+
+	return IsSlugAvailableResponse{Available: !exists}, nil
+}
+
+func createUniqueSlug(ctx context.Context, title string) (string, error) {
+	// Step 1: Slugify the title
+	reg := regexp.MustCompile(`[^a-z0-9]+`)
+	slugCandidate := reg.ReplaceAllString(strings.ToLower(title), "-")
+
+	// Step 2: Check if the plain slug already exists
+	exists, err := checkSlugExists(ctx, slugCandidate)
+	if err != nil {
+		return "", err
+	}
+	if !exists {
+		return slugCandidate, nil
+	}
+
+	// Step 3: Query for the highest suffix if the plain slug exists
+	var maxSuffix int
+	err = db.QueryRow(ctx, `
+	WITH existing_slugs AS (
+		SELECT slug 
+		FROM recipe 
+		WHERE slug = $1 OR slug LIKE $2
+	)
+	SELECT COALESCE(MAX(CAST(NULLIF(SUBSTRING(slug FROM LENGTH($1) + 2), '') AS INT)), 0) AS max_suffix
+	FROM existing_slugs
+`, slugCandidate, slugCandidate+"-%").Scan(&maxSuffix)
+
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s-%d", slugCandidate, maxSuffix+1), nil
+}
+
+func checkSlugExists(ctx context.Context, slug string) (bool, error) {
+	var exists bool
+	err := db.QueryRow(ctx, `
+		SELECT EXISTS (
+			SELECT 1
+			FROM recipe
+			WHERE slug = $1
+		)
+	`, slug).Scan(&exists)
+
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
 }

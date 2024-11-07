@@ -79,11 +79,21 @@ export namespace api {
         text: string
     }
 
+    export interface IsSlugAvailableRequest {
+        slug: string
+    }
+
+    export interface IsSlugAvailableResponse {
+        available: boolean
+    }
+
     export interface Recipe {
         id: string
+        slug: string
         title: string
         ingredients: string
         instructions: string
+        notes: string
         "cook_temp_deg_f": number
         "cook_time_minutes": number
         tags: string[]
@@ -91,6 +101,7 @@ export namespace api {
 
     export interface RecipeCard {
         id: string
+        slug: string
         title: string
         tags: string[]
     }
@@ -104,6 +115,12 @@ export namespace api {
 
         constructor(baseClient: BaseClient) {
             this.baseClient = baseClient
+        }
+
+        public async CheckIfSlugIsAvailable(params: IsSlugAvailableRequest): Promise<IsSlugAvailableResponse> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callAPI("POST", `/slug/available`, JSON.stringify(params))
+            return await resp.json() as IsSlugAvailableResponse
         }
 
         public async DeleteRecipe(id: string): Promise<void> {
@@ -122,9 +139,9 @@ export namespace api {
             return await resp.json() as Recipe
         }
 
-        public async GetRecipe(id: string): Promise<Recipe> {
+        public async GetRecipe(slug: string): Promise<Recipe> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("GET", `/api/recipes/${encodeURIComponent(id)}`)
+            const resp = await this.baseClient.callAPI("GET", `/api/recipes/${encodeURIComponent(slug)}`)
             return await resp.json() as Recipe
         }
 

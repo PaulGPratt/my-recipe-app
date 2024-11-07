@@ -24,31 +24,32 @@ function Recipe() {
     const navigate = useNavigate();
 
     // Get the 'id' from the route parameters
-    const { id } = useParams();
+    const { slug } = useParams();
 
     const [isLoading, setIsLoading] = useState(true);
     const [recipe, setRecipe] = useState<api.Recipe>();
     const [tags, setTags] = useState<string[]>([]);
     const [ingredients, setIngredients] = useState<string>("");
     const [instructions, setInstructions] = useState<string>("");
+    const [notes, setNotes] = useState<string>("");
     const [cookTime, setCookTime] = useState<number>(0);
     const [cookTemp, setCookTemp] = useState<number>(0);
 
     useEffect(() => {
 
         const loadRecipes = async () => {
-            if (!id) return;
+            if (!slug) return;
 
-            const cachedRecipe = getLocalStorage(`recipe_${id}`);
+            const cachedRecipe = getLocalStorage(`recipe_${slug}`);
             if (cachedRecipe) {
                 setRecipeState(JSON.parse(cachedRecipe));
                 setIsLoading(false);
             }
 
             try {
-                const freshRecipe = await client.api.GetRecipe(id);
+                const freshRecipe = await client.api.GetRecipe(slug);
                 setRecipeState(freshRecipe);
-                setLocalStorage(`recipe_${id}`, JSON.stringify(freshRecipe));
+                setLocalStorage(`recipe_${slug}`, JSON.stringify(freshRecipe));
             } catch (err) {
                 console.error(err);
             }
@@ -56,7 +57,7 @@ function Recipe() {
         };
 
         loadRecipes();
-    }, [id]);
+    }, [slug]);
 
 
 
@@ -65,6 +66,7 @@ function Recipe() {
         setTags(recipeResponse.tags ?? []);
         setIngredients(recipeResponse.ingredients);
         setInstructions(recipeResponse.instructions);
+        setNotes(recipeResponse.notes);
         setCookTemp(recipeResponse.cook_temp_deg_f);
         setCookTime(recipeResponse.cook_time_minutes);
     }
@@ -74,7 +76,7 @@ function Recipe() {
     };
 
     const editRecipe = async () => {
-        navigate(`/my-recipe-app/recipes/` + id + '/edit');
+        navigate(`/my-recipe-app/recipes/` + slug + '/edit');
     }
 
     return (
@@ -91,7 +93,7 @@ function Recipe() {
             <Separator />
 
             {!isLoading && (
-                <ScrollArea className="h-full w-full ">
+                <ScrollArea className="h-full w-full">
                     <div className="text-4xl px-4 pt-4 font-semibold text-center">{recipe?.title}</div>
                     {(tags?.length > 0) && (
                         <div className="px-4 pt-2 text-3xl flex flex-row items-center justify-center gap-x-2">
@@ -107,23 +109,23 @@ function Recipe() {
                     {(cookTime > 0 || cookTemp > 0) && (
                         <div className="px-4 pt-2 text-3xl flex flex-row items-center justify-center gap-x-2 font-semibold">
 
-                        {cookTime > 0 && (
-                            <div className="flex items-center">
-                                <Timer size={26} /> {cookTime}min
-                            </div>
-                        )}
-                        {cookTemp > 0 && (
-                            <div className="flex items-center">
-                                <Flame size={26} /> {cookTemp}°F
-                            </div>
-                        )}
-                    </div>
+                            {cookTime > 0 && (
+                                <div className="flex items-center">
+                                    <Timer size={26} /> {cookTime}min
+                                </div>
+                            )}
+                            {cookTemp > 0 && (
+                                <div className="flex items-center">
+                                    <Flame size={26} /> {cookTemp}°F
+                                </div>
+                            )}
+                        </div>
 
                     )}
-                    
+
                     <Separator className="m-4" />
 
-                    <div className="px-4 flex flex-col flex-grow items-start gap-2 transition-all ">
+                    <div className="px-4 pb-4 flex flex-col flex-grow items-start gap-2 transition-all ">
                         <div className="text-3xl font-semibold">Ingredients</div>
                         <div className={"text-2xl text-foreground w-full"}>
                             <MilkdownProvider>
@@ -137,6 +139,18 @@ function Recipe() {
                                 <MarkdownEditor content={instructions} setContent={setInstructions} isEditable={false} />
                             </MilkdownProvider>
                         </div>
+                        {notes.length > 0 && (
+                            <>
+                                <Separator className="my-2" />
+                                <div className="text-3xl font-semibold">Notes</div>
+                                <div className={"text-2xl text-foreground w-full"}>
+                                    <MilkdownProvider>
+                                        <MarkdownEditor content={notes} setContent={setNotes} isEditable={false} />
+                                    </MilkdownProvider>
+                                </div>
+                            </>
+                        )}
+
                     </div>
                 </ScrollArea>
             )}

@@ -1,45 +1,6 @@
 INSERT INTO recipe (id, title, ingredients, instructions, cook_temp_deg_f, cook_time_minutes, tags)
 VALUES (
   gen_random_uuid(),
-  'Salisbury Steak',
-  'Steak Patties:
-1. 2-3 pounds ground beef or venison
-* 2 eggs, beaten
-* 2 tablespoons all-purpose flour
-* 1/4 teaspoon black pepper
-* 1 teaspoon salt
-* 1 teaspoon onion powder
-* 1 teaspoon garlic powder
-* 1 tablespoon Worcestershire sauce
-* 2 tablespoons butter
-
-Gravy:
-* 1 large onion, sliced
-* 1 green or red bell pepper, sliced
-* 8 ounces button mushrooms, sliced
-* 2 tablespoons all-purpose flour
-* 4 cups beef broth
-* 1 tablespoon cornstarch
-* 1-2 tablespoons brown gravy mix
-
-Serve with:
-* White rice or mashed potatoes
-* Green beans or other vegetables
-* Gooey Butter Cookies',
-  '1. Mix ingredients together, except butter; shape into 3-4 ounce patties.
-2. Cook patties in skillet with butter until browned on both sides and no longer pink in the middle, about 5-7 minutes per side. Allow to rest on a plate while making the gravy.
-3. For the gravy, cook onions, bell peppers, and mushrooms in steak drippings until onions are translucent.
-4. Sprinkle the flour into the oil and veggies; allow it to cook for about 2 minutes to make a roux.
-5. Add a little broth to deglaze the pan, then add 3 more cups. Bring to a boil. In a separate bowl, mix the remaining broth with the cornstarch, then blend this with the gravy. Reduce heat to low (it will thicken quickly). Add brown gravy mix for extra flavor if desired.
-6. Add the patties back into the gravy. Serve with or over white rice or mashed potatoes.',
-  0,
-  35,
-  '{}'
-);
-
-INSERT INTO recipe (id, title, ingredients, instructions, cook_temp_deg_f, cook_time_minutes, tags)
-VALUES (
-  gen_random_uuid(),
   'Skillet Flatbreads',
   '1. 3 cups (360g) all-purpose flour
 * 2 teaspoons baking powder

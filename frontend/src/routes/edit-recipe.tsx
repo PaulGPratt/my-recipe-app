@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 import Client, { Environment, Local, api } from "../client";
-import { Button } from "../components/ui/button";
-import { ArrowLeft, Flame, Plus, Save, Timer, Trash } from "lucide-react";
+import { Button, buttonVariants } from "../components/ui/button";
+import { ArrowLeft, Flame, MoveDown, Plus, Save, Timer, Trash, TriangleAlert } from "lucide-react";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { MilkdownProvider } from "@milkdown/react";
@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import { getLocalStorage, setLocalStorage } from "../utils/localStorage";
 import { ScrollArea } from "../components/ui/scroll-area";
 import { Separator } from "../components/ui/separator";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog";
+import { cn } from "../lib/utils";
 
 const getRequestClient = () => {
     return import.meta.env.DEV
@@ -22,55 +24,89 @@ function EditRecipe() {
     const client = getRequestClient();
     const navigate = useNavigate();
 
-    const { id } = useParams();
+    const { slug } = useParams();
 
     const [isLoading, setIsLoading] = useState(true);
+    const [slugError, setSlugError] = useState<string>("");
+    const [recipeId, setRecipeId] = useState<string>("");
     const [recipeTitle, setRecipeTitle] = useState<string>("");
+    const [recipeSlug, setRecipeSlug] = useState<string>("");
     const [tags, setTags] = useState<string[]>([]);
     const [ingredients, setIngredients] = useState<string>("");
     const [instructions, setInstructions] = useState<string>("");
+    const [notes, setNotes] = useState<string>("");
     const [cookTime, setCookTime] = useState<number>(0);
     const [cookTemp, setCookTemp] = useState<number>(0);
 
     useEffect(() => {
         const loadRecipe = async () => {
-            if (!id) return;
+            if (!slug) return;
 
-            const cachedRecipe = getLocalStorage(`recipe_${id}`);
+            const cachedRecipe = getLocalStorage(`recipe_${slug}`);
             if (cachedRecipe) {
                 setRecipeState(JSON.parse(cachedRecipe));
                 setIsLoading(false);
             }
 
             try {
-                const freshRecipe = await client.api.GetRecipe(id);
+                const freshRecipe = await client.api.GetRecipe(slug);
                 setRecipeState(freshRecipe);
-                setLocalStorage(`recipe_${id}`, JSON.stringify(freshRecipe));
+                setLocalStorage(`recipe_${slug}`, JSON.stringify(freshRecipe));
             } catch (err) {
                 console.error(err);
             }
             setIsLoading(false);
+
         };
 
         loadRecipe();
-    }, [id]);
+    }, [slug]);
 
     const setRecipeState = (recipeResponse: api.Recipe) => {
+        setRecipeId(recipeResponse.id);
         setRecipeTitle(recipeResponse.title);
+        setRecipeSlug(recipeResponse.slug);
         setTags(recipeResponse.tags ?? []);
         setIngredients(recipeResponse.ingredients);
         setInstructions(recipeResponse.instructions);
+        setNotes(recipeResponse.notes);
         setCookTemp(recipeResponse.cook_temp_deg_f);
         setCookTime(recipeResponse.cook_time_minutes);
     }
 
     const handleBack = async () => {
-        navigate(`/my-recipe-app/recipes/` + id);
+        navigate(`/my-recipe-app/recipes/` + slug);
     }
 
     const handleTitleChange = (event: { target: { value: any; }; }) => {
         setRecipeTitle(event.target.value);
     }
+
+    const handleSlugInput = async (event: React.FocusEvent<HTMLInputElement> | React.ChangeEvent<HTMLInputElement>) => {
+        const slugVal = event.target.value;
+        
+        setSlugError("");
+        setRecipeSlug(slugVal);
+
+        // Only check if the event is a blur and the slug has changed
+        if (event.type === "blur" && slugVal !== slug) {
+            const slugPattern = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+            let isValidSlug = slugPattern.test(slugVal);
+            if (!isValidSlug) {
+                setSlugError(`Please only use lowercase letters and numbers separated by hyphens.`)
+                return;
+            }
+
+            try {
+                const availableResp = await client.api.CheckIfSlugIsAvailable({ slug: slugVal });
+                if(!availableResp.available) {
+                    setSlugError(`${slugVal} is already in use`)
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    };
 
     const handleCookTimeChange = (event: { target: { value: any; }; }) => {
         setCookTime(Number(event.target.value));
@@ -98,26 +134,29 @@ function EditRecipe() {
             setTags(filteredTags);
 
             await client.api.SaveRecipe({
-                id: id || uuidv4(),
+                id: recipeId || uuidv4(),
+                slug: recipeSlug,
                 title: recipeTitle,
                 instructions: instructions,
                 ingredients: ingredients,
+                notes: notes,
                 cook_temp_deg_f: cookTemp,
                 cook_time_minutes: cookTime,
                 tags: filteredTags,
             });
+            navigate(`/my-recipe-app/recipes/` + recipeSlug);
         } catch (err) {
             console.error(err);
         }
     };
 
     const deleteRecipe = async () => {
-        if (!id) {
+        if (!recipeId) {
             return;
         }
 
         try {
-            await client.api.DeleteRecipe(id)
+            await client.api.DeleteRecipe(recipeId)
             navigate(`/my-recipe-app/recipes/`);
         } catch (err) {
             console.error(err)
@@ -133,7 +172,7 @@ function EditRecipe() {
                     <div className="text-2xl font-semibold">Edit Recipe</div>
                 </div>
                 <div className="flex gap-2">
-                    <Button size="icon" variant="ghost" onClick={saveRecipe}><Save /></Button>
+                    <Button size="icon" variant="ghost" disabled={slugError.length > 0} onClick={saveRecipe}><Save /></Button>
                 </div>
             </div>
             <Separator />
@@ -147,6 +186,22 @@ function EditRecipe() {
                             className="mt-2 h-12 text-2xl"
                             value={recipeTitle}
                             onChange={handleTitleChange}></Input>
+                    </div>
+
+                    <div className="p-4 pt-0">
+                        <Label htmlFor="title" className="text-2xl font-semibold">URL Segment (ex. /recipe-name)</Label>
+                        <Input
+                            id="title"
+                            className="mt-2 h-12 text-2xl"
+                            value={recipeSlug}
+                            onChange={handleSlugInput}
+                            onBlur={handleSlugInput}></Input>
+                        {slugError.length > 0 && (
+                            <div className="flex gap-4 items-center pt-2">
+                                <TriangleAlert />
+                                <div className="text-xl">{slugError}</div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="p-4 pt-0">
@@ -207,9 +262,48 @@ function EditRecipe() {
                         </div>
                     </div>
 
-                    <div className="flex p-4 pt-0 justify-center">
+                    <div className="p-4 py-0">
+                        <Label className="text-2xl font-semibold">Notes</Label>
+                        <div className="ProseMirrorEdit text-2xl pt-2">
+                            <MilkdownProvider>
+                                <MarkdownEditor content={notes} setContent={setNotes} isEditable={true} />
+                            </MilkdownProvider>
+                        </div>
+                    </div>
+
+                    <Separator className="my-16 mx-4" />
+
+                    <div className="px-4 flex flex-row gap-2 items-center justify-center">
+                        <MoveDown />
+                        <div className="text-3xl font-semibold">DANGER ZONE</div>
+                        <MoveDown />
+                    </div>
+
+
+                    <div className="flex p-4 py-16 justify-center">
                         <div className="flex justify-center">
-                            <Button variant="destructive" onClick={deleteRecipe}><Trash className="mr-2"></Trash> Delete Recipe</Button>
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="destructive"><Trash className="mr-2"></Trash> Delete Recipe</Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle className="text-2xl">Are you absolutely sure?</AlertDialogTitle>
+                                        <AlertDialogDescription className="text-xl">
+                                            This action cannot be undone. This will permanently delete your recipe.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            className={cn(buttonVariants({ variant: "destructive" }))}
+                                            onClick={deleteRecipe}>
+                                            Confirm
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+
                         </div>
                     </div>
                 </ScrollArea>

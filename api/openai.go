@@ -82,9 +82,9 @@ const promptBase = `
 
 Preserve as much of the original text of the recipe as possible except where it violates these formatting guidelines.
 
-Use **bold** for emphasis where indicated by the recipe image
+Use **bold** for emphasis where applicable
 
-Fully write out fractions(e.g., 1/2 instead of ½)
+Fully write out fractions using digits and slashes (e.g., 1/2 instead of ½)
 
 Ingredients: Formatted in Markdown as one or more unordered lists (some recipes have multiple ingredient lists)
 Each ingredient should:
@@ -95,6 +95,8 @@ Instructions: Formatted in Markdown as one or more ordered lists (some recipes h
 Each instruction should:
 Begin with an incrementing number followed by a period and a space (e.g., '1. ')
 End with a newline (press 'Enter' after each instruction)
+
+Notes: Formatted in Markdown when present (not every recipe has notes)
 
 Tags: Assign a single tag from the following list, if relevant: [Bread, Breakfast, Dessert, Dinner, Dressing, Mix, Snack]. If none apply, leave the tag field empty.`
 
@@ -171,9 +173,6 @@ func constructOpenAIRequestBody(messagesContent []Content) OpenAIRequest {
 				Schema: Schema{
 					Type: "object",
 					Properties: map[string]Property{
-						"id": {
-							Type: "string",
-						},
 						"title": {
 							Type: "string",
 						},
@@ -181,6 +180,9 @@ func constructOpenAIRequestBody(messagesContent []Content) OpenAIRequest {
 							Type: "string",
 						},
 						"instructions": {
+							Type: "string",
+						},
+						"notes": {
 							Type: "string",
 						},
 						"cook_temp_deg_f": {
@@ -196,7 +198,7 @@ func constructOpenAIRequestBody(messagesContent []Content) OpenAIRequest {
 							},
 						},
 					},
-					Required:             []string{"id", "title", "ingredients", "instructions", "cook_temp_deg_f", "cook_time_minutes", "tags"},
+					Required:             []string{"title", "ingredients", "instructions", "notes", "cook_temp_deg_f", "cook_time_minutes", "tags"},
 					AdditionalProperties: false,
 				},
 				Strict: true,
