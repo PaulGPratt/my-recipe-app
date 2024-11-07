@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 import Client, { Environment, Local, api } from "../client";
-import { Button } from "../components/ui/button";
+import { Button, buttonVariants } from "../components/ui/button";
 import { ArrowLeft, Flame, MoveDown, Plus, Save, Timer, Trash } from "lucide-react";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import { getLocalStorage, setLocalStorage } from "../utils/localStorage";
 import { ScrollArea } from "../components/ui/scroll-area";
 import { Separator } from "../components/ui/separator";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog";
+import { cn } from "../lib/utils";
 
 const getRequestClient = () => {
     return import.meta.env.DEV
@@ -53,7 +55,7 @@ function EditRecipe() {
                 console.error(err);
             }
             setIsLoading(false);
-            
+
         };
 
         loadRecipe();
@@ -250,7 +252,28 @@ function EditRecipe() {
 
                     <div className="flex p-4 py-16 justify-center">
                         <div className="flex justify-center">
-                            <Button variant="destructive" onClick={deleteRecipe}><Trash className="mr-2"></Trash> Delete Recipe</Button>
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="destructive"><Trash className="mr-2"></Trash> Delete Recipe</Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle className="text-2xl">Are you absolutely sure?</AlertDialogTitle>
+                                        <AlertDialogDescription className="text-xl">
+                                            This action cannot be undone. This will permanently delete your recipe.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            className={cn(buttonVariants({ variant: "destructive" }))}
+                                            onClick={deleteRecipe}>
+                                                Confirm
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+
                         </div>
                     </div>
                 </ScrollArea>
