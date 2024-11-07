@@ -9,6 +9,7 @@ import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { setLocalStorage, getLocalStorage } from '../utils/localStorage';
+import LoginStatus from "./login-status";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -140,6 +141,7 @@ function Recipes() {
   return (
     <div className="h-full mx-auto max-w-4xl flex flex-col ">
       <TopNav className="hidden"></TopNav>
+      <LoginStatus />
 
       <div className="flex p-4 pb-0 justify-between">
         <div className="flex gap-4 items-center">

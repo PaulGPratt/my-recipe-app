@@ -4,6 +4,7 @@ import {
   createBrowserRouter,
   RouterProvider,
   Navigate,
+  redirect,
 } from "react-router-dom";
 import Recipe from "./routes/recipe";
 import Recipes from "./routes/recipes";
@@ -13,6 +14,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import Plan from "./routes/plan";
 import Upload from "./routes/upload";
 import EditRecipe from "./routes/edit-recipe";
+import { Auth0Provider } from "./lib/auth";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +40,55 @@ const router = createBrowserRouter([
   {
     path: "/upload",
     element: <Upload />,
+  },
+  {
+    // Login route
+    path: "login",
+    loader: async ({ request }) => {
+      const url = new URL(request.url);
+      const searchParams = new URLSearchParams(url.search);
+      const returnToURL = searchParams.get("returnTo") ?? "/";
+
+      if (Auth0Provider.isAuthenticated()) return redirect(returnToURL);
+
+      try {
+        const returnURL = await Auth0Provider.login(returnToURL);
+        return redirect(returnURL);
+      } catch (error) {
+        throw new Error("Login failed");
+      }
+    },
+  },
+  {
+    // Callback route, redirected to from Auth0 after login
+    path: "callback",
+    loader: async ({ request }) => {
+      const url = new URL(request.url);
+      const searchParams = new URLSearchParams(url.search);
+      const state = searchParams.get("state");
+      const code = searchParams.get("code");
+
+      if (!state || !code) throw new Error("Login failed");
+
+      try {
+        const redirectURL = await Auth0Provider.validate(state, code);
+        return redirect(redirectURL);
+      } catch (error) {
+        throw new Error("Login failed");
+      }
+    },
+  },
+  {
+    // Logout route
+    path: "logout",
+    loader: async () => {
+      try {
+        const redirectURL = await Auth0Provider.logout();
+        return redirect(redirectURL);
+      } catch (error) {
+        throw new Error("Logout failed");
+      }
+    },
   },
 ]);
 
