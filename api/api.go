@@ -106,7 +106,7 @@ func SaveRecipe(ctx context.Context, recipe *Recipe) (*Recipe, error) {
 		INSERT INTO recipe (id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		ON CONFLICT (id) DO UPDATE SET slug=$2, title=$3, ingredients=$4, instructions=$5, notes=$6, cook_temp_deg_f=$7, cook_time_minutes=$8, tags=$9
-	`, recipe.Id, recipe.Title, recipe.Ingredients, recipe.Instructions, recipe.CookTempDegF, recipe.CookTimeMinutes, recipe.Tags)
+	`, recipe.Id, recipe.Slug, recipe.Title, recipe.Ingredients, recipe.Instructions, recipe.Notes, recipe.CookTempDegF, recipe.CookTimeMinutes, recipe.Tags)
 
 	// If there was an error saving to the database, then we return that error.
 	if err != nil {

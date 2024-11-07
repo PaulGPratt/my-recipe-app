@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 import Client, { Environment, Local, api } from "../client";
 import { Button } from "../components/ui/button";
-import { ArrowLeft, Flame, Plus, Save, Timer, Trash } from "lucide-react";
+import { ArrowLeft, Flame, MoveDown, Plus, Save, Timer, Trash } from "lucide-react";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { MilkdownProvider } from "@milkdown/react";
@@ -26,9 +26,11 @@ function EditRecipe() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [recipeTitle, setRecipeTitle] = useState<string>("");
+    const [slug, setSlug] = useState<string>("");
     const [tags, setTags] = useState<string[]>([]);
     const [ingredients, setIngredients] = useState<string>("");
     const [instructions, setInstructions] = useState<string>("");
+    const [notes, setNotes] = useState<string>("");
     const [cookTime, setCookTime] = useState<number>(0);
     const [cookTemp, setCookTemp] = useState<number>(0);
 
@@ -57,9 +59,11 @@ function EditRecipe() {
 
     const setRecipeState = (recipeResponse: api.Recipe) => {
         setRecipeTitle(recipeResponse.title);
+        setSlug(recipeResponse.slug);
         setTags(recipeResponse.tags ?? []);
         setIngredients(recipeResponse.ingredients);
         setInstructions(recipeResponse.instructions);
+        setNotes(recipeResponse.notes);
         setCookTemp(recipeResponse.cook_temp_deg_f);
         setCookTime(recipeResponse.cook_time_minutes);
     }
@@ -70,6 +74,10 @@ function EditRecipe() {
 
     const handleTitleChange = (event: { target: { value: any; }; }) => {
         setRecipeTitle(event.target.value);
+    }
+
+    const handleSlugChange = (event: { target: { value: any; }; }) => {
+        setSlug(event.target.value);
     }
 
     const handleCookTimeChange = (event: { target: { value: any; }; }) => {
@@ -99,9 +107,11 @@ function EditRecipe() {
 
             await client.api.SaveRecipe({
                 id: id || uuidv4(),
+                slug: slug,
                 title: recipeTitle,
                 instructions: instructions,
                 ingredients: ingredients,
+                notes: notes,
                 cook_temp_deg_f: cookTemp,
                 cook_time_minutes: cookTime,
                 tags: filteredTags,
@@ -147,6 +157,15 @@ function EditRecipe() {
                             className="mt-2 h-12 text-2xl"
                             value={recipeTitle}
                             onChange={handleTitleChange}></Input>
+                    </div>
+
+                    <div className="p-4 pt-0">
+                        <Label htmlFor="title" className="text-2xl font-semibold">Link Name (ex. /recipe-name)</Label>
+                        <Input
+                            id="title"
+                            className="mt-2 h-12 text-2xl"
+                            value={slug}
+                            onChange={handleSlugChange}></Input>
                     </div>
 
                     <div className="p-4 pt-0">
@@ -207,7 +226,25 @@ function EditRecipe() {
                         </div>
                     </div>
 
-                    <div className="flex p-4 pt-0 justify-center">
+                    <div className="p-4 py-0">
+                        <Label className="text-2xl font-semibold">Notes</Label>
+                        <div className="ProseMirrorEdit text-2xl pt-2">
+                            <MilkdownProvider>
+                                <MarkdownEditor content={notes} setContent={setNotes} isEditable={true} />
+                            </MilkdownProvider>
+                        </div>
+                    </div>
+
+                    <Separator className="my-16 mx-4" />
+
+                    <div className="px-4 flex flex-row gap-2 items-center justify-center">
+                        <MoveDown />
+                        <div className="text-3xl font-semibold">DANGER ZONE</div>
+                        <MoveDown />
+                    </div>
+
+
+                    <div className="flex p-4 py-16 justify-center">
                         <div className="flex justify-center">
                             <Button variant="destructive" onClick={deleteRecipe}><Trash className="mr-2"></Trash> Delete Recipe</Button>
                         </div>

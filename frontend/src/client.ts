@@ -81,9 +81,11 @@ export namespace api {
 
     export interface Recipe {
         id: string
+        slug: string
         title: string
         ingredients: string
         instructions: string
+        notes: string
         "cook_temp_deg_f": number
         "cook_time_minutes": number
         tags: string[]
@@ -91,6 +93,7 @@ export namespace api {
 
     export interface RecipeCard {
         id: string
+        slug: string
         title: string
         tags: string[]
     }

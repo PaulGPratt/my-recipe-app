@@ -5,9 +5,7 @@ import { listener, listenerCtx } from "@milkdown/plugin-listener";
 import { commonmark } from "@milkdown/preset-commonmark";
 import { history } from "@milkdown/plugin-history";
 
-const defaultContent = `
-- 
-`;
+const defaultContent = ``;
 
 const MarkdownEditor: FC<{
   content: string | null;
