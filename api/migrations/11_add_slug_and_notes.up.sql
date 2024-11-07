@@ -1,6 +1,6 @@
 ALTER TABLE recipe
 ADD COLUMN slug TEXT,
-ADD COLUMN note TEXT;
+ADD COLUMN notes TEXT;
 
 CREATE UNIQUE INDEX idx_recipe_slug ON recipe (slug);
 
