@@ -28,9 +28,9 @@ function LoginStatus() {
   if (profile) {
     return (
       <div className="authStatus">
-        <img src={profile.picture} />
+        <div>Given Name: {profile.given_name}</div>
         <fetcher.Form method="GET" action="/logout">
-          <button type="submit">Sign out {profile.email}</button>
+          <button type="submit">Sign out {profile.username}</button>
         </fetcher.Form>
       </div>
     );

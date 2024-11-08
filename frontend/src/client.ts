@@ -205,8 +205,10 @@ export namespace auth {
     }
 
     export interface ProfileData {
+        "user_id": string
+        username: string
         email: string
-        picture: string
+        "given_name": string
     }
 
     export class ServiceClient {

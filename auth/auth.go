@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 
 	"encore.dev/beta/auth"
@@ -125,8 +126,8 @@ func (s *Service) Logout(ctx context.Context) (*LogoutResponse, error) {
 }
 
 type ProfileData struct {
-	Email   string `json:"email"`
-	Picture string `json:"picture"`
+	Email     string `json:"email"`
+	GivenName string `json:"given_name"`
 }
 
 // The `encore:authhandler` annotation tells Encore to run this function for all
@@ -158,14 +159,17 @@ func (s *Service) AuthHandler(
 		}
 	}
 
+	uid := auth.UID(profile["sub"].(string))
+	fmt.Printf("UID: %+v\n", uid)
+
 	// Extract profile data returned from the identity provider.
 	// auth0.com/docs/manage-users/user-accounts/user-profiles/user-profile-structure
 	profileData := &ProfileData{
-		Email:   profile["email"].(string),
-		Picture: profile["picture"].(string),
+		Email:     profile["email"].(string),
+		GivenName: profile["given_name"].(string),
 	}
 
-	return auth.UID(profile["sub"].(string)), profileData, nil
+	return uid, profileData, nil
 }
 
 // Endpoints annotated with `auth` are public and requires authentication
