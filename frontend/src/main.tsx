@@ -14,8 +14,9 @@ import Plan from "./routes/plan";
 import Upload from "./routes/upload";
 import EditRecipe from "./routes/edit-recipe";
 import { FirebaseProvider } from "./lib/firebase";
-import Login from "./components/login";
-import Signup from "./components/signup";
+import Login from "./routes/login";
+import Signup from "./routes/signup";
+import Profile from "./routes/profile";
 
 const router = createBrowserRouter([
   {
@@ -43,12 +44,16 @@ const router = createBrowserRouter([
     element: <Upload />,
   },
   {
-    path: "login",
+    path: "/login",
     element: <Login />,
   },
   {
-    path: "signup",
+    path: "/signup",
     element: <Signup />,
+  },
+  {
+    path: "/profile/:id",
+    element: <Profile />,
   },
 ]);
 

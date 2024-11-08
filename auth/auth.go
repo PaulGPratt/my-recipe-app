@@ -24,10 +24,6 @@ var (
 type UserData struct {
 	// Email is the user's email.
 	Email string
-	// Name is the user's name.
-	Name string
-	// Picture is the user's picture URL.
-	Picture string
 }
 
 // ValidateToken validates an auth token against Firebase Auth.
@@ -43,14 +39,10 @@ func ValidateToken(ctx context.Context, token string) (auth.UID, *UserData, erro
 	}
 
 	email, _ := tok.Claims["email"].(string)
-	name, _ := tok.Claims["name"].(string)
-	picture, _ := tok.Claims["picture"].(string)
 	uid := auth.UID(tok.UID)
 
 	usr := &UserData{
-		Email:   email,
-		Name:    name,
-		Picture: picture,
+		Email: email,
 	}
 	return uid, usr, nil
 }

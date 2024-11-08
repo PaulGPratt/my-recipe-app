@@ -3,9 +3,11 @@ package api
 import (
 	"context"
 	"fmt"
+	"log"
 	"regexp"
 	"strings"
 
+	"encore.dev/beta/auth"
 	"encore.dev/storage/sqldb"
 	"encore.dev/types/uuid"
 )
@@ -60,6 +62,39 @@ type IsSlugAvailableRequest struct {
 }
 type IsSlugAvailableResponse struct {
 	Available bool `json:"available"`
+}
+
+type Profile struct {
+	Id       string `json:"id"`
+	Email    string `json:"email"`
+	Username string `json:"username"`
+}
+
+//encore:api auth method=GET path=/profile/:id
+func GetProfile(ctx context.Context, id string) (*Profile, error) {
+
+	authData := auth.Data()
+	log.Printf("authData: %v", authData)
+
+	authResult, authBool := auth.UserID()
+	if !authBool || string(authResult) != id {
+		err := fmt.Errorf("not authorized")
+		return nil, err
+	}
+
+	pro := &Profile{Id: id}
+
+	err := db.QueryRow(ctx, `
+	SELECT email, username
+	FROM profile
+	WHERE id = $1
+	`, id).Scan(&pro.Email, &pro.Username)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return pro, nil
 }
 
 //encore:api public method=GET path=/api/recipes/:slug

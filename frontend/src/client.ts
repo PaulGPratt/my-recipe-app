@@ -112,6 +112,12 @@ export namespace api {
         available: boolean
     }
 
+    export interface Profile {
+        id: string
+        email: string
+        username: string
+    }
+
     export interface Recipe {
         id: string
         slug: string
@@ -162,6 +168,12 @@ export namespace api {
             // Now make the actual call to the API
             const resp = await this.baseClient.callAPI("POST", `/recipes/generate-from-text`, JSON.stringify(params))
             return await resp.json() as Recipe
+        }
+
+        public async GetProfile(id: string): Promise<Profile> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callAPI("GET", `/profile/${encodeURIComponent(id)}`)
+            return await resp.json() as Profile
         }
 
         public async GetRecipe(slug: string): Promise<Recipe> {

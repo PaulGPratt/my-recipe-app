@@ -2,9 +2,9 @@ import React, { useContext, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { FirebaseContext } from "../lib/firebase.tsx";
-import { Label } from "./ui/label.tsx";
-import { Input } from "./ui/input.tsx";
-import { Button } from "./ui/button.tsx";
+import { Label } from "../components/ui/label.tsx";
+import { Input } from "../components/ui/input.tsx";
+import { Button } from "../components/ui/button.tsx";
 
 function Login () {
   const { auth } = useContext(FirebaseContext);
