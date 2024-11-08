@@ -34,12 +34,28 @@ export default class Client {
 
 
     /**
+     * @deprecated This constructor is deprecated, and you should move to using BaseURL with an Options object
+     */
+    constructor(target: string, token?: string)
+
+    /**
      * Creates a Client for calling the public and authenticated APIs of your Encore application.
      *
      * @param target  The target which the client should be configured to use. See Local and Environment for options.
      * @param options Options for the client
      */
-    constructor(target: BaseURL, options?: ClientOptions) {
+    constructor(target: BaseURL, options?: ClientOptions)
+    constructor(target: string | BaseURL = "prod", options?: string | ClientOptions) {
+
+        // Convert the old constructor parameters to a BaseURL object and a ClientOptions object
+        if (!target.startsWith("http://") && !target.startsWith("https://")) {
+            target = Environment(target)
+        }
+
+        if (typeof options === "string") {
+            options = { auth: options }
+        }
+
         const base = new BaseClient(target, options ?? {})
         this.api = new api.ServiceClient(base)
     }
@@ -58,6 +74,15 @@ export interface ClientOptions {
 
     /** Default RequestInit to be used for the client */
     requestInit?: Omit<RequestInit, "headers"> & { headers?: Record<string, string> }
+
+    /**
+     * Allows you to set the auth token to be used for each request
+     * either by passing in a static token string or by passing in a function
+     * which returns the auth token.
+     *
+     * These tokens will be sent as bearer tokens in the Authorization header.
+     */
+    auth?: string | AuthDataGenerator
 }
 
 export namespace api {
@@ -363,6 +388,11 @@ type CallParameters = Omit<RequestInit, "method" | "body" | "headers"> & {
     query?: Record<string, string | string[]>
 }
 
+// AuthDataGenerator is a function that returns a new instance of the authentication data required by this API
+export type AuthDataGenerator = () =>
+  | string
+  | Promise<string | undefined>
+  | undefined;
 
 // A fetcher is the prototype for the inbuilt Fetch function
 export type Fetcher = typeof fetch;
@@ -374,6 +404,7 @@ class BaseClient {
     readonly fetcher: Fetcher
     readonly headers: Record<string, string>
     readonly requestInit: Omit<RequestInit, "headers"> & { headers?: Record<string, string> }
+    readonly authGenerator?: AuthDataGenerator
 
     constructor(baseURL: string, options: ClientOptions) {
         this.baseURL = baseURL
@@ -395,9 +426,40 @@ class BaseClient {
         } else {
             this.fetcher = boundFetch
         }
+
+        // Setup an authentication data generator using the auth data token option
+        if (options.auth !== undefined) {
+            const auth = options.auth
+            if (typeof auth === "function") {
+                this.authGenerator = auth
+            } else {
+                this.authGenerator = () => auth
+            }
+        }
     }
 
     async getAuthData(): Promise<CallParameters | undefined> {
+        let authData: string | undefined;
+
+        // If authorization data generator is present, call it and add the returned data to the request
+        if (this.authGenerator) {
+            const mayBePromise = this.authGenerator();
+            if (mayBePromise instanceof Promise) {
+                authData = await mayBePromise;
+            } else {
+                authData = mayBePromise;
+            }
+        }
+
+        if (authData) {
+            const data: CallParameters = {};
+
+            data.headers = {};
+            data.headers["Authorization"] = "Bearer " + authData;
+
+            return data;
+        }
+
         return undefined;
     }
 

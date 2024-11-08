@@ -13,6 +13,9 @@ import { ThemeProvider } from "./components/theme-provider";
 import Plan from "./routes/plan";
 import Upload from "./routes/upload";
 import EditRecipe from "./routes/edit-recipe";
+import { FirebaseProvider } from "./lib/firebase";
+import Login from "./components/login";
+import Signup from "./components/signup";
 
 const router = createBrowserRouter([
   {
@@ -39,12 +42,22 @@ const router = createBrowserRouter([
     path: "/upload",
     element: <Upload />,
   },
+  {
+    path: "login",
+    element: <Login />,
+  },
+  {
+    path: "signup",
+    element: <Signup />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <RouterProvider router={router} />
+      <FirebaseProvider>
+        <RouterProvider router={router} />
+      </FirebaseProvider>
       <Toaster />
     </ThemeProvider>
   </React.StrictMode>
