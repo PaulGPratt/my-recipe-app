@@ -156,7 +156,7 @@ function EditRecipe() {
     }
 
     return (
-        <div className="h-full mx-auto max-w-4xl flex flex-col">
+        <div className="h-screen mx-auto max-w-4xl flex flex-col">
 
             <div className="flex p-4 justify-between">
                 <div className="flex gap-4 items-center">
