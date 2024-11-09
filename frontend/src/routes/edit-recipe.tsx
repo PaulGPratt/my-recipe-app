@@ -164,7 +164,7 @@ function EditRecipe() {
                     <div className="text-2xl font-semibold">Edit Recipe</div>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="secondary" disabled={slugError.length > 0} onClick={saveRecipe}>Save Changes</Button>
+                    <Button size="header" variant="secondary" disabled={slugError.length > 0} onClick={saveRecipe}>Save Changes</Button>
                 </div>
             </div>
             <Separator />
