@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 import Client, { Environment, Local, api } from "../client";
 import { Button, buttonVariants } from "../components/ui/button";
-import { ArrowLeft, Flame, MoveDown, Plus, Save, Timer, Trash, TriangleAlert } from "lucide-react";
+import { ArrowLeft, Flame, MoveDown, Plus, Timer, Trash, TriangleAlert } from "lucide-react";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { MilkdownProvider } from "@milkdown/react";
@@ -164,7 +164,7 @@ function EditRecipe() {
                     <div className="text-2xl font-semibold">Edit Recipe</div>
                 </div>
                 <div className="flex gap-2">
-                    <Button size="icon" variant="ghost" disabled={slugError.length > 0} onClick={saveRecipe}><Save /></Button>
+                    <Button variant="secondary" disabled={slugError.length > 0} onClick={saveRecipe}>Save Changes</Button>
                 </div>
             </div>
             <Separator />
