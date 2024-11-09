@@ -6,7 +6,6 @@ import { MilkdownProvider } from "@milkdown/react";
 import { ArrowLeft, Flame, Pencil, Timer } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
-import { setLocalStorage, getLocalStorage } from '../utils/localStorage';
 import { ScrollArea } from "../components/ui/scroll-area";
 
 /**
@@ -40,16 +39,9 @@ function Recipe() {
         const loadRecipes = async () => {
             if (!slug) return;
 
-            const cachedRecipe = getLocalStorage(`recipe_${slug}`);
-            if (cachedRecipe) {
-                setRecipeState(JSON.parse(cachedRecipe));
-                setIsLoading(false);
-            }
-
             try {
                 const freshRecipe = await client.api.GetRecipe(slug);
                 setRecipeState(freshRecipe);
-                setLocalStorage(`recipe_${slug}`, JSON.stringify(freshRecipe));
             } catch (err) {
                 console.error(err);
             }

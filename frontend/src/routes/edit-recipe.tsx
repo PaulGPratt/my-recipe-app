@@ -8,7 +8,6 @@ import { Input } from "../components/ui/input";
 import { MilkdownProvider } from "@milkdown/react";
 import MarkdownEditor from "../components/markdown-editor";
 import { useEffect, useState } from "react";
-import { getLocalStorage, setLocalStorage } from "../utils/localStorage";
 import { ScrollArea } from "../components/ui/scroll-area";
 import { Separator } from "../components/ui/separator";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog";
@@ -42,16 +41,9 @@ function EditRecipe() {
         const loadRecipe = async () => {
             if (!slug) return;
 
-            const cachedRecipe = getLocalStorage(`recipe_${slug}`);
-            if (cachedRecipe) {
-                setRecipeState(JSON.parse(cachedRecipe));
-                setIsLoading(false);
-            }
-
             try {
                 const freshRecipe = await client.api.GetRecipe(slug);
                 setRecipeState(freshRecipe);
-                setLocalStorage(`recipe_${slug}`, JSON.stringify(freshRecipe));
             } catch (err) {
                 console.error(err);
             }
