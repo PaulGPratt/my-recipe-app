@@ -2,13 +2,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 import Client, { Environment, Local, api } from "../client";
 import { Button, buttonVariants } from "../components/ui/button";
-import { ArrowLeft, Flame, MoveDown, Plus, Save, Timer, Trash, TriangleAlert } from "lucide-react";
+import { ArrowLeft, Flame, MoveDown, Plus, Timer, Trash, TriangleAlert } from "lucide-react";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { MilkdownProvider } from "@milkdown/react";
 import MarkdownEditor from "../components/markdown-editor";
 import { useEffect, useState } from "react";
-import { getLocalStorage, setLocalStorage } from "../utils/localStorage";
 import { ScrollArea } from "../components/ui/scroll-area";
 import { Separator } from "../components/ui/separator";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog";
@@ -42,16 +41,9 @@ function EditRecipe() {
         const loadRecipe = async () => {
             if (!slug) return;
 
-            const cachedRecipe = getLocalStorage(`recipe_${slug}`);
-            if (cachedRecipe) {
-                setRecipeState(JSON.parse(cachedRecipe));
-                setIsLoading(false);
-            }
-
             try {
                 const freshRecipe = await client.api.GetRecipe(slug);
                 setRecipeState(freshRecipe);
-                setLocalStorage(`recipe_${slug}`, JSON.stringify(freshRecipe));
             } catch (err) {
                 console.error(err);
             }
@@ -164,7 +156,7 @@ function EditRecipe() {
     }
 
     return (
-        <div className="h-full mx-auto max-w-4xl flex flex-col">
+        <div className="h-screen mx-auto max-w-4xl flex flex-col">
 
             <div className="flex p-4 justify-between">
                 <div className="flex gap-4 items-center">
@@ -172,7 +164,7 @@ function EditRecipe() {
                     <div className="text-2xl font-semibold">Edit Recipe</div>
                 </div>
                 <div className="flex gap-2">
-                    <Button size="icon" variant="ghost" disabled={slugError.length > 0} onClick={saveRecipe}><Save /></Button>
+                    <Button size="header" variant="secondary" disabled={slugError.length > 0} onClick={saveRecipe}>Save Changes</Button>
                 </div>
             </div>
             <Separator />
