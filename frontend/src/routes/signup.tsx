@@ -14,7 +14,7 @@ function Signup () {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [notice, setNotice] = useState("");
 
-  const signupWithUsernameAndPassword = async (
+  const signupWithEmailAndPassword = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     e.preventDefault();
@@ -81,7 +81,7 @@ function Signup () {
         <div className="p-4 pt-0 flex gap-2">
           <Button
             type="submit"
-            onClick={(e) => signupWithUsernameAndPassword(e)}
+            onClick={(e) => signupWithEmailAndPassword(e)}
           >
             Sign up
           </Button>

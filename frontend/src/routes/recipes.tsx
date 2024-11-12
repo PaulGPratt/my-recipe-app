@@ -1,17 +1,16 @@
 import { SetStateAction, useContext, useEffect, useState } from "react";
 import Client, { Environment, Local, api } from "../client";
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search, Plus, User } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { Input } from "../components/ui/input";
 import RecipeCardButton from "../components/recipe-card-button";
 import TopNav from "../components/top-nav";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { setLocalStorage, getLocalStorage } from '../utils/localStorage';
 import { FirebaseContext } from "../lib/firebase";
-import { signOut } from "firebase/auth";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
+import ProfileMenu from "../components/profile-menu";
 
 /**
  * Returns the Encore request client for either the local or staging environment.
@@ -142,52 +141,12 @@ function Recipes() {
   const { auth } = useContext(FirebaseContext);
   const user = auth?.currentUser;
 
-  const logoutUser = async () => {
-    if (auth) {
-      await signOut(auth);
-      navigate("/");
-    }
-  }
-
-  const openLogin = () => {
-    navigate("/login");
-  }
-
-  const openSignUp = () => {
-    navigate("/signup");
-  }
-
-
   return (
     <div className="h-full mx-auto max-w-4xl flex flex-col ">
       <TopNav className="hidden"></TopNav>
       <div className="flex p-4 pb-0 justify-between">
         <div className="flex gap-4 items-center">
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="default" className="text-2xl font-bold"><User /></Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              {user?.uid ? (
-                <DropdownMenuItem onClick={logoutUser} className="text-2xl">
-                  Logout
-                </DropdownMenuItem>
-
-              ) : (
-                <>
-                <DropdownMenuItem onClick={openLogin} className="text-2xl">
-                  Login
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={openSignUp} className="text-2xl">
-                  Sign Up
-                </DropdownMenuItem>
-                </>
-              )}
-
-            </DropdownMenuContent>
-          </DropdownMenu>
-
+          <ProfileMenu></ProfileMenu>
           <div className="text-2xl font-semibold">Recipes</div>
         </div>
         <div className="flex gap-2">

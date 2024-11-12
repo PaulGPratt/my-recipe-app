@@ -112,6 +112,14 @@ export namespace api {
         available: boolean
     }
 
+    export interface IsUsernameAvailableRequest {
+        username: string
+    }
+
+    export interface IsUsernameAvailableResponse {
+        available: boolean
+    }
+
     export interface Profile {
         id: string
         email: string
@@ -154,6 +162,12 @@ export namespace api {
             return await resp.json() as IsSlugAvailableResponse
         }
 
+        public async CheckIfUsernameIsAvailable(params: IsUsernameAvailableRequest): Promise<IsUsernameAvailableResponse> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callAPI("POST", `/username/available`, JSON.stringify(params))
+            return await resp.json() as IsUsernameAvailableResponse
+        }
+
         public async DeleteRecipe(id: string): Promise<void> {
             await this.baseClient.callAPI("DELETE", `/api/recipes/${encodeURIComponent(id)}`)
         }
@@ -168,6 +182,12 @@ export namespace api {
             // Now make the actual call to the API
             const resp = await this.baseClient.callAPI("POST", `/recipes/generate-from-text`, JSON.stringify(params))
             return await resp.json() as Recipe
+        }
+
+        public async GetMyProfile(): Promise<Profile> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callAPI("GET", `/profile`)
+            return await resp.json() as Profile
         }
 
         public async GetProfile(id: string): Promise<Profile> {
@@ -186,6 +206,12 @@ export namespace api {
             // Now make the actual call to the API
             const resp = await this.baseClient.callAPI("GET", `/api/recipes`)
             return await resp.json() as RecipeListResponse
+        }
+
+        public async SaveProfile(params: Profile): Promise<Profile> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callAPI("POST", `/profile`, JSON.stringify(params))
+            return await resp.json() as Profile
         }
 
         public async SaveRecipe(params: Recipe): Promise<Recipe> {

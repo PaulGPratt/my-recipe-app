@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"fmt"
-	"log"
 	"regexp"
 	"strings"
 
@@ -64,6 +63,13 @@ type IsSlugAvailableResponse struct {
 	Available bool `json:"available"`
 }
 
+type IsUsernameAvailableRequest struct {
+	Username string `json:"username"`
+}
+type IsUsernameAvailableResponse struct {
+	Available bool `json:"available"`
+}
+
 type Profile struct {
 	Id       string `json:"id"`
 	Email    string `json:"email"`
@@ -72,10 +78,6 @@ type Profile struct {
 
 //encore:api auth method=GET path=/profile/:id
 func GetProfile(ctx context.Context, id string) (*Profile, error) {
-
-	authData := auth.Data()
-	log.Printf("authData: %v", authData)
-
 	authResult, authBool := auth.UserID()
 	if !authBool || string(authResult) != id {
 		err := fmt.Errorf("not authorized")
@@ -95,6 +97,81 @@ func GetProfile(ctx context.Context, id string) (*Profile, error) {
 	}
 
 	return pro, nil
+}
+
+//encore:api auth method=GET path=/profile
+func GetMyProfile(ctx context.Context) (*Profile, error) {
+	authResult, authBool := auth.UserID()
+	if !authBool {
+		err := fmt.Errorf("not authorized")
+		return nil, err
+	}
+
+	pro := &Profile{Id: string(authResult)}
+
+	err := db.QueryRow(ctx, `
+	SELECT email, username
+	FROM profile
+	WHERE id = $1
+	`, pro.Id).Scan(&pro.Email, &pro.Username)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return pro, nil
+
+}
+
+//encore:api auth method=POST path=/profile
+func SaveProfile(ctx context.Context, pro *Profile) (*Profile, error) {
+	authResult, authBool := auth.UserID()
+	if !authBool || string(authResult) != pro.Id {
+		err := fmt.Errorf("not authorized")
+		return nil, err
+	}
+
+	// Save the profile to the database.
+	// If the profile already exists (i.e. CONFLICT), we update the profile info.
+	_, err := db.Exec(ctx, `
+		INSERT INTO profile (id, email, username)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (id) DO UPDATE SET email=$2, username=$3
+	`, pro.Id, pro.Email, pro.Username)
+
+	// If there was an error saving to the database, then we return that error.
+	if err != nil {
+		return nil, err
+	}
+
+	return pro, nil
+}
+
+//encore:api public method=POST path=/username/available
+func CheckIfUsernameIsAvailable(ctx context.Context, req IsUsernameAvailableRequest) (IsUsernameAvailableResponse, error) {
+	exists, err := checkUsernameExists(ctx, req.Username)
+	if err != nil {
+		return IsUsernameAvailableResponse{}, err
+	}
+
+	return IsUsernameAvailableResponse{Available: !exists}, nil
+}
+
+func checkUsernameExists(ctx context.Context, username string) (bool, error) {
+	var exists bool
+	err := db.QueryRow(ctx, `
+		SELECT EXISTS (
+			SELECT 1
+			FROM profile
+			WHERE username = $1
+		)
+	`, username).Scan(&exists)
+
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
 }
 
 //encore:api public method=GET path=/api/recipes/:slug
