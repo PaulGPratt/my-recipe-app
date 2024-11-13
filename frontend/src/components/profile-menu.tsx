@@ -1,12 +1,12 @@
+import { signOut } from "firebase/auth";
 import { User } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { api } from "../client";
+import { FirebaseContext } from "../lib/firebase";
+import getRequestClient from "../lib/get-request-client";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { useContext, useEffect, useState } from "react";
-import { FirebaseContext } from "../lib/firebase";
-import { signOut } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
-import getRequestClient from "../lib/get-request-client";
-import { api } from "../client";
 
 function ProfileMenu() {
 
@@ -44,6 +44,14 @@ function ProfileMenu() {
     }
   }
 
+  const navigateToAllRecipes = async () => {
+    navigate(`/recipes`);
+  }
+
+  const navigateToMyRecipes = async () => {
+    navigate(`/recipes/${profile?.username}`);
+  }
+
   const openLogin = () => {
     navigate("/login");
   }
@@ -64,18 +72,29 @@ function ProfileMenu() {
               {profile?.username}
             </DropdownMenuLabel>
             <DropdownMenuSeparator></DropdownMenuSeparator>
+            <DropdownMenuItem onClick={navigateToMyRecipes} className="text-2xl">
+              My recipes
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={navigateToAllRecipes} className="text-2xl">
+              All recipes
+            </DropdownMenuItem>
+            <DropdownMenuSeparator></DropdownMenuSeparator>
             <DropdownMenuItem onClick={logoutUser} className="text-2xl">
-              Logout
+              Log out
             </DropdownMenuItem>
           </>
 
         ) : (
           <>
+            <DropdownMenuItem onClick={navigateToAllRecipes} className="text-2xl">
+              All Recipes
+            </DropdownMenuItem>
+            <DropdownMenuSeparator></DropdownMenuSeparator>
             <DropdownMenuItem onClick={openLogin} className="text-2xl">
-              Login
+              Log in
             </DropdownMenuItem>
             <DropdownMenuItem onClick={openSignUp} className="text-2xl">
-              Sign Up
+              Sign up
             </DropdownMenuItem>
           </>
         )}

@@ -77,7 +77,7 @@ function EditRecipe() {
     }
 
     const handleBack = async () => {
-        navigate(`/recipes/` + slug);
+        navigate(`/recipes/` + username + '/' + slug);
     }
 
     const handleTitleChange = (event: { target: { value: any; }; }) => {
@@ -151,7 +151,7 @@ function EditRecipe() {
                 cook_time_minutes: cookTime,
                 tags: filteredTags,
             });
-            navigate(`/recipes/` + recipeSlug);
+            navigate(`/recipes/` + username + '/' + recipeSlug);
         } catch (err) {
             console.error(err);
         }

@@ -29,7 +29,7 @@ function Login () {
   return (
     <div className="h-full mx-auto max-w-xl">
       <form>
-        {notice && <div role="alert">{notice}</div>}
+        {notice && <div role="alert" className="px-4 pt-6 pb-0  text-2xl">{notice}</div>}
         <div className="p-4 py-6 text-center text-4xl font-semibold">
           Log in
         </div>

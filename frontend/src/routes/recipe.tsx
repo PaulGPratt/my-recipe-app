@@ -1,7 +1,7 @@
 import { MilkdownProvider } from "@milkdown/react";
 import { ArrowLeft, Flame, Pencil, Timer } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { api } from "../client";
 import MarkdownEditor from "../components/markdown-editor";
 import { Button } from "../components/ui/button";
@@ -59,12 +59,16 @@ function Recipe() {
         setCookTime(recipeResponse.cook_time_minutes);
     }
 
+    const navigateToUsername = () => {
+        navigate(`/recipes/` + username)
+    }
+
     const handleBack = () => {
         navigate(`/recipes/`);
     };
 
     const editRecipe = async () => {
-        navigate(`/recipes/` + slug + '/edit');
+        navigate(`/recipes/` + username + '/' + slug + '/edit');
     }
 
     return (
@@ -84,6 +88,8 @@ function Recipe() {
             {!isLoading && (
                 <ScrollArea className="h-full w-full">
                     <div className="text-4xl px-4 pt-4 font-semibold text-center">{recipe?.title}</div>
+                    <div className="text-2xl px-4 pt-1 font-semibold text-center">by <Button variant="link" className="px-0" onClick={navigateToUsername}>{username}</Button></div>
+                    
                     {(tags?.length > 0) && (
                         <div className="px-4 pt-2 text-3xl flex flex-row items-center justify-center gap-x-2">
 
