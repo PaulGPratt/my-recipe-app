@@ -1,26 +1,24 @@
+import { MilkdownProvider } from "@milkdown/react";
+import { ArrowLeft, Flame, MoveDown, Plus, Timer, Trash, TriangleAlert } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
-import Client, { Environment, Local, api } from "../client";
-import { Button, buttonVariants } from "../components/ui/button";
-import { ArrowLeft, Flame, MoveDown, Plus, Timer, Trash, TriangleAlert } from "lucide-react";
-import { Label } from "../components/ui/label";
-import { Input } from "../components/ui/input";
-import { MilkdownProvider } from "@milkdown/react";
+import { api } from "../client";
 import MarkdownEditor from "../components/markdown-editor";
-import { useEffect, useState } from "react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog";
+import { Button, buttonVariants } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import { ScrollArea } from "../components/ui/scroll-area";
 import { Separator } from "../components/ui/separator";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog";
+import { FirebaseContext } from "../lib/firebase";
+import getRequestClient from "../lib/get-request-client";
 import { cn } from "../lib/utils";
 
-const getRequestClient = () => {
-    return import.meta.env.DEV
-        ? new Client(Local)
-        : new Client(Environment("staging"));
-};
-
 function EditRecipe() {
-    const client = getRequestClient();
+    const { auth } = useContext(FirebaseContext);
+    const [token, setToken] = useState<string | undefined>(undefined);
+
     const navigate = useNavigate();
 
     const { slug } = useParams();
@@ -42,6 +40,8 @@ function EditRecipe() {
             if (!slug) return;
 
             try {
+                const token = await fetchToken();
+                const client = getRequestClient(token ?? undefined);
                 const freshRecipe = await client.api.GetRecipe(slug);
                 setRecipeState(freshRecipe);
             } catch (err) {
@@ -53,6 +53,15 @@ function EditRecipe() {
 
         loadRecipe();
     }, [slug]);
+
+    const fetchToken = async () => {
+        if (!token) {
+            const newToken = await auth?.currentUser?.getIdToken();
+            setToken(newToken);
+            return newToken;
+        }
+        return token;
+    };
 
     const setRecipeState = (recipeResponse: api.Recipe) => {
         setRecipeId(recipeResponse.id);
@@ -76,7 +85,7 @@ function EditRecipe() {
 
     const handleSlugInput = async (event: React.FocusEvent<HTMLInputElement> | React.ChangeEvent<HTMLInputElement>) => {
         const slugVal = event.target.value;
-        
+
         setSlugError("");
         setRecipeSlug(slugVal);
 
@@ -90,8 +99,10 @@ function EditRecipe() {
             }
 
             try {
+                const token = await fetchToken();
+                const client = getRequestClient(token ?? undefined);
                 const availableResp = await client.api.CheckIfSlugIsAvailable({ slug: slugVal });
-                if(!availableResp.available) {
+                if (!availableResp.available) {
                     setSlugError(`${slugVal} is already in use`)
                 }
             } catch (err) {
@@ -125,6 +136,8 @@ function EditRecipe() {
             const filteredTags = tags.filter((tag) => tag != undefined && tag != null && tag != "");
             setTags(filteredTags);
 
+            const token = await fetchToken();
+            const client = getRequestClient(token ?? undefined);
             await client.api.SaveRecipe({
                 id: recipeId || uuidv4(),
                 slug: recipeSlug,
@@ -148,6 +161,8 @@ function EditRecipe() {
         }
 
         try {
+            const token = await fetchToken();
+            const client = getRequestClient(token ?? undefined);
             await client.api.DeleteRecipe(recipeId)
             navigate(`/recipes/`);
         } catch (err) {

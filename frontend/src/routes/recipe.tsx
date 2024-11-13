@@ -1,29 +1,23 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import Client, { Environment, Local, api } from "../client";
-import MarkdownEditor from "../components/markdown-editor";
 import { MilkdownProvider } from "@milkdown/react";
 import { ArrowLeft, Flame, Pencil, Timer } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { api } from "../client";
+import MarkdownEditor from "../components/markdown-editor";
 import { Button } from "../components/ui/button";
-import { Separator } from "../components/ui/separator";
 import { ScrollArea } from "../components/ui/scroll-area";
+import { Separator } from "../components/ui/separator";
+import { FirebaseContext } from "../lib/firebase";
+import getRequestClient from "../lib/get-request-client";
 
-/**
- * Returns the Encore request client for either the local or staging environment.
- * If we are running the frontend locally (dev mode) we assume that our Encore backend is also running locally
- * and make requests to that, otherwise we use the staging client.
- */
-const getRequestClient = () => {
-    return import.meta.env.DEV
-        ? new Client(Local)
-        : new Client(Environment("staging"));
-};
+
 function Recipe() {
-    const client = getRequestClient();
+
     const navigate = useNavigate();
 
     // Get the 'id' from the route parameters
     const { slug } = useParams();
+    const { auth } = useContext(FirebaseContext);
 
     const [isLoading, setIsLoading] = useState(true);
     const [recipe, setRecipe] = useState<api.Recipe>();
@@ -40,6 +34,8 @@ function Recipe() {
             if (!slug) return;
 
             try {
+                const token = await auth?.currentUser?.getIdToken();
+                const client = getRequestClient(token ?? undefined);
                 const freshRecipe = await client.api.GetRecipe(slug);
                 setRecipeState(freshRecipe);
             } catch (err) {
