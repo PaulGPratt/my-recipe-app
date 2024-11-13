@@ -1,5 +1,5 @@
 import { SetStateAction, useContext, useEffect, useState } from "react";
-import Client, { Environment, Local, api } from "../client";
+import { api } from "../client";
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search, Plus } from "lucide-react";
 import { Input } from "../components/ui/input";
@@ -11,17 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { setLocalStorage, getLocalStorage } from '../utils/localStorage';
 import { FirebaseContext } from "../lib/firebase";
 import ProfileMenu from "../components/profile-menu";
-
-/**
- * Returns the Encore request client for either the local or staging environment.
- * If we are running the frontend locally (dev mode) we assume that our Encore backend is also running locally
- * and make requests to that, otherwise we use the staging client.
- */
-const getRequestClient = () => {
-  return import.meta.env.DEV
-    ? new Client(Local)
-    : new Client(Environment("staging"));
-};
+import getRequestClient from "../lib/get-request-client";
 
 export interface TagRecipe {
   tag: string,
@@ -29,8 +19,9 @@ export interface TagRecipe {
 }
 
 function Recipes() {
-  // Get the request client to make requests to the Encore backend
-  const client = getRequestClient();
+  const { auth } = useContext(FirebaseContext);
+  const user = auth?.currentUser;
+
   const navigate = useNavigate();
 
   const [recipeList, setRecipeList] = useState<api.RecipeCard[]>([]);
@@ -65,6 +56,8 @@ function Recipes() {
       }
 
       try {
+        const token = await auth?.currentUser?.getIdToken();
+        const client = getRequestClient(token ?? undefined);
         const freshRecipeList = await client.api.GetRecipes();
         setRecipeListState(freshRecipeList);
         setLocalStorage(`recipe_list_response`, JSON.stringify(freshRecipeList));
@@ -137,9 +130,6 @@ function Recipes() {
       calculateTagRecipes();
     }
   }, [recipeList, searchQuery, activeTag]);
-
-  const { auth } = useContext(FirebaseContext);
-  const user = auth?.currentUser;
 
   return (
     <div className="h-full mx-auto max-w-4xl flex flex-col ">

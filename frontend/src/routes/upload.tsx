@@ -1,22 +1,18 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import Client, { Environment, Local, api } from "../client";
+import { api } from "../client";
 import { useNavigate } from "react-router-dom";
 import { Textarea } from "../components/ui/textarea";
 import { Separator } from "../components/ui/separator";
-
-const getRequestClient = () => {
-    return import.meta.env.DEV
-        ? new Client(Local)
-        : new Client(Environment("staging"));
-};
+import { FirebaseContext } from "../lib/firebase";
+import getRequestClient from "../lib/get-request-client";
 
 export default function Upload() {
-    const client = getRequestClient();
+    const { auth } = useContext(FirebaseContext);
     const navigate = useNavigate();
 
     const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -57,6 +53,8 @@ export default function Upload() {
     const submitImagesToApi = async () => {
         try {
             setIsUploading(true);
+            const token = await auth?.currentUser?.getIdToken();
+            const client = getRequestClient(token ?? undefined);
             const response = await client.api.GenerateFromImages({
                 files: filesData
             } as api.FileUploadRequest);
@@ -71,6 +69,8 @@ export default function Upload() {
     const submitTextToApi = async () => {
         try {
             setIsUploading(true);
+            const token = await auth?.currentUser?.getIdToken();
+            const client = getRequestClient(token ?? undefined);
             const response = await client.api.GenerateFromText({
                 text: recipeText
             } as api.GenerateFromTextRequest);

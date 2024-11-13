@@ -16,13 +16,12 @@ import getRequestClient from "../lib/get-request-client";
 import { cn } from "../lib/utils";
 
 function EditRecipe() {
-    const { auth } = useContext(FirebaseContext);
-    const [token, setToken] = useState<string | undefined>(undefined);
 
     const navigate = useNavigate();
-
+    const { auth } = useContext(FirebaseContext);
     const { slug } = useParams();
 
+    const [token, setToken] = useState<string | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(true);
     const [slugError, setSlugError] = useState<string>("");
     const [recipeId, setRecipeId] = useState<string>("");

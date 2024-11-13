@@ -10,7 +10,6 @@ import { api } from "../client";
 
 function ProfileMenu() {
 
-
   const navigate = useNavigate();
   const { auth } = useContext(FirebaseContext);
   const [profile, setProfile] = useState<api.Profile>();
@@ -18,6 +17,10 @@ function ProfileMenu() {
 
   useEffect(() => {
     const fetchMyProfile = async () => {
+      if (!auth?.currentUser) {
+        return;
+      }
+
       try {
         const token = await auth?.currentUser?.getIdToken();
         const client = getRequestClient(token ?? undefined);
