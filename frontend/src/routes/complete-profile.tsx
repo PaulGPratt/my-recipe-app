@@ -9,11 +9,11 @@ import { TriangleAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 
-function MyProfile() {
+function CompleteProfile() {
 
     const navigate = useNavigate();
     const { auth } = useContext(FirebaseContext);
-    const [profile, setProfile] = useState<api.Profile>();
+    const [_, setProfile] = useState<api.Profile>();
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [usernameError, setUsernameError] = useState<string>("");
@@ -125,4 +125,4 @@ function MyProfile() {
     )
 }
 
-export default MyProfile;
+export default CompleteProfile;

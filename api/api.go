@@ -2,6 +2,8 @@ package api
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -72,7 +74,6 @@ type IsUsernameAvailableResponse struct {
 
 type Profile struct {
 	Id       string `json:"id"`
-	Email    string `json:"email"`
 	Username string `json:"username"`
 }
 
@@ -87,10 +88,10 @@ func GetProfile(ctx context.Context, id string) (*Profile, error) {
 	pro := &Profile{Id: id}
 
 	err := db.QueryRow(ctx, `
-	SELECT email, username
+	SELECT username
 	FROM profile
 	WHERE id = $1
-	`, id).Scan(&pro.Email, &pro.Username)
+	`, id).Scan(&pro.Username)
 
 	if err != nil {
 		return nil, err
@@ -110,17 +111,20 @@ func GetMyProfile(ctx context.Context) (*Profile, error) {
 	pro := &Profile{Id: string(authResult)}
 
 	err := db.QueryRow(ctx, `
-	SELECT email, username
+	SELECT username
 	FROM profile
 	WHERE id = $1
-	`, pro.Id).Scan(&pro.Email, &pro.Username)
+	`, pro.Id).Scan(&pro.Username)
 
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			pro.Username = ""
+			return pro, nil
+		}
 		return nil, err
 	}
 
 	return pro, nil
-
 }
 
 //encore:api auth method=POST path=/profile
@@ -134,10 +138,10 @@ func SaveProfile(ctx context.Context, pro *Profile) (*Profile, error) {
 	// Save the profile to the database.
 	// If the profile already exists (i.e. CONFLICT), we update the profile info.
 	_, err := db.Exec(ctx, `
-		INSERT INTO profile (id, email, username)
-		VALUES ($1, $2, $3)
-		ON CONFLICT (id) DO UPDATE SET email=$2, username=$3
-	`, pro.Id, pro.Email, pro.Username)
+		INSERT INTO profile (id, username)
+		VALUES ($1, $2)
+		ON CONFLICT (id) DO UPDATE SET username=$2
+	`, pro.Id, pro.Username)
 
 	// If there was an error saving to the database, then we return that error.
 	if err != nil {

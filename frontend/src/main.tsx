@@ -17,7 +17,7 @@ import { FirebaseProvider } from "./lib/firebase";
 import Login from "./routes/login";
 import Signup from "./routes/signup";
 import Profile from "./routes/profile";
-import MyProfile from "./routes/my-profile";
+import CompleteProfile from "./routes/complete-profile";
 
 const router = createBrowserRouter([
   {
@@ -53,8 +53,8 @@ const router = createBrowserRouter([
     element: <Signup />,
   },
   {
-    path: "/profile",
-    element: <MyProfile />,
+    path: "/complete-profile",
+    element: <CompleteProfile />,
   },
   {
     path: "/profile/:id",
