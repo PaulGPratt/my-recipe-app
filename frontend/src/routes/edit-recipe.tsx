@@ -19,7 +19,7 @@ function EditRecipe() {
 
     const navigate = useNavigate();
     const { auth } = useContext(FirebaseContext);
-    const { slug } = useParams();
+    const { username, slug } = useParams();
 
     const [token, setToken] = useState<string | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(true);
@@ -37,12 +37,12 @@ function EditRecipe() {
 
     useEffect(() => {
         const loadRecipe = async () => {
-            if (!slug) return;
+            if (!username || !slug) return;
 
             try {
                 const token = await fetchToken();
                 const client = getRequestClient(token ?? undefined);
-                const freshRecipe = await client.api.GetRecipe(slug);
+                const freshRecipe = await client.api.GetRecipe(username, slug);
                 setRecipeState(freshRecipe);
             } catch (err) {
                 console.error(err);
@@ -52,7 +52,7 @@ function EditRecipe() {
         };
 
         loadRecipe();
-    }, [slug]);
+    }, [username, slug]);
 
     const fetchToken = async () => {
         if (!token) {

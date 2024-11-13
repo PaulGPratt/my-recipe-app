@@ -35,11 +35,11 @@ type Recipe struct {
 }
 
 type RecipeCard struct {
-	Id        string   `json:"id"`
-	ProfileId string   `json:"profile_id"`
-	Slug      string   `json:"slug"`
-	Title     string   `json:"title"`
-	Tags      []string `json:"tags"`
+	Id       string   `json:"id"`
+	Username string   `json:"username"`
+	Slug     string   `json:"slug"`
+	Title    string   `json:"title"`
+	Tags     []string `json:"tags"`
 }
 
 type RecipeListResponse struct {
@@ -180,41 +180,25 @@ func checkUsernameExists(ctx context.Context, username string) (bool, error) {
 	return exists, nil
 }
 
-//encore:api public method=GET path=/api/recipes/:slug
-func GetRecipe(ctx context.Context, slug string) (*Recipe, error) {
-	recipe := &Recipe{Slug: slug}
-
-	err := db.QueryRow(ctx, `
-		SELECT id, profile_id, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags
-		FROM recipe
-		WHERE slug = $1
-	`, slug).Scan(&recipe.Id, &recipe.ProfileId, &recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.Notes, &recipe.CookTempDegF, &recipe.CookTimeMinutes, &recipe.Tags)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return recipe, nil
-}
-
 //encore:api public method=GET path=/api/recipes
-func GetRecipes(ctx context.Context) (*RecipeListResponse, error) {
+func GetAllRecipes(ctx context.Context) (*RecipeListResponse, error) {
 	rows, err := db.Query(ctx, `
-		SELECT id, slug, title, tags
-		FROM recipe
+		SELECT r.id, p.username, r.slug, r.title, r.tags
+		FROM recipe r
+		INNER JOIN profile p ON r.profile_id = p.id
 	`)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var recipes []*RecipeCard
+	var recipeCards []*RecipeCard
 	for rows.Next() {
-		recipe := &RecipeCard{}
-		if err := rows.Scan(&recipe.Id, &recipe.Slug, &recipe.Title, &recipe.Tags); err != nil {
+		rc := &RecipeCard{}
+		if err := rows.Scan(&rc.Id, &rc.Username, &rc.Slug, &rc.Title, &rc.Tags); err != nil {
 			return nil, err
 		}
-		recipes = append(recipes, recipe)
+		recipeCards = append(recipeCards, rc)
 	}
 
 	// Check if there were any errors during iteration.
@@ -222,7 +206,70 @@ func GetRecipes(ctx context.Context) (*RecipeListResponse, error) {
 		return nil, fmt.Errorf("could not iterate over rows: %v", err)
 	}
 
-	return &RecipeListResponse{Recipes: recipes}, nil
+	return &RecipeListResponse{Recipes: recipeCards}, nil
+}
+
+//encore:api public method=GET path=/api/recipes/:username
+func GetRecipesByProfileId(ctx context.Context, username string) (*RecipeListResponse, error) {
+	rows, err := db.Query(ctx, `
+		SELECT r.id, p.username, r.slug, r.title, r.tags
+		FROM recipe r
+		INNER JOIN profile p ON r.profile_id = p.id
+		WHERE p.username = $1
+	`, username)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var recipeCards []*RecipeCard
+	for rows.Next() {
+		rc := &RecipeCard{}
+		if err := rows.Scan(&rc.Id, &rc.Username, &rc.Slug, &rc.Title, &rc.Tags); err != nil {
+			return nil, err
+		}
+		recipeCards = append(recipeCards, rc)
+	}
+
+	// Check if there were any errors during iteration.
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("could not iterate over rows: %v", err)
+	}
+
+	return &RecipeListResponse{Recipes: recipeCards}, nil
+}
+
+//encore:api public method=GET path=/api/recipes/:username/:slug
+func GetRecipe(ctx context.Context, username string, slug string) (*Recipe, error) {
+	recipe := &Recipe{Slug: slug}
+
+	// Use a JOIN to get the profile_id by username and retrieve recipe details in one query
+	err := db.QueryRow(ctx, `
+		SELECT r.id, r.profile_id, r.title, r.ingredients, r.instructions, r.notes, 
+		       r.cook_temp_deg_f, r.cook_time_minutes, r.tags
+		FROM recipe r
+		INNER JOIN profile p ON r.profile_id = p.id
+		WHERE p.username = $1 AND r.slug = $2
+	`, username, slug).Scan(
+		&recipe.Id,
+		&recipe.ProfileId,
+		&recipe.Title,
+		&recipe.Ingredients,
+		&recipe.Instructions,
+		&recipe.Notes,
+		&recipe.CookTempDegF,
+		&recipe.CookTimeMinutes,
+		&recipe.Tags,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("recipe not found")
+		}
+		return nil, err
+	}
+
+	return recipe, nil
 }
 
 //encore:api auth method=POST path=/recipes

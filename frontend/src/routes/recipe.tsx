@@ -16,7 +16,7 @@ function Recipe() {
     const navigate = useNavigate();
 
     // Get the 'id' from the route parameters
-    const { slug } = useParams();
+    const { username, slug } = useParams();
     const { auth } = useContext(FirebaseContext);
 
     const [isLoading, setIsLoading] = useState(true);
@@ -31,12 +31,12 @@ function Recipe() {
     useEffect(() => {
 
         const loadRecipes = async () => {
-            if (!slug) return;
+            if (!username || !slug) return;
 
             try {
                 const token = await auth?.currentUser?.getIdToken();
                 const client = getRequestClient(token ?? undefined);
-                const freshRecipe = await client.api.GetRecipe(slug);
+                const freshRecipe = await client.api.GetRecipe(username, slug);
                 setRecipeState(freshRecipe);
             } catch (err) {
                 console.error(err);
@@ -45,7 +45,7 @@ function Recipe() {
         };
 
         loadRecipes();
-    }, [slug]);
+    }, [username, slug]);
 
 
 

@@ -140,7 +140,7 @@ export namespace api {
 
     export interface RecipeCard {
         id: string
-        "profile_id": string
+        username: string
         slug: string
         title: string
         tags: string[]
@@ -185,6 +185,12 @@ export namespace api {
             return await resp.json() as Recipe
         }
 
+        public async GetAllRecipes(): Promise<RecipeListResponse> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callAPI("GET", `/api/recipes`)
+            return await resp.json() as RecipeListResponse
+        }
+
         public async GetMyProfile(): Promise<Profile> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callAPI("GET", `/profile`)
@@ -197,15 +203,15 @@ export namespace api {
             return await resp.json() as Profile
         }
 
-        public async GetRecipe(slug: string): Promise<Recipe> {
+        public async GetRecipe(username: string, slug: string): Promise<Recipe> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("GET", `/api/recipes/${encodeURIComponent(slug)}`)
+            const resp = await this.baseClient.callAPI("GET", `/api/recipes/${encodeURIComponent(username)}/${encodeURIComponent(slug)}`)
             return await resp.json() as Recipe
         }
 
-        public async GetRecipes(): Promise<RecipeListResponse> {
+        public async GetRecipesByProfileId(username: string): Promise<RecipeListResponse> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("GET", `/api/recipes`)
+            const resp = await this.baseClient.callAPI("GET", `/api/recipes/${encodeURIComponent(username)}`)
             return await resp.json() as RecipeListResponse
         }
 

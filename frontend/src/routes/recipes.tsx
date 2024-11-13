@@ -64,7 +64,7 @@ function Recipes() {
       try {
         const token = await auth?.currentUser?.getIdToken();
         const client = getRequestClient(token ?? undefined);
-        const freshRecipeList = await client.api.GetRecipes();
+        const freshRecipeList = await client.api.GetAllRecipes();
         setRecipeListState(freshRecipeList);
         setLocalStorage(`recipe_list_response`, JSON.stringify(freshRecipeList));
       } catch (err) {
