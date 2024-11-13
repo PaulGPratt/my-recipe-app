@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
-import { APIError, ErrCode, api } from "../client";
+import { api } from "../client";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
@@ -14,7 +14,6 @@ function CompleteProfile() {
     const navigate = useNavigate();
     const { auth } = useContext(FirebaseContext);
     const [_, setProfile] = useState<api.Profile>();
-    const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [usernameError, setUsernameError] = useState<string>("");
     const [duplicateCheckComplete, setDuplicateCheckComplete] = useState<boolean>();
@@ -24,16 +23,13 @@ function CompleteProfile() {
             try {
                 const token = await auth?.currentUser?.getIdToken();
                 const client = getRequestClient(token ?? undefined);
-                setProfile(await client.api.GetMyProfile());
-            } catch (err) {
-                const apiErr = err as APIError;
-                if (apiErr.code === ErrCode.NotFound) {
-                    if (auth?.currentUser?.email) {
-                        setEmail(auth?.currentUser?.email);
-                    }
-                } else {
+                const freshProfile = await client.api.GetMyProfile();
+                if (freshProfile.username.length > 0) {
                     navigate(`/recipes/`);
                 }
+                setProfile(freshProfile);
+            } catch (err) {
+                console.log(err);
             }
         };
         fetchMyProfile();
@@ -55,7 +51,7 @@ function CompleteProfile() {
 
     const handleUsernameInput = async (event: React.FocusEvent<HTMLInputElement> | React.ChangeEvent<HTMLInputElement>) => {
         const usernameVal = event.target.value;
-        
+
         setUsernameError("");
         setUsername(usernameVal);
         setDuplicateCheckComplete(false);
@@ -72,7 +68,7 @@ function CompleteProfile() {
             try {
                 const client = getRequestClient(undefined);
                 const availableResp = await client.api.CheckIfUsernameIsAvailable({ username: usernameVal });
-                if(availableResp.available) {
+                if (availableResp.available) {
                     setDuplicateCheckComplete(true);
                 } else {
                     setUsernameError(`${usernameVal} is already in use`);
