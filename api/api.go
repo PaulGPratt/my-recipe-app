@@ -23,6 +23,7 @@ var db = sqldb.NewDatabase("recipe", sqldb.DatabaseConfig{
 
 type Recipe struct {
 	Id              string   `json:"id"`
+	ProfileId       string   `json:"profile_id"`
 	Slug            string   `json:"slug"`
 	Title           string   `json:"title"`
 	Ingredients     string   `json:"ingredients"`
@@ -34,10 +35,11 @@ type Recipe struct {
 }
 
 type RecipeCard struct {
-	Id    string   `json:"id"`
-	Slug  string   `json:"slug"`
-	Title string   `json:"title"`
-	Tags  []string `json:"tags"`
+	Id        string   `json:"id"`
+	ProfileId string   `json:"profile_id"`
+	Slug      string   `json:"slug"`
+	Title     string   `json:"title"`
+	Tags      []string `json:"tags"`
 }
 
 type RecipeListResponse struct {
@@ -183,10 +185,10 @@ func GetRecipe(ctx context.Context, slug string) (*Recipe, error) {
 	recipe := &Recipe{Slug: slug}
 
 	err := db.QueryRow(ctx, `
-		SELECT id, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags
+		SELECT id, profile_id, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags
 		FROM recipe
 		WHERE slug = $1
-	`, slug).Scan(&recipe.Id, &recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.Notes, &recipe.CookTempDegF, &recipe.CookTimeMinutes, &recipe.Tags)
+	`, slug).Scan(&recipe.Id, &recipe.ProfileId, &recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.Notes, &recipe.CookTempDegF, &recipe.CookTimeMinutes, &recipe.Tags)
 
 	if err != nil {
 		return nil, err
@@ -223,14 +225,18 @@ func GetRecipes(ctx context.Context) (*RecipeListResponse, error) {
 	return &RecipeListResponse{Recipes: recipes}, nil
 }
 
-//encore:api public method=POST path=/recipes
+//encore:api auth method=POST path=/recipes
 func SaveRecipe(ctx context.Context, recipe *Recipe) (*Recipe, error) {
-	// Save the recipe to the database.
-	// If the recipe already exists (i.e. CONFLICT), we update the recipe info.
+	authResult, authBool := auth.UserID()
+	if !authBool || string(authResult) != recipe.ProfileId {
+		err := fmt.Errorf("not authorized")
+		return nil, err
+	}
+
 	_, err := db.Exec(ctx, `
-		INSERT INTO recipe (id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-		ON CONFLICT (id) DO UPDATE SET slug=$2, title=$3, ingredients=$4, instructions=$5, notes=$6, cook_temp_deg_f=$7, cook_time_minutes=$8, tags=$9
+		INSERT INTO recipe (id, profile_id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		ON CONFLICT (id) DO UPDATE SET profile_id=$2, slug=$3, title=$4, ingredients=$5, instructions=$6, notes=$7, cook_temp_deg_f=$8, cook_time_minutes=$9, tags=$10
 	`, recipe.Id, recipe.Slug, recipe.Title, recipe.Ingredients, recipe.Instructions, recipe.Notes, recipe.CookTempDegF, recipe.CookTimeMinutes, recipe.Tags)
 
 	// If there was an error saving to the database, then we return that error.
@@ -242,9 +248,32 @@ func SaveRecipe(ctx context.Context, recipe *Recipe) (*Recipe, error) {
 	return recipe, nil
 }
 
-//encore:api public method=DELETE path=/api/recipes/:id
+//encore:api auth method=DELETE path=/api/recipes/:id
 func DeleteRecipe(ctx context.Context, id string) error {
-	_, err := db.Exec(ctx, `DELETE FROM recipe WHERE id = $1`, id)
+	authResult, authBool := auth.UserID()
+	if !authBool {
+		return fmt.Errorf("not authorized")
+	}
+
+	var recipeProfileId string
+	err := db.QueryRow(ctx, `
+		SELECT profile_id
+		FROM recipe
+		WHERE id = $1
+	`, id).Scan(&recipeProfileId)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return fmt.Errorf("recipe not found")
+		}
+		return fmt.Errorf("error retrieving recipe: %w", err)
+	}
+
+	if recipeProfileId != string(authResult) {
+		return fmt.Errorf("not authorized to delete this recipe")
+	}
+
+	_, err = db.Exec(ctx, `DELETE FROM recipe WHERE id = $1`, id)
 	if err != nil {
 		return fmt.Errorf("error deleting recipe: %w", err)
 	}
@@ -252,15 +281,19 @@ func DeleteRecipe(ctx context.Context, id string) error {
 	return nil
 }
 
-//encore:api public method=POST path=/recipes/generate-from-images
+//encore:api auth method=POST path=/recipes/generate-from-images
 func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*Recipe, error) {
-	var recipe *Recipe
+	authResult, authBool := auth.UserID()
+	if !authBool {
+		return nil, fmt.Errorf("not authorized")
+	}
 
 	recipe, err := AnalyzeImageToRecipe(ctx, req.Files)
 	if err != nil {
 		return nil, fmt.Errorf("error analyzing images: %w", err)
 	}
 
+	recipe.ProfileId = string(authResult)
 	recipeId, err := uuid.NewV4()
 	if err != nil {
 		return nil, fmt.Errorf("error generating uuid: %w", err)
@@ -281,15 +314,19 @@ func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*Recipe, er
 	return savedRecipe, nil
 }
 
-//encore:api public method=POST path=/recipes/generate-from-text
+//encore:api auth method=POST path=/recipes/generate-from-text
 func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Recipe, error) {
-	var recipe *Recipe
+	authResult, authBool := auth.UserID()
+	if !authBool {
+		return nil, fmt.Errorf("not authorized")
+	}
 
 	recipe, err := AnalyzeTextToRecipe(ctx, req.Text)
 	if err != nil {
 		return nil, fmt.Errorf("error analyzing text: %w", err)
 	}
 
+	recipe.ProfileId = string(authResult)
 	recipeId, err := uuid.NewV4()
 	if err != nil {
 		return nil, fmt.Errorf("error generating uuid: %w", err)
