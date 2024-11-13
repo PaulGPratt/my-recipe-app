@@ -45,8 +45,7 @@ function CompleteProfile() {
             const client = getRequestClient(token ?? undefined);
             await client.api.SaveProfile({
                 id: auth?.currentUser?.uid || '',
-                username: username,
-                email: email,
+                username: username
             });
             navigate(`/recipes/`);
         } catch (err) {
