@@ -1,4 +1,4 @@
-import { SetStateAction, useContext, useEffect, useState } from "react";
+import { SetStateAction, useContext, useEffect, useRef, useState } from "react";
 import { api } from "../client";
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search, Plus } from "lucide-react";
@@ -33,7 +33,7 @@ function Recipes() {
   const [activeTag, setActiveTag] = useState<string>("All");
   const [showSearch, setShowSearch] = useState<boolean>(false);
 
-  // Handler for search input change
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const handleSearchChange = (event: { target: { value: SetStateAction<string>; }; }) => {
     setSearchQuery(event.target.value);
   };
@@ -46,6 +46,12 @@ function Recipes() {
     setSearchQuery("");
     setShowSearch(!showSearch);
   }
+
+  useEffect(() => {
+    if (showSearch && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [showSearch]);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -151,12 +157,15 @@ function Recipes() {
         <div className="flex px-4 pt-4">
           <div className="relative flex-grow">
             <Search className="absolute left-3 top-3 h-6 w-6 text-muted-foreground" />
-            <Input placeholder="Search recipes" className="pl-11 h-12 text-2xl" value={searchQuery}
+            <Input
+              ref={searchInputRef}
+              placeholder="Search recipes"
+              className="pl-11 h-12 text-2xl"
+              value={searchQuery}
               onChange={handleSearchChange} />
           </div>
         </div>
       )}
-
 
       <div className="flex flex-wrap gap-2 p-4">
 

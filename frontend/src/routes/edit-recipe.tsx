@@ -25,6 +25,7 @@ function EditRecipe() {
     const [isLoading, setIsLoading] = useState(true);
     const [slugError, setSlugError] = useState<string>("");
     const [recipeId, setRecipeId] = useState<string>("");
+    const [recipeProfileId, setRecipeProfileId] = useState<string>("");
     const [recipeTitle, setRecipeTitle] = useState<string>("");
     const [recipeSlug, setRecipeSlug] = useState<string>("");
     const [tags, setTags] = useState<string[]>([]);
@@ -64,6 +65,7 @@ function EditRecipe() {
 
     const setRecipeState = (recipeResponse: api.Recipe) => {
         setRecipeId(recipeResponse.id);
+        setRecipeProfileId(recipeResponse.profile_id);
         setRecipeTitle(recipeResponse.title);
         setRecipeSlug(recipeResponse.slug);
         setTags(recipeResponse.tags ?? []);
@@ -139,6 +141,7 @@ function EditRecipe() {
             const client = getRequestClient(token ?? undefined);
             await client.api.SaveRecipe({
                 id: recipeId || uuidv4(),
+                profile_id: recipeProfileId,
                 slug: recipeSlug,
                 title: recipeTitle,
                 instructions: instructions,

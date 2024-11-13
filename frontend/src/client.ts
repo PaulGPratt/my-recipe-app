@@ -122,12 +122,12 @@ export namespace api {
 
     export interface Profile {
         id: string
-        email: string
         username: string
     }
 
     export interface Recipe {
         id: string
+        "profile_id": string
         slug: string
         title: string
         ingredients: string
@@ -140,6 +140,7 @@ export namespace api {
 
     export interface RecipeCard {
         id: string
+        "profile_id": string
         slug: string
         title: string
         tags: string[]

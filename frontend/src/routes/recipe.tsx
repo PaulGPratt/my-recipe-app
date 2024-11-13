@@ -75,8 +75,9 @@ function Recipe() {
                 <div className="flex flex-grow items-center">
                     {!isLoading && (<div className="text-2xl font-semibold">{recipe?.title}</div>)}
                 </div>
-                <Button size="icon" variant="ghost" onClick={editRecipe}><Pencil /></Button>
-
+                {(auth?.currentUser?.uid && auth.currentUser.uid === recipe?.profile_id) && (
+                    <Button size="icon" variant="ghost" onClick={editRecipe}><Pencil /></Button>
+                )}
             </div>
             <Separator />
 
