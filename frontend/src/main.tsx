@@ -1,23 +1,23 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import {
-  createBrowserRouter,
-  RouterProvider,
   Navigate,
+  RouterProvider,
+  createBrowserRouter,
 } from "react-router-dom";
-import Recipe from "./routes/recipe";
-import "./index.css";
-import { Toaster } from "./components/ui/toaster";
 import { ThemeProvider } from "./components/theme-provider";
-import Plan from "./routes/plan";
-import Upload from "./routes/upload";
-import EditRecipe from "./routes/edit-recipe";
+import { Toaster } from "./components/ui/toaster";
+import "./index.css";
 import { FirebaseProvider } from "./lib/firebase";
-import Login from "./routes/login";
-import Signup from "./routes/signup";
-import Profile from "./routes/profile";
-import CompleteProfile from "./routes/complete-profile";
 import AllRecipes from "./routes/all-recipes";
+import CompleteProfile from "./routes/complete-profile";
+import EditRecipe from "./routes/edit-recipe";
+import Login from "./routes/login";
+import Plan from "./routes/plan";
+import Profile from "./routes/profile";
+import Recipe from "./routes/recipe";
+import Signup from "./routes/signup";
+import Upload from "./routes/upload";
 import UserRecipes from "./routes/user-recipes";
 
 const router = createBrowserRouter([
