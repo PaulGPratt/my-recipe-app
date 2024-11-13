@@ -1,39 +1,44 @@
+// RecipeListBase.tsx
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Plus, Search } from "lucide-react";
 import { SetStateAction, useContext, useEffect, useRef, useState } from "react";
-import { api } from "../client";
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search, Plus } from "lucide-react";
-import { Input } from "../components/ui/input";
+import { useNavigate } from "react-router-dom";
+import Client, { api } from "../client";
+import ProfileMenu from "../components/profile-menu";
 import RecipeCardButton from "../components/recipe-card-button";
 import TopNav from "../components/top-nav";
 import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
 import { Separator } from "../components/ui/separator";
-import { useNavigate } from "react-router-dom";
-import { setLocalStorage, getLocalStorage } from '../utils/localStorage';
 import { FirebaseContext } from "../lib/firebase";
-import ProfileMenu from "../components/profile-menu";
 import getRequestClient from "../lib/get-request-client";
+import { getLocalStorage, setLocalStorage } from '../utils/localStorage';
 
 export interface TagRecipe {
   tag: string,
   recipes: api.RecipeCard[],
 }
 
-function Recipes() {
+interface RecipeListBaseProps {
+  title: string;
+  fetchRecipes: (client: Client) => Promise<api.RecipeListResponse>;
+  cacheKey: string;
+}
+
+function RecipeListBase({ title, fetchRecipes, cacheKey }: RecipeListBaseProps) {
   const { auth } = useContext(FirebaseContext);
   const user = auth?.currentUser;
-
   const navigate = useNavigate();
 
   const [recipeList, setRecipeList] = useState<api.RecipeCard[]>([]);
   const [tagList, setTagList] = useState<string[]>([]);
   const [tagRecipes, setTagRecipes] = useState<TagRecipe[]>([]);
-
-  // State for search query and filtered recipes
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTag, setActiveTag] = useState<string>("All");
   const [showSearch, setShowSearch] = useState<boolean>(false);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
+
   const handleSearchChange = (event: { target: { value: SetStateAction<string>; }; }) => {
     setSearchQuery(event.target.value);
   };
@@ -54,9 +59,8 @@ function Recipes() {
   }, [showSearch]);
 
   useEffect(() => {
-    const fetchRecipes = async () => {
-
-      const cachedRecipeList = getLocalStorage(`recipe_list_response`);
+    const loadRecipes = async () => {
+      const cachedRecipeList = getLocalStorage(cacheKey);
       if (cachedRecipeList) {
         setRecipeListState(JSON.parse(cachedRecipeList));
       }
@@ -64,15 +68,15 @@ function Recipes() {
       try {
         const token = await auth?.currentUser?.getIdToken();
         const client = getRequestClient(token ?? undefined);
-        const freshRecipeList = await client.api.GetAllRecipes();
+        const freshRecipeList = await fetchRecipes(client);
         setRecipeListState(freshRecipeList);
-        setLocalStorage(`recipe_list_response`, JSON.stringify(freshRecipeList));
+        setLocalStorage(cacheKey, JSON.stringify(freshRecipeList));
       } catch (err) {
         console.error(err);
       }
     };
-    fetchRecipes();
-  }, []);
+    loadRecipes();
+  }, [cacheKey, fetchRecipes]);
 
   const setRecipeListState = (recipeResponse: api.RecipeListResponse) => {
     const localRecipeList = recipeResponse.Recipes.map(x => ({
@@ -105,27 +109,24 @@ function Recipes() {
       .map((tag) => {
         var recipes = recipeList
           .filter(recipe => recipe.tags?.some(x => x.toLowerCase() === tag.toLowerCase()))
-          .sort((a, b) => {
-            return a.title.localeCompare(b.title);
-          })
+          .sort((a, b) => a.title.localeCompare(b.title));
         return {
           tag: tag,
           recipes: recipes
-        } as TagRecipe
+        } as TagRecipe;
       });
 
     if (searchQuery.length > 0) {
-      tagRecipes = tagRecipes.map(x => {
-        return {
-          tag: x.tag,
-          recipes: x.recipes.filter(recipe => recipe.title.toLowerCase().includes(searchQuery.toLowerCase()))
-        } as TagRecipe
-      }).filter(x => x.recipes.length > 0)
+      tagRecipes = tagRecipes.map(x => ({
+        tag: x.tag,
+        recipes: x.recipes.filter(recipe => 
+          recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      })).filter(x => x.recipes.length > 0);
     }
 
     setTagRecipes(tagRecipes);
   }
-
 
   const handleTagClick = ((tag: string) => {
     setActiveTag(tag);
@@ -138,21 +139,21 @@ function Recipes() {
   }, [recipeList, searchQuery, activeTag]);
 
   return (
-    <div className="h-full mx-auto max-w-4xl flex flex-col ">
+    <div className="h-full mx-auto max-w-4xl flex flex-col">
       <TopNav className="hidden"></TopNav>
       <div className="flex p-4 pb-0 justify-between">
         <div className="flex gap-4 items-center">
           <ProfileMenu></ProfileMenu>
-          <div className="text-2xl font-semibold">Recipes</div>
+          <div className="text-2xl font-semibold">{title}</div>
         </div>
         <div className="flex gap-2">
           <Button size="icon" variant="ghost" onClick={toggleShowSearch}><Search /></Button>
           {user?.uid && (
             <Button size="icon" variant="ghost" onClick={handleAdd}><Plus /></Button>
           )}
-
         </div>
       </div>
+      
       {showSearch && (
         <div className="flex px-4 pt-4">
           <div className="relative flex-grow">
@@ -162,13 +163,13 @@ function Recipes() {
               placeholder="Search recipes"
               className="pl-11 h-12 text-2xl"
               value={searchQuery}
-              onChange={handleSearchChange} />
+              onChange={handleSearchChange}
+            />
           </div>
         </div>
       )}
 
       <div className="flex flex-wrap gap-2 p-4">
-
         {tagList?.map((tag) => (
           <Button
             size="tag"
@@ -176,7 +177,9 @@ function Recipes() {
             variant={activeTag === tag ? "default" : "secondary"}
             className={activeTag === tag ? "text-background" : ""}
             onClick={() => handleTagClick(tag)}
-          >{tag}</Button>
+          >
+            {tag}
+          </Button>
         ))}
       </div>
 
@@ -204,4 +207,4 @@ function Recipes() {
   );
 }
 
-export default Recipes;
+export default RecipeListBase;

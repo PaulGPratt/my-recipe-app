@@ -6,7 +6,6 @@ import {
   Navigate,
 } from "react-router-dom";
 import Recipe from "./routes/recipe";
-import Recipes from "./routes/recipes";
 import "./index.css";
 import { Toaster } from "./components/ui/toaster";
 import { ThemeProvider } from "./components/theme-provider";
@@ -18,6 +17,8 @@ import Login from "./routes/login";
 import Signup from "./routes/signup";
 import Profile from "./routes/profile";
 import CompleteProfile from "./routes/complete-profile";
+import AllRecipes from "./routes/all-recipes";
+import UserRecipes from "./routes/user-recipes";
 
 const router = createBrowserRouter([
   {
@@ -30,7 +31,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/recipes",
-    element: <Recipes />,
+    element: <AllRecipes />,
+  },
+  {
+    path: "/recipes/:username",
+    element: <UserRecipes />,
   },
   {
     path: "/recipes/:username/:slug",
