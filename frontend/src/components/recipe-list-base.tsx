@@ -13,6 +13,7 @@ import { Separator } from "../components/ui/separator";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
 import { getLocalStorage, setLocalStorage } from '../utils/localStorage';
+import BreadCrumbs from "./breadcrumbs";
 
 export interface TagRecipe {
   tag: string,
@@ -143,14 +144,14 @@ function RecipeListBase({ title, fetchRecipes, cacheKey }: RecipeListBaseProps) 
       <TopNav className="hidden"></TopNav>
       <div className="flex p-4 pb-0 justify-between">
         <div className="flex gap-4 items-center">
-          <ProfileMenu></ProfileMenu>
-          <div className="text-2xl font-semibold">{title}</div>
+          <BreadCrumbs></BreadCrumbs>
         </div>
         <div className="flex gap-2">
           <Button size="icon" variant="ghost" onClick={toggleShowSearch}><Search /></Button>
           {user?.uid && (
             <Button size="icon" variant="ghost" onClick={handleAdd}><Plus /></Button>
           )}
+          <ProfileMenu></ProfileMenu>
         </div>
       </div>
       
