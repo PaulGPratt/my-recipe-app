@@ -125,7 +125,7 @@ function EditRecipe() {
     }
 
     const handleTagChange = (index: number, event: { target: { value: any; }; }) => {
-        tags[index] = event.target.value;
+        tags[index] = event.target.value.trim();
         if (tags[index] === undefined || tags[index] === null || tags[index] === "") {
             tags.splice(index, 1);
         }
@@ -149,7 +149,7 @@ function EditRecipe() {
                 notes: notes,
                 cook_temp_deg_f: cookTemp,
                 cook_time_minutes: cookTime,
-                tags: filteredTags,
+                tags: Array.from(new Set(filteredTags)),
             });
             navigate(`/recipes/` + username + '/' + recipeSlug);
         } catch (err) {
