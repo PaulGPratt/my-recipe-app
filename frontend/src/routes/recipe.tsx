@@ -11,6 +11,7 @@ import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
 import ProfileMenu from "../components/profile-menu";
 import BreadCrumbs from "../components/breadcrumbs";
+import { BreadcrumbLink } from "../components/ui/breadcrumb";
 
 
 function Recipe() {
@@ -65,10 +66,6 @@ function Recipe() {
         navigate(`/recipes/` + username)
     }
 
-    const handleBack = () => {
-        navigate(`/recipes/`);
-    };
-
     const editRecipe = async () => {
         navigate(`/recipes/` + username + '/' + slug + '/edit');
     }
@@ -90,8 +87,6 @@ function Recipe() {
             {!isLoading && (
                 <ScrollArea className="h-full w-full">
                     <div className="text-4xl px-4 pt-4 font-semibold text-center">{recipe?.title}</div>
-                    <div className="text-2xl px-4 pt-1 font-semibold text-center">by <Button variant="link" className="px-0" onClick={navigateToUsername}>{username}</Button></div>
-
                     {(tags?.length > 0) && (
                         <div className="px-4 pt-2 text-3xl flex flex-row items-center justify-center gap-x-2">
 
