@@ -156,10 +156,10 @@ function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
         </div>
         <div className="flex gap-2">
           {!noRecipesFound && (
-            <Button size="icon" variant="ghost" onClick={toggleShowSearch}><Search /></Button>
+            <Button size="icon" variant="ghost" onClick={toggleShowSearch} title="Search"><Search /></Button>
           )}
           {user?.uid && (
-            <Button size="icon" variant="ghost" onClick={handleAdd}><Plus /></Button>
+            <Button size="icon" variant="ghost" onClick={handleAdd} title="Add Recipe"><Plus /></Button>
           )}
 
         </div>

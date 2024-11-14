@@ -63,7 +63,7 @@ function ProfileMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" variant="secondary" className="text-2xl font-bold"><User /></Button>
+        <Button size="icon" variant="secondary" className="text-2xl font-bold" title="User Menu"><User /></Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64">
         {user?.uid ? (
