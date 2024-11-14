@@ -79,7 +79,7 @@ type Profile struct {
 	Username string `json:"username"`
 }
 
-//encore:api auth method=GET path=/profile
+//encore:api auth method=GET path=/api/profile
 func GetMyProfile(ctx context.Context) (*Profile, error) {
 	authResult, authBool := auth.UserID()
 	if !authBool {
@@ -106,7 +106,7 @@ func GetMyProfile(ctx context.Context) (*Profile, error) {
 	return pro, nil
 }
 
-//encore:api auth method=POST path=/profile
+//encore:api auth method=POST path=/api/profile
 func SaveProfile(ctx context.Context, pro *Profile) (*Profile, error) {
 	authResult, authBool := auth.UserID()
 	if !authBool || string(authResult) != pro.Id {
@@ -130,7 +130,7 @@ func SaveProfile(ctx context.Context, pro *Profile) (*Profile, error) {
 	return pro, nil
 }
 
-//encore:api public method=POST path=/username/available
+//encore:api public method=POST path=/api/username/available
 func CheckIfUsernameIsAvailable(ctx context.Context, req IsUsernameAvailableRequest) (IsUsernameAvailableResponse, error) {
 	exists, err := checkUsernameExists(ctx, req.Username)
 	if err != nil {
@@ -249,7 +249,7 @@ func GetRecipe(ctx context.Context, username string, slug string) (*Recipe, erro
 	return recipe, nil
 }
 
-//encore:api auth method=POST path=/recipes
+//encore:api auth method=POST path=/api/recipes
 func SaveRecipe(ctx context.Context, recipe *Recipe) (*Recipe, error) {
 	authResult, authBool := auth.UserID()
 	if !authBool || string(authResult) != recipe.ProfileId {
@@ -305,7 +305,7 @@ func DeleteRecipe(ctx context.Context, id string) error {
 	return nil
 }
 
-//encore:api auth method=POST path=/recipes/generate-from-images
+//encore:api auth method=POST path=/api/recipes/generate-from-images
 func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*Recipe, error) {
 	authResult, authBool := auth.UserID()
 	if !authBool {
@@ -338,7 +338,7 @@ func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*Recipe, er
 	return savedRecipe, nil
 }
 
-//encore:api auth method=POST path=/recipes/generate-from-text
+//encore:api auth method=POST path=/api/recipes/generate-from-text
 func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Recipe, error) {
 	authResult, authBool := auth.UserID()
 	if !authBool {
@@ -371,7 +371,7 @@ func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Recipe
 	return savedRecipe, nil
 }
 
-//encore:api public method=POST path=/slug/available
+//encore:api public method=POST path=/api/slug/available
 func CheckIfSlugIsAvailable(ctx context.Context, req IsSlugAvailableRequest) (IsSlugAvailableResponse, error) {
 	exists, err := checkSlugExists(ctx, req.Slug)
 	if err != nil {

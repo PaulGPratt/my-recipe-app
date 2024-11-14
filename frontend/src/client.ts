@@ -159,13 +159,13 @@ export namespace api {
 
         public async CheckIfSlugIsAvailable(params: IsSlugAvailableRequest): Promise<IsSlugAvailableResponse> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("POST", `/slug/available`, JSON.stringify(params))
+            const resp = await this.baseClient.callAPI("POST", `/api/slug/available`, JSON.stringify(params))
             return await resp.json() as IsSlugAvailableResponse
         }
 
         public async CheckIfUsernameIsAvailable(params: IsUsernameAvailableRequest): Promise<IsUsernameAvailableResponse> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("POST", `/username/available`, JSON.stringify(params))
+            const resp = await this.baseClient.callAPI("POST", `/api/username/available`, JSON.stringify(params))
             return await resp.json() as IsUsernameAvailableResponse
         }
 
@@ -175,13 +175,13 @@ export namespace api {
 
         public async GenerateFromImages(params: FileUploadRequest): Promise<Recipe> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("POST", `/recipes/generate-from-images`, JSON.stringify(params))
+            const resp = await this.baseClient.callAPI("POST", `/api/recipes/generate-from-images`, JSON.stringify(params))
             return await resp.json() as Recipe
         }
 
         public async GenerateFromText(params: GenerateFromTextRequest): Promise<Recipe> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("POST", `/recipes/generate-from-text`, JSON.stringify(params))
+            const resp = await this.baseClient.callAPI("POST", `/api/recipes/generate-from-text`, JSON.stringify(params))
             return await resp.json() as Recipe
         }
 
@@ -193,7 +193,7 @@ export namespace api {
 
         public async GetMyProfile(): Promise<Profile> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("GET", `/profile`)
+            const resp = await this.baseClient.callAPI("GET", `/api/profile`)
             return await resp.json() as Profile
         }
 
@@ -211,13 +211,13 @@ export namespace api {
 
         public async SaveProfile(params: Profile): Promise<Profile> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("POST", `/profile`, JSON.stringify(params))
+            const resp = await this.baseClient.callAPI("POST", `/api/profile`, JSON.stringify(params))
             return await resp.json() as Profile
         }
 
         public async SaveRecipe(params: Recipe): Promise<Recipe> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("POST", `/recipes`, JSON.stringify(params))
+            const resp = await this.baseClient.callAPI("POST", `/api/recipes`, JSON.stringify(params))
             return await resp.json() as Recipe
         }
     }
