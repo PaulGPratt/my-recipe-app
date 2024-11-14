@@ -197,12 +197,6 @@ export namespace api {
             return await resp.json() as Profile
         }
 
-        public async GetProfile(id: string): Promise<Profile> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("GET", `/profile/${encodeURIComponent(id)}`)
-            return await resp.json() as Profile
-        }
-
         public async GetRecipe(username: string, slug: string): Promise<Recipe> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callAPI("GET", `/api/recipes/${encodeURIComponent(username)}/${encodeURIComponent(slug)}`)

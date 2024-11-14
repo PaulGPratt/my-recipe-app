@@ -79,29 +79,6 @@ type Profile struct {
 	Username string `json:"username"`
 }
 
-//encore:api auth method=GET path=/profile/:id
-func GetProfile(ctx context.Context, id string) (*Profile, error) {
-	authResult, authBool := auth.UserID()
-	if !authBool || string(authResult) != id {
-		err := fmt.Errorf("not authorized")
-		return nil, err
-	}
-
-	pro := &Profile{Id: id}
-
-	err := db.QueryRow(ctx, `
-	SELECT username
-	FROM profile
-	WHERE id = $1
-	`, id).Scan(&pro.Username)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return pro, nil
-}
-
 //encore:api auth method=GET path=/profile
 func GetMyProfile(ctx context.Context) (*Profile, error) {
 	authResult, authBool := auth.UserID()
