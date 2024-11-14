@@ -3,14 +3,14 @@ import { Flame, Pencil, Timer } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../client";
+import BreadCrumbs from "../components/breadcrumbs";
 import MarkdownEditor from "../components/markdown-editor";
+import ProfileMenu from "../components/profile-menu";
 import { Button } from "../components/ui/button";
 import { ScrollArea } from "../components/ui/scroll-area";
 import { Separator } from "../components/ui/separator";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
-import ProfileMenu from "../components/profile-menu";
-import BreadCrumbs from "../components/breadcrumbs";
 
 
 function Recipe() {
@@ -59,10 +59,6 @@ function Recipe() {
         setNotes(recipeResponse.notes);
         setCookTemp(recipeResponse.cook_temp_deg_f);
         setCookTime(recipeResponse.cook_time_minutes);
-    }
-
-    const navigateToUsername = () => {
-        navigate(`/recipes/` + username)
     }
 
     const editRecipe = async () => {

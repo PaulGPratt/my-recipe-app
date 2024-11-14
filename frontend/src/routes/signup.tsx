@@ -1,10 +1,10 @@
-import React, { useContext, useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FirebaseContext } from "../lib/firebase.tsx";
-import { Label } from "../components/ui/label.tsx";
-import { Input } from "../components/ui/input.tsx";
 import { Button } from "../components/ui/button.tsx";
+import { Input } from "../components/ui/input.tsx";
+import { Label } from "../components/ui/label.tsx";
+import { FirebaseContext } from "../lib/firebase.tsx";
 
 function Signup () {
   const { auth } = useContext(FirebaseContext);
