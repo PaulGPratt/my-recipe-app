@@ -7,6 +7,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
+import { fetchStoredProfile, storeProfile } from "../lib/profile-utils";
 
 function CompleteProfile() {
 
@@ -19,16 +20,16 @@ function CompleteProfile() {
 
     useEffect(() => {
         const fetchMyProfile = async () => {
-            try {
-                const token = await auth?.currentUser?.getIdToken();
-                const client = getRequestClient(token ?? undefined);
-                const freshProfile = await client.api.GetMyProfile();
-                if (freshProfile.username.length > 0) {
-                    navigate(`/recipes/`);
+            if(auth) {
+                try {
+                    const freshProfile = await fetchStoredProfile(auth);
+                    if (freshProfile && freshProfile.username.length > 0) {
+                        navigate(`/recipes/${freshProfile.username}`);
+                    }
+                    setProfile(freshProfile);
+                } catch (err) {
+                    console.log(err);
                 }
-                setProfile(freshProfile);
-            } catch (err) {
-                console.log(err);
             }
         };
         fetchMyProfile();
@@ -38,11 +39,12 @@ function CompleteProfile() {
         try {
             const token = await auth?.currentUser?.getIdToken();
             const client = getRequestClient(token ?? undefined);
-            await client.api.SaveProfile({
+            const freshProfile = await client.api.SaveProfile({
                 id: auth?.currentUser?.uid || '',
                 username: username
             });
-            navigate(`/recipes/`);
+            storeProfile(freshProfile);
+            navigate(`/recipes/${freshProfile.username}`);
         } catch (err) {
             console.error(err);
         }

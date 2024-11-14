@@ -60,6 +60,11 @@ type GenerateFromTextRequest struct {
 	Text string `json:"text"`
 }
 
+type GenerateRecipeResponse struct {
+	Username string `json:"username"`
+	Slug     string `json:"slug"`
+}
+
 type IsSlugAvailableRequest struct {
 	Slug string `json:"slug"`
 }
@@ -306,7 +311,7 @@ func DeleteRecipe(ctx context.Context, id string) error {
 }
 
 //encore:api auth method=POST path=/api/recipes/generate-from-images
-func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*Recipe, error) {
+func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*GenerateRecipeResponse, error) {
 	authResult, authBool := auth.UserID()
 	if !authBool {
 		return nil, fmt.Errorf("not authorized")
@@ -329,17 +334,21 @@ func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*Recipe, er
 		return nil, fmt.Errorf("error generating slug: %w", err)
 	}
 
-	// Save the recipe
 	savedRecipe, err := SaveRecipe(ctx, recipe)
 	if err != nil {
 		return nil, fmt.Errorf("error saving recipe to database: %w", err)
 	}
 
-	return savedRecipe, nil
+	response, err := getGenerateRecipeResponse(ctx, savedRecipe.Id)
+	if err != nil {
+		return nil, fmt.Errorf("error generating recipe response: %w", err)
+	}
+
+	return response, nil
 }
 
 //encore:api auth method=POST path=/api/recipes/generate-from-text
-func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Recipe, error) {
+func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*GenerateRecipeResponse, error) {
 	authResult, authBool := auth.UserID()
 	if !authBool {
 		return nil, fmt.Errorf("not authorized")
@@ -368,7 +377,32 @@ func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Recipe
 		return nil, fmt.Errorf("error saving recipe to database: %w", err)
 	}
 
-	return savedRecipe, nil
+	response, err := getGenerateRecipeResponse(ctx, savedRecipe.Id)
+	if err != nil {
+		return nil, fmt.Errorf("error generating recipe response: %w", err)
+	}
+
+	return response, nil
+}
+
+func getGenerateRecipeResponse(ctx context.Context, recipeId string) (*GenerateRecipeResponse, error) {
+	recipe := &GenerateRecipeResponse{}
+
+	err := db.QueryRow(ctx, `
+		SELECT p.username, r.slug
+		FROM recipe r
+		INNER JOIN profile p ON r.profile_id = p.id
+		WHERE r.id = $1
+	`, recipeId).Scan(
+		&recipe.Username,
+		&recipe.Slug,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("error getting generated recipe: %w", err)
+	}
+
+	return recipe, nil
 }
 
 //encore:api public method=POST path=/api/slug/available

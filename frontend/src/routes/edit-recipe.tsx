@@ -14,6 +14,7 @@ import { Separator } from "../components/ui/separator";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
 import { cn } from "../lib/utils";
+import { fetchStoredProfile } from "../lib/profile-utils";
 
 function EditRecipe() {
 
@@ -37,12 +38,16 @@ function EditRecipe() {
 
     useEffect(() => {
         const loadRecipe = async () => {
-            if (!username || !slug) return;
+            if (!username || !slug || !auth) return;
 
             try {
                 const token = await fetchToken();
                 const client = getRequestClient(token ?? undefined);
                 const freshRecipe = await client.api.GetRecipe(username, slug);
+                const profile = await fetchStoredProfile(auth);
+                if(profile.username != username) {
+                    handleBack();
+                }
                 setRecipeState(freshRecipe);
             } catch (err) {
                 console.error(err);
@@ -52,7 +57,7 @@ function EditRecipe() {
         };
 
         loadRecipe();
-    }, [username, slug]);
+    }, [username, slug, auth]);
 
     const fetchToken = async () => {
         if (!token) {
@@ -125,7 +130,7 @@ function EditRecipe() {
     }
 
     const handleTagChange = (index: number, event: { target: { value: any; }; }) => {
-        tags[index] = event.target.value;
+        tags[index] = event.target.value.trim();
         if (tags[index] === undefined || tags[index] === null || tags[index] === "") {
             tags.splice(index, 1);
         }
@@ -149,7 +154,7 @@ function EditRecipe() {
                 notes: notes,
                 cook_temp_deg_f: cookTemp,
                 cook_time_minutes: cookTime,
-                tags: filteredTags,
+                tags: Array.from(new Set(filteredTags)),
             });
             navigate(`/recipes/` + username + '/' + recipeSlug);
         } catch (err) {
@@ -177,7 +182,7 @@ function EditRecipe() {
 
             <div className="flex p-4 justify-between">
                 <div className="flex gap-4 items-center">
-                    <Button size="icon" variant="ghost" onClick={handleBack} role="link"><ArrowLeft size={30} /></Button>
+                    <Button size="icon" variant="ghost" onClick={handleBack} role="link" title="Back to Recipe"><ArrowLeft size={30} /></Button>
                     <div className="text-2xl font-semibold">Edit Recipe</div>
                 </div>
                 <div className="flex gap-2">

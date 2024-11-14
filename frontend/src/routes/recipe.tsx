@@ -74,7 +74,7 @@ function Recipe() {
                     <BreadCrumbs></BreadCrumbs>
                 </div>
                 {(auth?.currentUser?.uid && auth.currentUser.uid === recipe?.profile_id) && (
-                    <Button size="icon" variant="ghost" onClick={editRecipe}><Pencil /></Button>
+                    <Button size="icon" variant="ghost" onClick={editRecipe} title="Edit Recipe"><Pencil /></Button>
                 )}
             </div>
             <Separator />

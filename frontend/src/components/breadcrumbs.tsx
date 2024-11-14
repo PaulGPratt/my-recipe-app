@@ -1,5 +1,5 @@
-import { useParams } from "react-router-dom";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "./ui/breadcrumb";
+import { Link, useParams } from "react-router-dom";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from "./ui/breadcrumb";
 
 function BreadCrumbs() {
     const { username } = useParams();
@@ -8,13 +8,13 @@ function BreadCrumbs() {
         <Breadcrumb>
             <BreadcrumbList>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href="/recipes">recipes</BreadcrumbLink>
+                    <Link to={`/recipes`} className="transition-colors hover:text-foreground text-2xl">recipes</Link>
                 </BreadcrumbItem>
                 {username && (
                     <>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbLink href={`/recipes/${username}`}>{username}</BreadcrumbLink>
+                            <Link to={`/recipes/${username}`} className="transition-colors hover:text-foreground text-2xl">{username}</Link>
                         </BreadcrumbItem>
                     </>
                 )}

@@ -10,7 +10,7 @@ import { Input } from "../components/ui/input";
 import { Separator } from "../components/ui/separator";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
-import { getLocalStorage, setLocalStorage } from '../utils/localStorage';
+import { getLocalStorage, setLocalStorage } from '../lib/localStorage';
 import BreadCrumbs from "./breadcrumbs";
 
 export interface TagRecipe {
@@ -34,6 +34,7 @@ function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTag, setActiveTag] = useState<string>("All");
   const [showSearch, setShowSearch] = useState<boolean>(false);
+  const [noRecipesFound, setNoRecipesFound] = useState<boolean>(false);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -43,6 +44,10 @@ function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
 
   const handleAdd = () => {
     navigate(`/upload/`);
+  };
+
+  const goToAllRecipes = () => {
+    navigate(`/recipes/`);
   };
 
   const toggleShowSearch = () => {
@@ -77,6 +82,12 @@ function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
   }, [cacheKey, fetchRecipes]);
 
   const setRecipeListState = (recipeResponse: api.RecipeListResponse) => {
+    if (!recipeResponse.Recipes || recipeResponse.Recipes.length === 0) {
+      setNoRecipesFound(true);
+      return;
+    }
+
+    setNoRecipesFound(false);
     const localRecipeList = recipeResponse.Recipes.map(x => ({
       ...x,
       tags: x.tags && x.tags.length ? x.tags : ["Uncategorized"]
@@ -144,27 +155,31 @@ function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
           <BreadCrumbs></BreadCrumbs>
         </div>
         <div className="flex gap-2">
-          <Button size="icon" variant="ghost" onClick={toggleShowSearch}><Search /></Button>
+          {!noRecipesFound && (
+            <Button size="icon" variant="ghost" onClick={toggleShowSearch} title="Search"><Search /></Button>
+          )}
           {user?.uid && (
-            <Button size="icon" variant="ghost" onClick={handleAdd}><Plus /></Button>
+            <Button size="icon" variant="ghost" onClick={handleAdd} title="Add Recipe"><Plus /></Button>
           )}
 
         </div>
       </div>
+      {tagList && tagList.length > 0 && (
+        <div className="flex flex-wrap gap-2 p-4">
+          {tagList?.map((tag) => (
+            <Button
+              size="tag"
+              key={tag}
+              variant={activeTag === tag ? "default" : "secondary"}
+              className={activeTag === tag ? "text-background" : ""}
+              onClick={() => handleTagClick(tag)}
+            >
+              {tag}
+            </Button>
+          ))}
+        </div>
+      )}
 
-      <div className="flex flex-wrap gap-2 p-4">
-        {tagList?.map((tag) => (
-          <Button
-            size="tag"
-            key={tag}
-            variant={activeTag === tag ? "default" : "secondary"}
-            className={activeTag === tag ? "text-background" : ""}
-            onClick={() => handleTagClick(tag)}
-          >
-            {tag}
-          </Button>
-        ))}
-      </div>
 
       {showSearch && (
         <div className="flex px-4 pb-4">
@@ -177,6 +192,17 @@ function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
               value={searchQuery}
               onChange={handleSearchChange}
             />
+          </div>
+        </div>
+      )}
+
+      {noRecipesFound && (
+        <div className="flex flex-col px-4 py-16">
+          <div className="flex-grow text-2xl text-center">
+            It looks like there aren't any recipes here yet.
+          </div>
+          <div className="flex flex-row py-8 gap-4 justify-center">
+            <Button onClick={goToAllRecipes}>View All Recipes</Button>
           </div>
         </div>
       )}
