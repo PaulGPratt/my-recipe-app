@@ -2,10 +2,13 @@ package api
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
 
+	"encore.dev/beta/auth"
 	"encore.dev/storage/sqldb"
 	"encore.dev/types/uuid"
 )
@@ -20,6 +23,7 @@ var db = sqldb.NewDatabase("recipe", sqldb.DatabaseConfig{
 
 type Recipe struct {
 	Id              string   `json:"id"`
+	ProfileId       string   `json:"profile_id"`
 	Slug            string   `json:"slug"`
 	Title           string   `json:"title"`
 	Ingredients     string   `json:"ingredients"`
@@ -31,10 +35,11 @@ type Recipe struct {
 }
 
 type RecipeCard struct {
-	Id    string   `json:"id"`
-	Slug  string   `json:"slug"`
-	Title string   `json:"title"`
-	Tags  []string `json:"tags"`
+	Id       string   `json:"id"`
+	Username string   `json:"username"`
+	Slug     string   `json:"slug"`
+	Title    string   `json:"title"`
+	Tags     []string `json:"tags"`
 }
 
 type RecipeListResponse struct {
@@ -62,41 +67,115 @@ type IsSlugAvailableResponse struct {
 	Available bool `json:"available"`
 }
 
-//encore:api public method=GET path=/api/recipes/:slug
-func GetRecipe(ctx context.Context, slug string) (*Recipe, error) {
-	recipe := &Recipe{Slug: slug}
+type IsUsernameAvailableRequest struct {
+	Username string `json:"username"`
+}
+type IsUsernameAvailableResponse struct {
+	Available bool `json:"available"`
+}
+
+type Profile struct {
+	Id       string `json:"id"`
+	Username string `json:"username"`
+}
+
+//encore:api auth method=GET path=/api/profile
+func GetMyProfile(ctx context.Context) (*Profile, error) {
+	authResult, authBool := auth.UserID()
+	if !authBool {
+		err := fmt.Errorf("not authorized")
+		return nil, err
+	}
+
+	pro := &Profile{Id: string(authResult)}
 
 	err := db.QueryRow(ctx, `
-		SELECT id, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags
-		FROM recipe
-		WHERE slug = $1
-	`, slug).Scan(&recipe.Id, &recipe.Title, &recipe.Ingredients, &recipe.Instructions, &recipe.Notes, &recipe.CookTempDegF, &recipe.CookTimeMinutes, &recipe.Tags)
+	SELECT username
+	FROM profile
+	WHERE id = $1
+	`, pro.Id).Scan(&pro.Username)
 
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			pro.Username = ""
+			return pro, nil
+		}
+		return nil, err
+	}
+
+	return pro, nil
+}
+
+//encore:api auth method=POST path=/api/profile
+func SaveProfile(ctx context.Context, pro *Profile) (*Profile, error) {
+	authResult, authBool := auth.UserID()
+	if !authBool || string(authResult) != pro.Id {
+		err := fmt.Errorf("not authorized")
+		return nil, err
+	}
+
+	// Save the profile to the database.
+	// If the profile already exists (i.e. CONFLICT), we update the profile info.
+	_, err := db.Exec(ctx, `
+		INSERT INTO profile (id, username)
+		VALUES ($1, $2)
+		ON CONFLICT (id) DO UPDATE SET username=$2
+	`, pro.Id, pro.Username)
+
+	// If there was an error saving to the database, then we return that error.
 	if err != nil {
 		return nil, err
 	}
 
-	return recipe, nil
+	return pro, nil
+}
+
+//encore:api public method=POST path=/api/username/available
+func CheckIfUsernameIsAvailable(ctx context.Context, req IsUsernameAvailableRequest) (IsUsernameAvailableResponse, error) {
+	exists, err := checkUsernameExists(ctx, req.Username)
+	if err != nil {
+		return IsUsernameAvailableResponse{}, err
+	}
+
+	return IsUsernameAvailableResponse{Available: !exists}, nil
+}
+
+func checkUsernameExists(ctx context.Context, username string) (bool, error) {
+	var exists bool
+	err := db.QueryRow(ctx, `
+		SELECT EXISTS (
+			SELECT 1
+			FROM profile
+			WHERE username = $1
+		)
+	`, username).Scan(&exists)
+
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
 }
 
 //encore:api public method=GET path=/api/recipes
-func GetRecipes(ctx context.Context) (*RecipeListResponse, error) {
+func GetAllRecipes(ctx context.Context) (*RecipeListResponse, error) {
 	rows, err := db.Query(ctx, `
-		SELECT id, slug, title, tags
-		FROM recipe
+		SELECT r.id, p.username, r.slug, r.title, r.tags
+		FROM recipe r
+		INNER JOIN profile p ON r.profile_id = p.id
 	`)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var recipes []*RecipeCard
+	var recipeCards []*RecipeCard
 	for rows.Next() {
-		recipe := &RecipeCard{}
-		if err := rows.Scan(&recipe.Id, &recipe.Slug, &recipe.Title, &recipe.Tags); err != nil {
+		rc := &RecipeCard{}
+		if err := rows.Scan(&rc.Id, &rc.Username, &rc.Slug, &rc.Title, &rc.Tags); err != nil {
 			return nil, err
 		}
-		recipes = append(recipes, recipe)
+		recipeCards = append(recipeCards, rc)
 	}
 
 	// Check if there were any errors during iteration.
@@ -104,18 +183,85 @@ func GetRecipes(ctx context.Context) (*RecipeListResponse, error) {
 		return nil, fmt.Errorf("could not iterate over rows: %v", err)
 	}
 
-	return &RecipeListResponse{Recipes: recipes}, nil
+	return &RecipeListResponse{Recipes: recipeCards}, nil
 }
 
-//encore:api public method=POST path=/recipes
+//encore:api public method=GET path=/api/recipes/:username
+func GetRecipesByProfileId(ctx context.Context, username string) (*RecipeListResponse, error) {
+	rows, err := db.Query(ctx, `
+		SELECT r.id, p.username, r.slug, r.title, r.tags
+		FROM recipe r
+		INNER JOIN profile p ON r.profile_id = p.id
+		WHERE p.username = $1
+	`, username)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var recipeCards []*RecipeCard
+	for rows.Next() {
+		rc := &RecipeCard{}
+		if err := rows.Scan(&rc.Id, &rc.Username, &rc.Slug, &rc.Title, &rc.Tags); err != nil {
+			return nil, err
+		}
+		recipeCards = append(recipeCards, rc)
+	}
+
+	// Check if there were any errors during iteration.
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("could not iterate over rows: %v", err)
+	}
+
+	return &RecipeListResponse{Recipes: recipeCards}, nil
+}
+
+//encore:api public method=GET path=/api/recipes/:username/:slug
+func GetRecipe(ctx context.Context, username string, slug string) (*Recipe, error) {
+	recipe := &Recipe{Slug: slug}
+
+	// Use a JOIN to get the profile_id by username and retrieve recipe details in one query
+	err := db.QueryRow(ctx, `
+		SELECT r.id, r.profile_id, r.title, r.ingredients, r.instructions, r.notes, 
+		       r.cook_temp_deg_f, r.cook_time_minutes, r.tags
+		FROM recipe r
+		INNER JOIN profile p ON r.profile_id = p.id
+		WHERE p.username = $1 AND r.slug = $2
+	`, username, slug).Scan(
+		&recipe.Id,
+		&recipe.ProfileId,
+		&recipe.Title,
+		&recipe.Ingredients,
+		&recipe.Instructions,
+		&recipe.Notes,
+		&recipe.CookTempDegF,
+		&recipe.CookTimeMinutes,
+		&recipe.Tags,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("recipe not found")
+		}
+		return nil, err
+	}
+
+	return recipe, nil
+}
+
+//encore:api auth method=POST path=/api/recipes
 func SaveRecipe(ctx context.Context, recipe *Recipe) (*Recipe, error) {
-	// Save the recipe to the database.
-	// If the recipe already exists (i.e. CONFLICT), we update the recipe info.
+	authResult, authBool := auth.UserID()
+	if !authBool || string(authResult) != recipe.ProfileId {
+		err := fmt.Errorf("not authorized")
+		return nil, err
+	}
+
 	_, err := db.Exec(ctx, `
-		INSERT INTO recipe (id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-		ON CONFLICT (id) DO UPDATE SET slug=$2, title=$3, ingredients=$4, instructions=$5, notes=$6, cook_temp_deg_f=$7, cook_time_minutes=$8, tags=$9
-	`, recipe.Id, recipe.Slug, recipe.Title, recipe.Ingredients, recipe.Instructions, recipe.Notes, recipe.CookTempDegF, recipe.CookTimeMinutes, recipe.Tags)
+		INSERT INTO recipe (id, profile_id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		ON CONFLICT (id) DO UPDATE SET profile_id=$2, slug=$3, title=$4, ingredients=$5, instructions=$6, notes=$7, cook_temp_deg_f=$8, cook_time_minutes=$9, tags=$10
+	`, recipe.Id, recipe.ProfileId, recipe.Slug, recipe.Title, recipe.Ingredients, recipe.Instructions, recipe.Notes, recipe.CookTempDegF, recipe.CookTimeMinutes, recipe.Tags)
 
 	// If there was an error saving to the database, then we return that error.
 	if err != nil {
@@ -126,9 +272,32 @@ func SaveRecipe(ctx context.Context, recipe *Recipe) (*Recipe, error) {
 	return recipe, nil
 }
 
-//encore:api public method=DELETE path=/api/recipes/:id
+//encore:api auth method=DELETE path=/api/recipes/:id
 func DeleteRecipe(ctx context.Context, id string) error {
-	_, err := db.Exec(ctx, `DELETE FROM recipe WHERE id = $1`, id)
+	authResult, authBool := auth.UserID()
+	if !authBool {
+		return fmt.Errorf("not authorized")
+	}
+
+	var recipeProfileId string
+	err := db.QueryRow(ctx, `
+		SELECT profile_id
+		FROM recipe
+		WHERE id = $1
+	`, id).Scan(&recipeProfileId)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return fmt.Errorf("recipe not found")
+		}
+		return fmt.Errorf("error retrieving recipe: %w", err)
+	}
+
+	if recipeProfileId != string(authResult) {
+		return fmt.Errorf("not authorized to delete this recipe")
+	}
+
+	_, err = db.Exec(ctx, `DELETE FROM recipe WHERE id = $1`, id)
 	if err != nil {
 		return fmt.Errorf("error deleting recipe: %w", err)
 	}
@@ -136,15 +305,19 @@ func DeleteRecipe(ctx context.Context, id string) error {
 	return nil
 }
 
-//encore:api public method=POST path=/recipes/generate-from-images
+//encore:api auth method=POST path=/api/recipes/generate-from-images
 func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*Recipe, error) {
-	var recipe *Recipe
+	authResult, authBool := auth.UserID()
+	if !authBool {
+		return nil, fmt.Errorf("not authorized")
+	}
 
 	recipe, err := AnalyzeImageToRecipe(ctx, req.Files)
 	if err != nil {
 		return nil, fmt.Errorf("error analyzing images: %w", err)
 	}
 
+	recipe.ProfileId = string(authResult)
 	recipeId, err := uuid.NewV4()
 	if err != nil {
 		return nil, fmt.Errorf("error generating uuid: %w", err)
@@ -165,15 +338,19 @@ func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*Recipe, er
 	return savedRecipe, nil
 }
 
-//encore:api public method=POST path=/recipes/generate-from-text
+//encore:api auth method=POST path=/api/recipes/generate-from-text
 func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Recipe, error) {
-	var recipe *Recipe
+	authResult, authBool := auth.UserID()
+	if !authBool {
+		return nil, fmt.Errorf("not authorized")
+	}
 
 	recipe, err := AnalyzeTextToRecipe(ctx, req.Text)
 	if err != nil {
 		return nil, fmt.Errorf("error analyzing text: %w", err)
 	}
 
+	recipe.ProfileId = string(authResult)
 	recipeId, err := uuid.NewV4()
 	if err != nil {
 		return nil, fmt.Errorf("error generating uuid: %w", err)
@@ -194,7 +371,7 @@ func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Recipe
 	return savedRecipe, nil
 }
 
-//encore:api public method=POST path=/slug/available
+//encore:api public method=POST path=/api/slug/available
 func CheckIfSlugIsAvailable(ctx context.Context, req IsSlugAvailableRequest) (IsSlugAvailableResponse, error) {
 	exists, err := checkSlugExists(ctx, req.Slug)
 	if err != nil {

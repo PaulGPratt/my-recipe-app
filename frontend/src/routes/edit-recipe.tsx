@@ -1,33 +1,31 @@
+import { MilkdownProvider } from "@milkdown/react";
+import { ArrowLeft, Flame, MoveDown, Plus, Timer, Trash, TriangleAlert } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
-import Client, { Environment, Local, api } from "../client";
-import { Button, buttonVariants } from "../components/ui/button";
-import { ArrowLeft, Flame, MoveDown, Plus, Timer, Trash, TriangleAlert } from "lucide-react";
-import { Label } from "../components/ui/label";
-import { Input } from "../components/ui/input";
-import { MilkdownProvider } from "@milkdown/react";
+import { api } from "../client";
 import MarkdownEditor from "../components/markdown-editor";
-import { useEffect, useState } from "react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog";
+import { Button, buttonVariants } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import { ScrollArea } from "../components/ui/scroll-area";
 import { Separator } from "../components/ui/separator";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog";
+import { FirebaseContext } from "../lib/firebase";
+import getRequestClient from "../lib/get-request-client";
 import { cn } from "../lib/utils";
 
-const getRequestClient = () => {
-    return import.meta.env.DEV
-        ? new Client(Local)
-        : new Client(Environment("staging"));
-};
-
 function EditRecipe() {
-    const client = getRequestClient();
+
     const navigate = useNavigate();
+    const { auth } = useContext(FirebaseContext);
+    const { username, slug } = useParams();
 
-    const { slug } = useParams();
-
+    const [token, setToken] = useState<string | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(true);
     const [slugError, setSlugError] = useState<string>("");
     const [recipeId, setRecipeId] = useState<string>("");
+    const [recipeProfileId, setRecipeProfileId] = useState<string>("");
     const [recipeTitle, setRecipeTitle] = useState<string>("");
     const [recipeSlug, setRecipeSlug] = useState<string>("");
     const [tags, setTags] = useState<string[]>([]);
@@ -39,10 +37,12 @@ function EditRecipe() {
 
     useEffect(() => {
         const loadRecipe = async () => {
-            if (!slug) return;
+            if (!username || !slug) return;
 
             try {
-                const freshRecipe = await client.api.GetRecipe(slug);
+                const token = await fetchToken();
+                const client = getRequestClient(token ?? undefined);
+                const freshRecipe = await client.api.GetRecipe(username, slug);
                 setRecipeState(freshRecipe);
             } catch (err) {
                 console.error(err);
@@ -52,10 +52,20 @@ function EditRecipe() {
         };
 
         loadRecipe();
-    }, [slug]);
+    }, [username, slug]);
+
+    const fetchToken = async () => {
+        if (!token) {
+            const newToken = await auth?.currentUser?.getIdToken();
+            setToken(newToken);
+            return newToken;
+        }
+        return token;
+    };
 
     const setRecipeState = (recipeResponse: api.Recipe) => {
         setRecipeId(recipeResponse.id);
+        setRecipeProfileId(recipeResponse.profile_id);
         setRecipeTitle(recipeResponse.title);
         setRecipeSlug(recipeResponse.slug);
         setTags(recipeResponse.tags ?? []);
@@ -67,7 +77,7 @@ function EditRecipe() {
     }
 
     const handleBack = async () => {
-        navigate(`/recipes/` + slug);
+        navigate(`/recipes/` + username + '/' + slug);
     }
 
     const handleTitleChange = (event: { target: { value: any; }; }) => {
@@ -76,7 +86,7 @@ function EditRecipe() {
 
     const handleSlugInput = async (event: React.FocusEvent<HTMLInputElement> | React.ChangeEvent<HTMLInputElement>) => {
         const slugVal = event.target.value;
-        
+
         setSlugError("");
         setRecipeSlug(slugVal);
 
@@ -90,8 +100,10 @@ function EditRecipe() {
             }
 
             try {
+                const token = await fetchToken();
+                const client = getRequestClient(token ?? undefined);
                 const availableResp = await client.api.CheckIfSlugIsAvailable({ slug: slugVal });
-                if(!availableResp.available) {
+                if (!availableResp.available) {
                     setSlugError(`${slugVal} is already in use`)
                 }
             } catch (err) {
@@ -125,8 +137,11 @@ function EditRecipe() {
             const filteredTags = tags.filter((tag) => tag != undefined && tag != null && tag != "");
             setTags(filteredTags);
 
+            const token = await fetchToken();
+            const client = getRequestClient(token ?? undefined);
             await client.api.SaveRecipe({
                 id: recipeId || uuidv4(),
+                profile_id: recipeProfileId,
                 slug: recipeSlug,
                 title: recipeTitle,
                 instructions: instructions,
@@ -136,7 +151,7 @@ function EditRecipe() {
                 cook_time_minutes: cookTime,
                 tags: filteredTags,
             });
-            navigate(`/recipes/` + recipeSlug);
+            navigate(`/recipes/` + username + '/' + recipeSlug);
         } catch (err) {
             console.error(err);
         }
@@ -148,6 +163,8 @@ function EditRecipe() {
         }
 
         try {
+            const token = await fetchToken();
+            const client = getRequestClient(token ?? undefined);
             await client.api.DeleteRecipe(recipeId)
             navigate(`/recipes/`);
         } catch (err) {

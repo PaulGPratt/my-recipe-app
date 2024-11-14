@@ -1,29 +1,25 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import Client, { Environment, Local, api } from "../client";
-import MarkdownEditor from "../components/markdown-editor";
 import { MilkdownProvider } from "@milkdown/react";
-import { ArrowLeft, Flame, Pencil, Timer } from "lucide-react";
+import { Flame, Pencil, Timer } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { api } from "../client";
+import BreadCrumbs from "../components/breadcrumbs";
+import MarkdownEditor from "../components/markdown-editor";
+import ProfileMenu from "../components/profile-menu";
 import { Button } from "../components/ui/button";
-import { Separator } from "../components/ui/separator";
 import { ScrollArea } from "../components/ui/scroll-area";
+import { Separator } from "../components/ui/separator";
+import { FirebaseContext } from "../lib/firebase";
+import getRequestClient from "../lib/get-request-client";
 
-/**
- * Returns the Encore request client for either the local or staging environment.
- * If we are running the frontend locally (dev mode) we assume that our Encore backend is also running locally
- * and make requests to that, otherwise we use the staging client.
- */
-const getRequestClient = () => {
-    return import.meta.env.DEV
-        ? new Client(Local)
-        : new Client(Environment("staging"));
-};
+
 function Recipe() {
-    const client = getRequestClient();
+
     const navigate = useNavigate();
 
     // Get the 'id' from the route parameters
-    const { slug } = useParams();
+    const { username, slug } = useParams();
+    const { auth } = useContext(FirebaseContext);
 
     const [isLoading, setIsLoading] = useState(true);
     const [recipe, setRecipe] = useState<api.Recipe>();
@@ -37,10 +33,12 @@ function Recipe() {
     useEffect(() => {
 
         const loadRecipes = async () => {
-            if (!slug) return;
+            if (!username || !slug) return;
 
             try {
-                const freshRecipe = await client.api.GetRecipe(slug);
+                const token = await auth?.currentUser?.getIdToken();
+                const client = getRequestClient(token ?? undefined);
+                const freshRecipe = await client.api.GetRecipe(username, slug);
                 setRecipeState(freshRecipe);
             } catch (err) {
                 console.error(err);
@@ -49,7 +47,7 @@ function Recipe() {
         };
 
         loadRecipes();
-    }, [slug]);
+    }, [username, slug]);
 
 
 
@@ -63,24 +61,21 @@ function Recipe() {
         setCookTime(recipeResponse.cook_time_minutes);
     }
 
-    const handleBack = () => {
-        navigate(`/recipes/`);
-    };
-
     const editRecipe = async () => {
-        navigate(`/recipes/` + slug + '/edit');
+        navigate(`/recipes/` + username + '/' + slug + '/edit');
     }
 
     return (
         <div className="h-full mx-auto max-w-4xl flex flex-col">
 
             <div className="flex p-4 gap-4 justify-between">
-                <Button size="icon" variant="ghost" onClick={handleBack} role="link"><ArrowLeft size={30} /></Button>
-                <div className="flex flex-grow items-center">
-                    {!isLoading && (<div className="text-2xl font-semibold">{recipe?.title}</div>)}
+                <div className="flex gap-4 items-center">
+                    <ProfileMenu></ProfileMenu>
+                    <BreadCrumbs></BreadCrumbs>
                 </div>
-                <Button size="icon" variant="ghost" onClick={editRecipe}><Pencil /></Button>
-
+                {(auth?.currentUser?.uid && auth.currentUser.uid === recipe?.profile_id) && (
+                    <Button size="icon" variant="ghost" onClick={editRecipe}><Pencil /></Button>
+                )}
             </div>
             <Separator />
 

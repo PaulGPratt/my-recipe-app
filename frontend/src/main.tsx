@@ -1,18 +1,22 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import {
-  createBrowserRouter,
-  RouterProvider,
   Navigate,
+  RouterProvider,
+  createBrowserRouter,
 } from "react-router-dom";
-import Recipe from "./routes/recipe";
-import Recipes from "./routes/recipes";
-import "./index.css";
-import { Toaster } from "./components/ui/toaster";
 import { ThemeProvider } from "./components/theme-provider";
-import Plan from "./routes/plan";
-import Upload from "./routes/upload";
+import { Toaster } from "./components/ui/toaster";
+import "./index.css";
+import { FirebaseProvider } from "./lib/firebase";
+import AllRecipes from "./routes/all-recipes";
+import CompleteProfile from "./routes/complete-profile";
 import EditRecipe from "./routes/edit-recipe";
+import Login from "./routes/login";
+import Recipe from "./routes/recipe";
+import Signup from "./routes/signup";
+import Upload from "./routes/upload";
+import UserRecipes from "./routes/user-recipes";
 
 const router = createBrowserRouter([
   {
@@ -20,31 +24,45 @@ const router = createBrowserRouter([
     element: <Navigate to="/recipes" replace />,
   },
   {
-    path: "/plan",
-    element: <Plan />,
-  },
-  {
     path: "/recipes",
-    element: <Recipes />,
+    element: <AllRecipes />,
   },
   {
-    path: "/recipes/:slug",
+    path: "/recipes/:username",
+    element: <UserRecipes />,
+  },
+  {
+    path: "/recipes/:username/:slug",
     element: <Recipe />
   },
   {
-    path: "/recipes/:slug/edit",
+    path: "/recipes/:username/:slug/edit",
     element: <EditRecipe />
   },
   {
     path: "/upload",
     element: <Upload />,
   },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/signup",
+    element: <Signup />,
+  },
+  {
+    path: "/complete-profile",
+    element: <CompleteProfile />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <RouterProvider router={router} />
+      <FirebaseProvider>
+        <RouterProvider router={router} />
+      </FirebaseProvider>
       <Toaster />
     </ThemeProvider>
   </React.StrictMode>
