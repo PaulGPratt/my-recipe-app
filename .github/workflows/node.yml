@@ -12,6 +12,7 @@ jobs:
   build-and-deploy:
     concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
+    environment: github-pages
     defaults:
       run:
         working-directory: frontend
