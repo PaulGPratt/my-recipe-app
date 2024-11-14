@@ -104,6 +104,11 @@ export namespace api {
         text: string
     }
 
+    export interface GenerateRecipeResponse {
+        username: string
+        slug: string
+    }
+
     export interface IsSlugAvailableRequest {
         slug: string
     }
@@ -173,16 +178,16 @@ export namespace api {
             await this.baseClient.callAPI("DELETE", `/api/recipes/${encodeURIComponent(id)}`)
         }
 
-        public async GenerateFromImages(params: FileUploadRequest): Promise<Recipe> {
+        public async GenerateFromImages(params: FileUploadRequest): Promise<GenerateRecipeResponse> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callAPI("POST", `/api/recipes/generate-from-images`, JSON.stringify(params))
-            return await resp.json() as Recipe
+            return await resp.json() as GenerateRecipeResponse
         }
 
-        public async GenerateFromText(params: GenerateFromTextRequest): Promise<Recipe> {
+        public async GenerateFromText(params: GenerateFromTextRequest): Promise<GenerateRecipeResponse> {
             // Now make the actual call to the API
             const resp = await this.baseClient.callAPI("POST", `/api/recipes/generate-from-text`, JSON.stringify(params))
-            return await resp.json() as Recipe
+            return await resp.json() as GenerateRecipeResponse
         }
 
         public async GetAllRecipes(): Promise<RecipeListResponse> {

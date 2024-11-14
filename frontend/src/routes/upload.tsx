@@ -15,7 +15,8 @@ export default function Upload() {
     const { auth } = useContext(FirebaseContext);
     const navigate = useNavigate();
 
-    const [isUploading, setIsUploading] = useState<boolean>(false);
+    const [isUploadingFiles, setIsUploadingFiles] = useState<boolean>(false);
+    const [isSubmittingText, setIsSubmittingText] = useState<boolean>(false);
     const [filesData, setFilesData] = useState<api.FileUpload[]>([]);
     const [recipeText, setRecipeText] = useState<string>("");
 
@@ -52,33 +53,33 @@ export default function Upload() {
 
     const submitImagesToApi = async () => {
         try {
-            setIsUploading(true);
+            setIsUploadingFiles(true);
             const token = await auth?.currentUser?.getIdToken();
             const client = getRequestClient(token ?? undefined);
             const response = await client.api.GenerateFromImages({
                 files: filesData
             } as api.FileUploadRequest);
-            navigate(`/recipes/${response.slug}`);
+            navigate(`/recipes/${response.username}/${response.slug}`);
         } catch (error) {
             console.error("Submit images failed:", error);
         } finally {
-            setIsUploading(false);
+            setIsUploadingFiles(false);
         }
     }
 
     const submitTextToApi = async () => {
         try {
-            setIsUploading(true);
+            setIsSubmittingText(true);
             const token = await auth?.currentUser?.getIdToken();
             const client = getRequestClient(token ?? undefined);
             const response = await client.api.GenerateFromText({
                 text: recipeText
             } as api.GenerateFromTextRequest);
-            navigate(`/recipes/${response.slug}`);
+            navigate(`/recipes/${response.username}/${response.slug}`);
         } catch (error) {
             console.error("Submit text failed:", error);
         } finally {
-            setIsUploading(false);
+            setIsSubmittingText(false);
         }
     }
 
@@ -99,13 +100,13 @@ export default function Upload() {
                         className="p-0 my-2 cursor-pointer file:cursor-pointer h-13 text-2xl file:mr-3 file:px-4 file:py-2 f font-semibold file:text-2xl file:font-semibold file:bg-secondary file:text-secondary-foreground file:shadow file:hover:bg-secondary/80" />
                     {filesData.length !== 0 && (
                         <div>
-                            <Button variant="default" onClick={submitImagesToApi} disabled={isUploading}>
-                                {isUploading ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Submit Images"}
+                            <Button variant="default" onClick={submitImagesToApi} disabled={isSubmittingText || isUploadingFiles}>
+                                {isUploadingFiles ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Submit Images"}
                             </Button>
                         </div>
                     )}
 
-                    {isUploading && (
+                    {isUploadingFiles && (
                         <div className="text-2xl">
                             You will be redirected to the new recipe once adding is complete.
                         </div>
@@ -128,13 +129,13 @@ export default function Upload() {
                         placeholder="Insert your recipe text here."
                         value={recipeText}
                         onChange={handleChangeRecipeText}
-                        disabled={isUploading} />
+                        disabled={isSubmittingText || isUploadingFiles} />
                     {recipeText.trim().length > 0 && (<div>
-                        <Button variant="default" onClick={submitTextToApi} disabled={isUploading}>
-                            {isUploading ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Submit Text"}
+                        <Button variant="default" onClick={submitTextToApi} disabled={isSubmittingText || isUploadingFiles}>
+                            {isSubmittingText ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Submit Text"}
                         </Button>
                     </div>)}
-                    {isUploading && (
+                    {isSubmittingText && (
                         <div className="text-2xl">
                             You will be redirected to the new recipe once adding is complete.
                         </div>
