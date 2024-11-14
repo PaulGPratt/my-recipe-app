@@ -177,7 +177,7 @@ function EditRecipe() {
 
             <div className="flex p-4 justify-between">
                 <div className="flex gap-4 items-center">
-                    <Button size="icon" variant="ghost" onClick={handleBack} role="link"><ArrowLeft size={30} /></Button>
+                    <Button size="icon" variant="ghost" onClick={handleBack} role="link" title="Back to Recipe"><ArrowLeft size={30} /></Button>
                     <div className="text-2xl font-semibold">Edit Recipe</div>
                 </div>
                 <div className="flex gap-2">
