@@ -13,8 +13,6 @@ import AllRecipes from "./routes/all-recipes";
 import CompleteProfile from "./routes/complete-profile";
 import EditRecipe from "./routes/edit-recipe";
 import Login from "./routes/login";
-import Plan from "./routes/plan";
-import Profile from "./routes/profile";
 import Recipe from "./routes/recipe";
 import Signup from "./routes/signup";
 import Upload from "./routes/upload";
@@ -24,10 +22,6 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Navigate to="/recipes" replace />,
-  },
-  {
-    path: "/plan",
-    element: <Plan />,
   },
   {
     path: "/recipes",
@@ -60,10 +54,6 @@ const router = createBrowserRouter([
   {
     path: "/complete-profile",
     element: <CompleteProfile />,
-  },
-  {
-    path: "/profile/:id",
-    element: <Profile />,
   },
 ]);
 

@@ -1,7 +1,7 @@
 import { MilkdownProvider } from "@milkdown/react";
-import { ArrowLeft, Flame, Pencil, Timer } from "lucide-react";
+import { Flame, Pencil, Timer } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../client";
 import MarkdownEditor from "../components/markdown-editor";
 import { Button } from "../components/ui/button";
@@ -11,7 +11,6 @@ import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
 import ProfileMenu from "../components/profile-menu";
 import BreadCrumbs from "../components/breadcrumbs";
-import { BreadcrumbLink } from "../components/ui/breadcrumb";
 
 
 function Recipe() {

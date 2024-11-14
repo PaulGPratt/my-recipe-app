@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import Client, { api } from "../client";
 import ProfileMenu from "../components/profile-menu";
 import RecipeCardButton from "../components/recipe-card-button";
-import TopNav from "../components/top-nav";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Separator } from "../components/ui/separator";
@@ -140,7 +139,6 @@ function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
 
   return (
     <div className="h-full mx-auto max-w-4xl flex flex-col">
-      <TopNav className="hidden"></TopNav>
       <div className="flex p-4 pb-0 justify-between">
         <div className="flex gap-4 items-center">
           <ProfileMenu></ProfileMenu>
