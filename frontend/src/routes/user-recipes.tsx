@@ -6,7 +6,6 @@ function UserRecipes() {
   
   return (
     <RecipeListBase
-      title={`${username}'s recipes`}
       cacheKey={`user_recipes_${username}`}
       fetchRecipes={(client) => client.api.GetRecipesByProfileId(username!)}
     />

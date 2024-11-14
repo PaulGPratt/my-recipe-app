@@ -40,6 +40,20 @@ body {
   }
 }
 
+.ProseMirror {
+  ul {
+    list-style-type: disc;
+    padding-inline-start: 1.25em;
+    @apply pb-4;
+  }
+
+  ol {
+    list-style-type: decimal;
+    padding-inline-start: 1.25em;
+    @apply pb-4;
+  }
+}
+
 .milkdown li {
   @apply my-2;
 }
@@ -109,10 +123,6 @@ body {
 
 
 
-
-
-
-
 @layer base {
   * {
     @apply border-border;
@@ -120,18 +130,6 @@ body {
 
   body {
     @apply bg-background text-foreground;
-  }
-
-  ul {
-    list-style-type: disc;
-    padding-inline-start: 1.25em;
-    @apply pb-4;
-  }
-
-  ol {
-    list-style-type: decimal;
-    padding-inline-start: 1.25em;
-    @apply pb-4;
   }
 }
 

@@ -21,12 +21,11 @@ export interface TagRecipe {
 }
 
 interface RecipeListBaseProps {
-  title: string;
   fetchRecipes: (client: Client) => Promise<api.RecipeListResponse>;
   cacheKey: string;
 }
 
-function RecipeListBase({ title, fetchRecipes, cacheKey }: RecipeListBaseProps) {
+function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
   const { auth } = useContext(FirebaseContext);
   const user = auth?.currentUser;
   const navigate = useNavigate();
@@ -120,7 +119,7 @@ function RecipeListBase({ title, fetchRecipes, cacheKey }: RecipeListBaseProps) 
     if (searchQuery.length > 0) {
       tagRecipes = tagRecipes.map(x => ({
         tag: x.tag,
-        recipes: x.recipes.filter(recipe => 
+        recipes: x.recipes.filter(recipe =>
           recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
         )
       })).filter(x => x.recipes.length > 0);
@@ -144,6 +143,7 @@ function RecipeListBase({ title, fetchRecipes, cacheKey }: RecipeListBaseProps) 
       <TopNav className="hidden"></TopNav>
       <div className="flex p-4 pb-0 justify-between">
         <div className="flex gap-4 items-center">
+          <ProfileMenu></ProfileMenu>
           <BreadCrumbs></BreadCrumbs>
         </div>
         <div className="flex gap-2">
@@ -151,10 +151,10 @@ function RecipeListBase({ title, fetchRecipes, cacheKey }: RecipeListBaseProps) 
           {user?.uid && (
             <Button size="icon" variant="ghost" onClick={handleAdd}><Plus /></Button>
           )}
-          <ProfileMenu></ProfileMenu>
+
         </div>
       </div>
-      
+
       {showSearch && (
         <div className="flex px-4 pt-4">
           <div className="relative flex-grow">

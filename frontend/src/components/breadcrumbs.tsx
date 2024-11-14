@@ -1,31 +1,25 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { Button } from "./ui/button";
+import { useParams } from "react-router-dom";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb";
 
 function BreadCrumbs() {
-    const navigate = useNavigate();
     const { username } = useParams();
 
-    const navigateToAllRecipes = async () => {
-        navigate(`/recipes`);
-    }
-
-    const navigateToUsername = () => {
-        navigate(`/recipes/` + username)
-    }
-
     return (
-        <div className="flex gap-2 items-center">
-            <Button variant="link" className="p-0 min-h-10" onClick={navigateToAllRecipes}>recipes</Button>
-            {username && (
-                <>
-                <div>
-                /
-                </div>
-                     <Button variant="link" className="p-0 min-h-10" onClick={navigateToUsername}>{username}</Button>
-                </>
-
-            )}
-        </div>
+        <Breadcrumb>
+            <BreadcrumbList>
+                <BreadcrumbItem>
+                    <BreadcrumbLink href="/recipes">recipes</BreadcrumbLink>
+                </BreadcrumbItem>
+                {username && (
+                    <>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href={`/recipes/${username}`}>{username}</BreadcrumbLink>
+                        </BreadcrumbItem>
+                    </>
+                )}
+            </BreadcrumbList>
+        </Breadcrumb>
     )
 }
 

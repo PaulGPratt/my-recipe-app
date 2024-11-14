@@ -9,6 +9,8 @@ import { ScrollArea } from "../components/ui/scroll-area";
 import { Separator } from "../components/ui/separator";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
+import ProfileMenu from "../components/profile-menu";
+import BreadCrumbs from "../components/breadcrumbs";
 
 
 function Recipe() {
@@ -75,9 +77,9 @@ function Recipe() {
         <div className="h-full mx-auto max-w-4xl flex flex-col">
 
             <div className="flex p-4 gap-4 justify-between">
-                <Button size="icon" variant="ghost" onClick={handleBack} role="link"><ArrowLeft size={30} /></Button>
-                <div className="flex flex-grow items-center">
-                    {!isLoading && (<div className="text-2xl font-semibold">{recipe?.title}</div>)}
+                <div className="flex gap-4 items-center">
+                    <ProfileMenu></ProfileMenu>
+                    <BreadCrumbs></BreadCrumbs>
                 </div>
                 {(auth?.currentUser?.uid && auth.currentUser.uid === recipe?.profile_id) && (
                     <Button size="icon" variant="ghost" onClick={editRecipe}><Pencil /></Button>
@@ -89,7 +91,7 @@ function Recipe() {
                 <ScrollArea className="h-full w-full">
                     <div className="text-4xl px-4 pt-4 font-semibold text-center">{recipe?.title}</div>
                     <div className="text-2xl px-4 pt-1 font-semibold text-center">by <Button variant="link" className="px-0" onClick={navigateToUsername}>{username}</Button></div>
-                    
+
                     {(tags?.length > 0) && (
                         <div className="px-4 pt-2 text-3xl flex flex-row items-center justify-center gap-x-2">
 

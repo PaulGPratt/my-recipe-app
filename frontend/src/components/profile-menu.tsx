@@ -63,7 +63,7 @@ function ProfileMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" variant="ghost" className="text-2xl font-bold"><User /></Button>
+        <Button size="icon" variant="secondary" className="text-2xl font-bold"><User /></Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64">
         {user?.uid ? (
@@ -73,11 +73,11 @@ function ProfileMenu() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator></DropdownMenuSeparator>
             <DropdownMenuItem onClick={navigateToMyRecipes} className="text-2xl">
-              My recipes
+              My Recipes
             </DropdownMenuItem>
             <DropdownMenuSeparator></DropdownMenuSeparator>
             <DropdownMenuItem onClick={logoutUser} className="text-2xl">
-              Log out
+              Log Out
             </DropdownMenuItem>
           </>
 
@@ -88,10 +88,10 @@ function ProfileMenu() {
             </DropdownMenuItem>
             <DropdownMenuSeparator></DropdownMenuSeparator>
             <DropdownMenuItem onClick={openLogin} className="text-2xl">
-              Log in
+              Log In
             </DropdownMenuItem>
             <DropdownMenuItem onClick={openSignUp} className="text-2xl">
-              Sign up
+              Sign Up
             </DropdownMenuItem>
           </>
         )}
