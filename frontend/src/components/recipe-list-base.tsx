@@ -155,21 +155,6 @@ function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
         </div>
       </div>
 
-      {showSearch && (
-        <div className="flex px-4 pt-4">
-          <div className="relative flex-grow">
-            <Search className="absolute left-3 top-3 h-6 w-6 text-muted-foreground" />
-            <Input
-              ref={searchInputRef}
-              placeholder="Search recipes"
-              className="pl-11 h-12 text-2xl"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-          </div>
-        </div>
-      )}
-
       <div className="flex flex-wrap gap-2 p-4">
         {tagList?.map((tag) => (
           <Button
@@ -183,6 +168,21 @@ function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
           </Button>
         ))}
       </div>
+
+      {showSearch && (
+        <div className="flex px-4 pb-4">
+          <div className="relative flex-grow">
+            <Search className="absolute left-3 top-3 h-6 w-6 text-muted-foreground" />
+            <Input
+              ref={searchInputRef}
+              placeholder="Search recipes"
+              className="pl-11 h-12 text-2xl"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
+        </div>
+      )}
 
       <ScrollArea className="h-full w-full">
         {tagRecipes?.map((tagRecipe) => (

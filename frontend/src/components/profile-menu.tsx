@@ -83,6 +83,10 @@ function ProfileMenu() {
 
         ) : (
           <>
+          <DropdownMenuLabel className="text-2xl">
+              Welcome Guest!
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator></DropdownMenuSeparator>
             <DropdownMenuItem onClick={navigateToAllRecipes} className="text-2xl">
               All Recipes
             </DropdownMenuItem>
