@@ -2,14 +2,14 @@ import { Auth } from "firebase/auth";
 import { api } from "../client";
 import getRequestClient from "./get-request-client";
 import {
-    getLocalStorage,
-    removeLocalStorage,
-    setLocalStorage,
+  getLocalStorage,
+  removeLocalStorage,
+  setLocalStorage,
 } from "./localStorage";
 
 const profile_key = "profile";
 
-export async function fetchStoredProfile(auth: Auth): Promise<api.Profile | undefined> {
+export async function fetchStoredProfile(auth: Auth): Promise<api.Profile> {
   const cachedProfile = getLocalStorage(profile_key) as api.Profile;
   if (cachedProfile && cachedProfile.id === auth.currentUser?.uid) {
     return cachedProfile;
@@ -29,9 +29,16 @@ export async function fetchStoredProfile(auth: Auth): Promise<api.Profile | unde
     console.log(err);
   }
 
-  return undefined;
+  return {
+    id: auth.currentUser?.uid,
+    username: "",
+  } as api.Profile;
 }
 
 export function storeProfile(profile: api.Profile): void {
   setLocalStorage(profile_key, profile);
+}
+
+export function removeStoredProfile(): void {
+  removeLocalStorage(profile_key);
 }

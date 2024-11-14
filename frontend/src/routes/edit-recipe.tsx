@@ -14,6 +14,7 @@ import { Separator } from "../components/ui/separator";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
 import { cn } from "../lib/utils";
+import { fetchStoredProfile } from "../lib/profile-utils";
 
 function EditRecipe() {
 
@@ -37,12 +38,16 @@ function EditRecipe() {
 
     useEffect(() => {
         const loadRecipe = async () => {
-            if (!username || !slug) return;
+            if (!username || !slug || !auth) return;
 
             try {
                 const token = await fetchToken();
                 const client = getRequestClient(token ?? undefined);
                 const freshRecipe = await client.api.GetRecipe(username, slug);
+                const profile = await fetchStoredProfile(auth);
+                if(profile.username != username) {
+                    handleBack();
+                }
                 setRecipeState(freshRecipe);
             } catch (err) {
                 console.error(err);
@@ -52,7 +57,7 @@ function EditRecipe() {
         };
 
         loadRecipe();
-    }, [username, slug]);
+    }, [username, slug, auth]);
 
     const fetchToken = async () => {
         if (!token) {

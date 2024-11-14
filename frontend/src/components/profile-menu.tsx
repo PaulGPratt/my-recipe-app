@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../client";
 import { FirebaseContext } from "../lib/firebase";
-import getRequestClient from "../lib/get-request-client";
+import { fetchStoredProfile, removeStoredProfile } from "../lib/profile-utils";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
@@ -22,9 +22,7 @@ function ProfileMenu() {
       }
 
       try {
-        const token = await auth?.currentUser?.getIdToken();
-        const client = getRequestClient(token ?? undefined);
-        const freshProfile = await client.api.GetMyProfile();
+        const freshProfile = await fetchStoredProfile(auth);
         if (freshProfile.username.length === 0) {
           navigate("/complete-profile");
         } else {
@@ -40,6 +38,7 @@ function ProfileMenu() {
   const logoutUser = async () => {
     if (auth) {
       await signOut(auth);
+      removeStoredProfile();
       navigate("/");
     }
   }
@@ -63,7 +62,12 @@ function ProfileMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" variant="secondary" className="text-2xl font-bold" title="User Menu"><User /></Button>
+        {profile?.username ? (
+          <Button size="icon" variant="secondary" className="text-2xl font-bold" title="User Menu">{profile.username.slice(0, 1).toUpperCase()}</Button>
+        ) : (
+          <Button size="icon" variant="secondary"title="User Menu"><User /></Button>
+        )}
+
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64">
         {user?.uid ? (
@@ -83,7 +87,7 @@ function ProfileMenu() {
 
         ) : (
           <>
-          <DropdownMenuLabel className="text-2xl">
+            <DropdownMenuLabel className="text-2xl">
               Welcome Guest!
             </DropdownMenuLabel>
             <DropdownMenuSeparator></DropdownMenuSeparator>
