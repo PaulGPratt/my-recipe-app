@@ -41,13 +41,13 @@ body {
 }
 
 .ProseMirror {
-  ul {
+  :is(ul) {
     list-style-type: disc;
     padding-inline-start: 1.25em;
     @apply pb-4;
   }
 
-  ol {
+  :is(ol) {
     list-style-type: decimal;
     padding-inline-start: 1.25em;
     @apply pb-4;
