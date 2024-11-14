@@ -10,7 +10,7 @@ import { Input } from "../components/ui/input";
 import { Separator } from "../components/ui/separator";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
-import { getLocalStorage, setLocalStorage } from '../utils/localStorage';
+import { getLocalStorage, setLocalStorage } from '../lib/localStorage';
 import BreadCrumbs from "./breadcrumbs";
 
 export interface TagRecipe {
