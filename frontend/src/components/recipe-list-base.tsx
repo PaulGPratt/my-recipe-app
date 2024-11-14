@@ -1,4 +1,3 @@
-// RecipeListBase.tsx
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plus, Search } from "lucide-react";
 import { SetStateAction, useContext, useEffect, useRef, useState } from "react";

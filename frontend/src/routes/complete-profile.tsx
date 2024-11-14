@@ -1,13 +1,12 @@
+import { TriangleAlert } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { api } from "../client";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
-import { api } from "../client";
-import { Label } from "../components/ui/label";
-import { Input } from "../components/ui/input";
-import { Button } from "../components/ui/button";
-import { TriangleAlert } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
 
 function CompleteProfile() {
 
