@@ -1,12 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, X } from "lucide-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../client";
-import { Separator } from "../components/ui/separator";
+import { ImageUploader } from "../components/image-uploader";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Textarea } from "../components/ui/textarea";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
@@ -18,19 +16,20 @@ export default function Upload() {
     const [isUploadingFiles, setIsUploadingFiles] = useState<boolean>(false);
     const [isSubmittingText, setIsSubmittingText] = useState<boolean>(false);
     const [filesData, setFilesData] = useState<api.FileUpload[]>([]);
+    const [filePreviews, setFilePreviews] = useState<(string | ArrayBuffer | null)[]>([]);
     const [recipeText, setRecipeText] = useState<string>("");
 
     const handleBack = () => {
         navigate(`/recipes/`);
     };
 
-    const handleFilesUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(event.target.files || []); // Convert to array with fallback for null
+    const handleImagesUpload = (files: File[]) => {
         const newFilesData: api.FileUpload[] = [];
-
+        const newFilePreviews: (string | ArrayBuffer | null)[] = [];
         files.forEach((file: any) => {
             const reader = new FileReader();
             reader.onloadend = () => {
+                newFilePreviews.push(reader.result);
                 const base64Content = reader.result?.toString().split(',')[1] || ''; // Safely extracts Base64
                 newFilesData.push({
                     filename: file.name,
@@ -41,10 +40,16 @@ export default function Upload() {
                 // Update state only when all files are processed
                 if (newFilesData.length === files.length) {
                     setFilesData((prevData) => [...prevData, ...newFilesData]);
+                    setFilePreviews((prev) => [...prev, ...newFilePreviews])
                 }
             };
             reader.readAsDataURL(file);
         });
+    };
+
+    const handleRemoveFile = (index: number) => {
+        setFilesData((prev) => prev.filter((_, i) => i !== index));
+        setFilePreviews((prev) => prev.filter((_, i) => i !== index));
     };
 
     const handleChangeRecipeText = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -91,15 +96,40 @@ export default function Upload() {
                     Add Recipe
                 </div>
             </div>
-            <Card className="rounded-none pt-4" >
-                <CardContent className="p-4 pt-0 flex flex-col">
-                    <Label htmlFor="file" className="text-2xl font-semibold">
-                        From Images:
-                    </Label>
-                    <Input id="file" type="file" accept="image/*;capture=camera" multiple onChange={handleFilesUpload}
-                        className="p-0 my-2 cursor-pointer file:cursor-pointer h-13 text-2xl file:mr-3 file:px-4 file:py-2 f font-semibold file:text-2xl file:font-semibold file:bg-secondary file:text-secondary-foreground file:shadow file:hover:bg-secondary/80" />
+            <Tabs defaultValue="from-images" className="w-full px-4">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="from-images">From Images</TabsTrigger>
+                    <TabsTrigger value="from-text">From Text</TabsTrigger>
+                </TabsList>
+                <TabsContent value="from-images" className="flex flex-col mt-0">
+                    {filePreviews.map((preview, index) => (
+                        <div
+                            key={`preview_${index}`}
+                            className="mt-4 relative flex items-center justify-center bg-secondary rounded-md overflow-hidden w-full"
+                        >
+                            <img
+                                src={preview as string}
+                                alt="Uploaded image"
+                                className="h-full w-full object-cover"
+                            />
+                            <Button
+                                variant="secondary"
+                                size="icon"
+                                className="absolute top-2 right-2"
+                                onClick={() => handleRemoveFile(index)}
+                            >
+                                <X />
+                            </Button>
+                        </div>
+                    ))}
+                    {filePreviews.length < 5 && !isUploadingFiles && (
+                        <div className="mt-4">
+                            <ImageUploader onImagesUpload={handleImagesUpload} />
+                        </div>
+                    )}
+
                     {filesData.length !== 0 && (
-                        <div>
+                        <div className="py-4 mx-auto">
                             <Button variant="default" onClick={submitImagesToApi} disabled={isSubmittingText || isUploadingFiles}>
                                 {isUploadingFiles ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Submit Images"}
                             </Button>
@@ -111,37 +141,28 @@ export default function Upload() {
                             You will be redirected to the new recipe once adding is complete.
                         </div>
                     )}
-
-
-                    <div className="my-4 text-2xl flex gap-2 items-center">
-                        <div className="flex-grow"><Separator className="bg-muted-foreground" /></div>
-                        <span className="text-muted-foreground">OR</span>
-                        <div className="flex-grow"><Separator className="bg-muted-foreground" /></div>
-                    </div>
-
-
-                    <Label htmlFor="recipeText" className="text-2xl font-semibold">
-                        From Text:
-                    </Label>
+                </TabsContent>
+                <TabsContent value="from-text" className="flex flex-col mt-0">
                     <Textarea
                         id="recipeText"
-                        className="text-xl my-2"
-                        placeholder="Insert your recipe text here."
+                        className="text-xl mt-4"
+                        placeholder="Copy and paste your recipe text here."
                         value={recipeText}
                         onChange={handleChangeRecipeText}
                         disabled={isSubmittingText || isUploadingFiles} />
-                    {recipeText.trim().length > 0 && (<div>
-                        <Button variant="default" onClick={submitTextToApi} disabled={isSubmittingText || isUploadingFiles}>
-                            {isSubmittingText ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Submit Text"}
-                        </Button>
-                    </div>)}
+                    {recipeText.trim().length > 0 && (
+                        <div className="py-4 mx-auto">
+                            <Button variant="default" onClick={submitTextToApi} disabled={isSubmittingText || isUploadingFiles}>
+                                {isSubmittingText ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Submit Text"}
+                            </Button>
+                        </div>)}
                     {isSubmittingText && (
-                        <div className="text-2xl">
+                        <div className="text-2xl mt-8 text-center">
                             You will be redirected to the new recipe once adding is complete.
                         </div>
                     )}
-                </CardContent>
-            </Card>
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }
