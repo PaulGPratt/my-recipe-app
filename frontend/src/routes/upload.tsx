@@ -10,6 +10,7 @@ import { Separator } from "../components/ui/separator";
 import { Textarea } from "../components/ui/textarea";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 
 export default function Upload() {
     const { auth } = useContext(FirebaseContext);
@@ -91,11 +92,12 @@ export default function Upload() {
                     Add Recipe
                 </div>
             </div>
-            <Card className="rounded-none pt-4" >
-                <CardContent className="p-4 pt-0 flex flex-col">
-                    <Label htmlFor="file" className="text-2xl font-semibold">
-                        From Images:
-                    </Label>
+            <Tabs defaultValue="from-images" className="w-full px-4">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="from-images">From Images</TabsTrigger>
+                    <TabsTrigger value="from-text">From Text</TabsTrigger>
+                </TabsList>
+                <TabsContent value="from-images" className="mt-4">
                     <Input id="file" type="file" accept="image/*;capture=camera" multiple onChange={handleFilesUpload}
                         className="p-0 my-2 cursor-pointer file:cursor-pointer h-13 text-2xl file:mr-3 file:px-4 file:py-2 f font-semibold file:text-2xl file:font-semibold file:bg-secondary file:text-secondary-foreground file:shadow file:hover:bg-secondary/80" />
                     {filesData.length !== 0 && (
@@ -111,18 +113,8 @@ export default function Upload() {
                             You will be redirected to the new recipe once adding is complete.
                         </div>
                     )}
-
-
-                    <div className="my-4 text-2xl flex gap-2 items-center">
-                        <div className="flex-grow"><Separator className="bg-muted-foreground" /></div>
-                        <span className="text-muted-foreground">OR</span>
-                        <div className="flex-grow"><Separator className="bg-muted-foreground" /></div>
-                    </div>
-
-
-                    <Label htmlFor="recipeText" className="text-2xl font-semibold">
-                        From Text:
-                    </Label>
+                </TabsContent>
+                <TabsContent value="from-text" className="mt-4">
                     <Textarea
                         id="recipeText"
                         className="text-xl my-2"
@@ -140,8 +132,8 @@ export default function Upload() {
                             You will be redirected to the new recipe once adding is complete.
                         </div>
                     )}
-                </CardContent>
-            </Card>
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }
