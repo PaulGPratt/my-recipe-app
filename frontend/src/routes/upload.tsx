@@ -102,7 +102,6 @@ export default function Upload() {
                     <TabsTrigger value="from-text">From Text</TabsTrigger>
                 </TabsList>
                 <TabsContent value="from-images" className="flex flex-col mt-0">
-
                     {filePreviews.map((preview, index) => (
                         <div
                             key={`preview_${index}`}
@@ -123,7 +122,7 @@ export default function Upload() {
                             </Button>
                         </div>
                     ))}
-                    {filePreviews.length < 5 && !isUploadingFiles &&(
+                    {filePreviews.length < 5 && !isUploadingFiles && (
                         <div className="mt-4">
                             <ImageUploader onImagesUpload={handleImagesUpload} />
                         </div>
@@ -143,21 +142,22 @@ export default function Upload() {
                         </div>
                     )}
                 </TabsContent>
-                <TabsContent value="from-text" className="mt-4">
+                <TabsContent value="from-text" className="flex flex-col mt-0">
                     <Textarea
                         id="recipeText"
-                        className="text-xl my-2"
+                        className="text-xl mt-4"
                         placeholder="Copy and paste your recipe text here."
                         value={recipeText}
                         onChange={handleChangeRecipeText}
                         disabled={isSubmittingText || isUploadingFiles} />
-                    {recipeText.trim().length > 0 && (<div>
-                        <Button variant="default" onClick={submitTextToApi} disabled={isSubmittingText || isUploadingFiles}>
-                            {isSubmittingText ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Submit Text"}
-                        </Button>
-                    </div>)}
+                    {recipeText.trim().length > 0 && (
+                        <div className="py-4 mx-auto">
+                            <Button variant="default" onClick={submitTextToApi} disabled={isSubmittingText || isUploadingFiles}>
+                                {isSubmittingText ? (<><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding recipe</>) : "Submit Text"}
+                            </Button>
+                        </div>)}
                     {isSubmittingText && (
-                        <div className="text-2xl">
+                        <div className="text-2xl mt-8 text-center">
                             You will be redirected to the new recipe once adding is complete.
                         </div>
                     )}
