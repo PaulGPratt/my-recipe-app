@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, X } from "lucide-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../client";
@@ -16,30 +16,40 @@ export default function Upload() {
     const [isUploadingFiles, setIsUploadingFiles] = useState<boolean>(false);
     const [isSubmittingText, setIsSubmittingText] = useState<boolean>(false);
     const [filesData, setFilesData] = useState<api.FileUpload[]>([]);
+    const [filePreviews, setFilePreviews] = useState<(string | ArrayBuffer | null)[]>([]);
     const [recipeText, setRecipeText] = useState<string>("");
-    const [uploadersCount, setUploadersCount] = useState<number>(1);
 
     const handleBack = () => {
         navigate(`/recipes/`);
     };
 
-    const handleImageUpload = (file: File) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            const base64Content = reader.result?.toString().split(',')[1] || ''; // Safely extracts Base64
-            const fileUpload = {
-                filename: file.name,
-                content: base64Content,
-                mime_type: file.type,
-            } as api.FileUpload;
+    const handleImagesUpload = (files: File[]) => {
+        const newFilesData: api.FileUpload[] = [];
+        const newFilePreviews: (string | ArrayBuffer | null)[] = [];
+        files.forEach((file: any) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                newFilePreviews.push(reader.result);
+                const base64Content = reader.result?.toString().split(',')[1] || ''; // Safely extracts Base64
+                newFilesData.push({
+                    filename: file.name,
+                    content: base64Content,
+                    mime_type: file.type,
+                });
 
-            setFilesData((prevData) => [...prevData, fileUpload]);
+                // Update state only when all files are processed
+                if (newFilesData.length === files.length) {
+                    setFilesData((prevData) => [...prevData, ...newFilesData]);
+                    setFilePreviews((prev) => [...prev, ...newFilePreviews])
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    };
 
-            if (filesData.length + 1 < 5) {
-                setUploadersCount((prevCount) => prevCount + 1);
-            }
-        };
-        reader.readAsDataURL(file);
+    const handleRemoveFile = (index: number) => {
+        setFilesData((prev) => prev.filter((_, i) => i !== index));
+        setFilePreviews((prev) => prev.filter((_, i) => i !== index));
     };
 
     const handleChangeRecipeText = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -91,10 +101,33 @@ export default function Upload() {
                     <TabsTrigger value="from-images">From Images</TabsTrigger>
                     <TabsTrigger value="from-text">From Text</TabsTrigger>
                 </TabsList>
-                <TabsContent value="from-images" className="mt-4 flex flex-col">
-                    {[...Array(uploadersCount)].map((_, index) => (
-                        <ImageUploader key={index} onImageUpload={handleImageUpload} />
+                <TabsContent value="from-images" className="flex flex-col mt-0">
+
+                    {filePreviews.map((preview, index) => (
+                        <div
+                            key={`preview_${index}`}
+                            className="mt-4 relative flex items-center justify-center bg-secondary rounded-md overflow-hidden w-full"
+                        >
+                            <img
+                                src={preview as string}
+                                alt="Uploaded image"
+                                className="h-full w-full object-cover"
+                            />
+                            <Button
+                                variant="secondary"
+                                size="icon"
+                                className="absolute top-2 right-2"
+                                onClick={() => handleRemoveFile(index)}
+                            >
+                                <X />
+                            </Button>
+                        </div>
                     ))}
+                    {filePreviews.length < 5 && !isUploadingFiles &&(
+                        <div className="mt-4">
+                            <ImageUploader onImagesUpload={handleImagesUpload} />
+                        </div>
+                    )}
 
                     {filesData.length !== 0 && (
                         <div className="py-4 mx-auto">
@@ -114,7 +147,7 @@ export default function Upload() {
                     <Textarea
                         id="recipeText"
                         className="text-xl my-2"
-                        placeholder="Insert your recipe text here."
+                        placeholder="Copy and paste your recipe text here."
                         value={recipeText}
                         onChange={handleChangeRecipeText}
                         disabled={isSubmittingText || isUploadingFiles} />
