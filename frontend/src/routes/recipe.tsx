@@ -1,11 +1,10 @@
 import { MilkdownProvider } from "@milkdown/react";
-import { Flame, Pencil, Timer } from "lucide-react";
+import { ArrowLeft, Flame, Pencil, Timer } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../client";
 import BreadCrumbs from "../components/breadcrumbs";
 import MarkdownEditor from "../components/markdown-editor";
-import ProfileMenu from "../components/profile-menu";
 import { Button } from "../components/ui/button";
 import { ScrollArea } from "../components/ui/scroll-area";
 import { Separator } from "../components/ui/separator";
@@ -23,7 +22,6 @@ function Recipe() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [recipe, setRecipe] = useState<api.Recipe>();
-    const [tags, setTags] = useState<string[]>([]);
     const [ingredients, setIngredients] = useState<string>("");
     const [instructions, setInstructions] = useState<string>("");
     const [notes, setNotes] = useState<string>("");
@@ -53,7 +51,6 @@ function Recipe() {
 
     const setRecipeState = (recipeResponse: api.Recipe) => {
         setRecipe(recipeResponse);
-        setTags(recipeResponse.tags ?? []);
         setIngredients(recipeResponse.ingredients);
         setInstructions(recipeResponse.instructions);
         setNotes(recipeResponse.notes);
@@ -65,12 +62,16 @@ function Recipe() {
         navigate(`/recipes/` + username + '/' + slug + '/edit');
     }
 
+    const handleBack = () => {
+        navigate(`/recipes/` + username);
+    };
+
     return (
         <div className="h-full mx-auto max-w-4xl flex flex-col">
 
             <div className="flex p-4 gap-4 justify-between">
                 <div className="flex gap-4 items-center">
-                    <ProfileMenu></ProfileMenu>
+                    <Button size="icon" variant="ghost" onClick={handleBack} role="link" title={`Back to recipes by ${username}`}><ArrowLeft size={30} /></Button>
                     <BreadCrumbs></BreadCrumbs>
                 </div>
                 {(auth?.currentUser?.uid && auth.currentUser.uid === recipe?.profile_id) && (
@@ -82,17 +83,6 @@ function Recipe() {
             {!isLoading && (
                 <ScrollArea className="h-full w-full">
                     <div className="text-4xl px-4 pt-4 font-semibold text-center">{recipe?.title}</div>
-                    {(tags?.length > 0) && (
-                        <div className="px-4 pt-2 text-3xl flex flex-row items-center justify-center gap-x-2">
-
-                            <div className="flex gap-2">
-                                {tags?.map((tag, index) => (
-                                    <div key={tag + index} className="rounded-full border-2 border-input px-3 bg-secondary text-secondary-foreground text-xl font-semibold" >{tag}</div>
-                                ))}
-                            </div>
-
-                        </div>
-                    )}
                     {(cookTime > 0 || cookTemp > 0) && (
                         <div className="px-4 pt-2 text-3xl flex flex-row items-center justify-center gap-x-2 font-semibold">
 
