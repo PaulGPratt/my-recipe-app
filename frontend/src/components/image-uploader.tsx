@@ -55,17 +55,17 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesUpload: on
 
     return (
 
-        <div className="mx-auto">
+        <>
             <div
                 {...getRootProps()}
-                className="mx-auto flex cursor-pointer flex-col items-center justify-center gap-y-2 rounded-lg border border-secondary p-4"
+                className="flex cursor-pointer min-h-12 px-4 rounded-lg border border-secondary bg-secondary shadow-sm hover:bg-secondary/80 "
             >
                 <div className={"flex items-center"}>
                     <ImagePlus className="mr-2" />
                     {isDragActive ? (
-                        <p className="text-xl font-semibold">Drop the image!</p>
+                        <p className="text-2xl font-semibold">Drop the image!</p>
                     ) : (
-                        <p className="text-xl font-semibold">Add Image</p>
+                        <p className="text-2xl font-semibold">Add Image</p>
                     )}
                 </div>
 
@@ -77,6 +77,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesUpload: on
                     Images must be less than 10MB and of type png, jpg, or jpeg
                 </div>
             )}
-        </div>
+        </>
     );
 };
