@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React from "react";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ImagePlus } from "lucide-react";
+import React from "react";
 import { useDropzone } from "react-dropzone";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Input } from "./ui/input";
-import { ImagePlus } from "lucide-react";
 
 interface ImageUploaderProps {
     onImagesUpload: (image: File[]) => void;
