@@ -310,7 +310,52 @@ func DeleteRecipe(ctx context.Context, id string) error {
 	return nil
 }
 
-//encore:api auth method=POST path=/api/recipes/generate-from-images
+//encore:api auth method=POST path=/api/add-recipe/copy/:id
+func CopyRecipe(ctx context.Context, id string) (*GenerateRecipeResponse, error) {
+	authResult, authBool := auth.UserID()
+	if !authBool {
+		err := fmt.Errorf("not authorized")
+		return nil, err
+	}
+
+	authProfileId := string(authResult)
+	newRecipeId, err := uuid.NewV4()
+	if err != nil {
+		return nil, fmt.Errorf("error generating new recipe ID: %w", err)
+	}
+
+	// Step 3: Perform the recipe duplication in a single query
+	_, err = db.Exec(ctx, `
+        INSERT INTO recipe (
+            id, profile_id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags
+        )
+        SELECT 
+            $1, -- New UUID
+            $2, -- New profile_id
+            slug, 
+            title, 
+            ingredients, 
+            instructions, 
+            notes, 
+            cook_temp_deg_f, 
+            cook_time_minutes, 
+            tags
+        FROM recipe
+        WHERE id = $3
+    `, newRecipeId.String(), authProfileId, id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to copy recipe in database: %w", err)
+	}
+
+	response, err := getAddRecipeResponse(ctx, newRecipeId.String())
+	if err != nil {
+		return nil, fmt.Errorf("error generating recipe response: %w", err)
+	}
+
+	return response, nil
+}
+
+//encore:api auth method=POST path=/api/add-recipe/from-images
 func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*GenerateRecipeResponse, error) {
 	authResult, authBool := auth.UserID()
 	if !authBool {
@@ -339,7 +384,7 @@ func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*GenerateRe
 		return nil, fmt.Errorf("error saving recipe to database: %w", err)
 	}
 
-	response, err := getGenerateRecipeResponse(ctx, savedRecipe.Id)
+	response, err := getAddRecipeResponse(ctx, savedRecipe.Id)
 	if err != nil {
 		return nil, fmt.Errorf("error generating recipe response: %w", err)
 	}
@@ -347,7 +392,7 @@ func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*GenerateRe
 	return response, nil
 }
 
-//encore:api auth method=POST path=/api/recipes/generate-from-text
+//encore:api auth method=POST path=/api/add-recipe/from-text
 func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*GenerateRecipeResponse, error) {
 	authResult, authBool := auth.UserID()
 	if !authBool {
@@ -377,7 +422,7 @@ func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Genera
 		return nil, fmt.Errorf("error saving recipe to database: %w", err)
 	}
 
-	response, err := getGenerateRecipeResponse(ctx, savedRecipe.Id)
+	response, err := getAddRecipeResponse(ctx, savedRecipe.Id)
 	if err != nil {
 		return nil, fmt.Errorf("error generating recipe response: %w", err)
 	}
@@ -385,7 +430,7 @@ func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Genera
 	return response, nil
 }
 
-func getGenerateRecipeResponse(ctx context.Context, recipeId string) (*GenerateRecipeResponse, error) {
+func getAddRecipeResponse(ctx context.Context, recipeId string) (*GenerateRecipeResponse, error) {
 	recipe := &GenerateRecipeResponse{}
 
 	err := db.QueryRow(ctx, `
@@ -399,7 +444,7 @@ func getGenerateRecipeResponse(ctx context.Context, recipeId string) (*GenerateR
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf("error getting generated recipe: %w", err)
+		return nil, fmt.Errorf("error getting added recipe: %w", err)
 	}
 
 	return recipe, nil
