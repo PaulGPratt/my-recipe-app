@@ -8,13 +8,13 @@ function BreadCrumbs() {
         <Breadcrumb>
             <BreadcrumbList>
                 <BreadcrumbItem>
-                    <Link to={`/recipes`} className="transition-colors hover:text-foreground text-2xl">recipes</Link>
+                    <Link to={`/recipes`} className="transition-colors hover:underline text-2xl">recipes</Link>
                 </BreadcrumbItem>
                 {username && (
                     <>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <Link to={`/recipes/${username}`} className="transition-colors hover:text-foreground text-2xl">{username}</Link>
+                            <Link to={`/recipes/${username}`} className="transition-colors hover:underline text-2xl">{username}</Link>
                         </BreadcrumbItem>
                     </>
                 )}

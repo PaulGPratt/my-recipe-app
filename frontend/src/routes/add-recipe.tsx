@@ -9,7 +9,7 @@ import { Textarea } from "../components/ui/textarea";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
 
-export default function Upload() {
+export default function AddRecipe() {
     const { auth } = useContext(FirebaseContext);
     const navigate = useNavigate();
 
@@ -120,6 +120,7 @@ export default function Upload() {
                                     variant="secondary"
                                     size="icon"
                                     className="absolute top-2 right-2"
+                                    disabled={isSubmittingText || isUploadingFiles}
                                     onClick={() => handleRemoveFile(index)}
                                 >
                                     <X />

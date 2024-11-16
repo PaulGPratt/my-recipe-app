@@ -42,8 +42,8 @@ function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
     setSearchQuery(event.target.value);
   };
 
-  const handleAdd = () => {
-    navigate(`/upload/`);
+  const goToAddRecipe = () => {
+    navigate(`/add-recipe/`);
   };
 
   const goToAllRecipes = () => {
@@ -159,7 +159,7 @@ function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
             <Button size="icon" variant="ghost" onClick={toggleShowSearch} title="Search"><Search /></Button>
           )}
           {user?.uid && (
-            <Button size="icon" variant="ghost" onClick={handleAdd} title="Add Recipe"><Plus /></Button>
+            <Button size="icon" variant="ghost" onClick={goToAddRecipe} title="Add Recipe"><Plus /></Button>
           )}
 
         </div>

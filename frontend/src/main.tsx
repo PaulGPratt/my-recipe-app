@@ -15,7 +15,7 @@ import EditRecipe from "./routes/edit-recipe";
 import Login from "./routes/login";
 import Recipe from "./routes/recipe";
 import Signup from "./routes/signup";
-import Upload from "./routes/upload";
+import AddRecipe from "./routes/add-recipe";
 import UserRecipes from "./routes/user-recipes";
 
 const router = createBrowserRouter([
@@ -40,8 +40,8 @@ const router = createBrowserRouter([
     element: <EditRecipe />
   },
   {
-    path: "/upload",
-    element: <Upload />,
+    path: "/add-recipe",
+    element: <AddRecipe />,
   },
   {
     path: "/login",
