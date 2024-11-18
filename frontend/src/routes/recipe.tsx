@@ -1,5 +1,5 @@
 import { MilkdownProvider } from "@milkdown/react";
-import { ArrowLeft, Flame, Pencil, Timer } from "lucide-react";
+import { ArrowLeft, Flame, Heart, Pencil, Timer } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../client";
@@ -58,12 +58,27 @@ function Recipe() {
         setCookTime(recipeResponse.cook_time_minutes);
     }
 
+    const copyRecipe = async () => {
+        if (!recipe?.id) {
+            return;
+        }
+
+        try {
+            const token = await auth?.currentUser?.getIdToken();
+            const client = getRequestClient(token ?? undefined);
+            const copyResponse = await client.api.CopyRecipe(recipe?.id);
+            navigate(`/recipes/${copyResponse.username}/${copyResponse.slug}`)
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     const editRecipe = async () => {
-        navigate(`/recipes/` + username + '/' + slug + '/edit');
+        navigate(`/recipes/${username}/${slug}/edit`);
     }
 
     const handleBack = () => {
-        navigate(`/recipes/` + username);
+        navigate(`/recipes/${username}`);
     };
 
     return (
@@ -74,6 +89,9 @@ function Recipe() {
                     <Button size="icon" variant="ghost" onClick={handleBack} role="link" title={`Back to recipes by ${username}`}><ArrowLeft size={30} /></Button>
                     <BreadCrumbs></BreadCrumbs>
                 </div>
+                {(auth?.currentUser?.uid && auth.currentUser.uid !== recipe?.profile_id) && (
+                    <Button size="icon" variant="ghost" onClick={copyRecipe} title="Save to My Recipes"><Heart /></Button>
+                )}
                 {(auth?.currentUser?.uid && auth.currentUser.uid === recipe?.profile_id) && (
                     <Button size="icon" variant="ghost" onClick={editRecipe} title="Edit Recipe"><Pencil /></Button>
                 )}
