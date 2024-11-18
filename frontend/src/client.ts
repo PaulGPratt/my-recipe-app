@@ -174,19 +174,25 @@ export namespace api {
             return await resp.json() as IsUsernameAvailableResponse
         }
 
+        public async CopyRecipe(id: string): Promise<GenerateRecipeResponse> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callAPI("POST", `/api/add-recipe/copy/${encodeURIComponent(id)}`)
+            return await resp.json() as GenerateRecipeResponse
+        }
+
         public async DeleteRecipe(id: string): Promise<void> {
             await this.baseClient.callAPI("DELETE", `/api/recipes/${encodeURIComponent(id)}`)
         }
 
         public async GenerateFromImages(params: FileUploadRequest): Promise<GenerateRecipeResponse> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("POST", `/api/recipes/generate-from-images`, JSON.stringify(params))
+            const resp = await this.baseClient.callAPI("POST", `/api/add-recipe/from-images`, JSON.stringify(params))
             return await resp.json() as GenerateRecipeResponse
         }
 
         public async GenerateFromText(params: GenerateFromTextRequest): Promise<GenerateRecipeResponse> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callAPI("POST", `/api/recipes/generate-from-text`, JSON.stringify(params))
+            const resp = await this.baseClient.callAPI("POST", `/api/add-recipe/from-text`, JSON.stringify(params))
             return await resp.json() as GenerateRecipeResponse
         }
 
