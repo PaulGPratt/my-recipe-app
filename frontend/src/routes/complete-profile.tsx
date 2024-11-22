@@ -20,7 +20,7 @@ function CompleteProfile() {
 
     useEffect(() => {
         const fetchMyProfile = async () => {
-            if(auth) {
+            if (auth) {
                 try {
                     const freshProfile = await fetchStoredProfile(auth);
                     if (freshProfile && freshProfile.username.length > 0) {
@@ -82,41 +82,38 @@ function CompleteProfile() {
 
     return (
         <div className="h-full mx-auto max-w-4xl ">
-            <form className="loginForm">
-                <div className="p-4 py-6 text-center text-4xl font-semibold">
-                    Complete Profile
+            <div className="p-4 py-6 text-center text-4xl font-semibold">
+                Complete Profile
+            </div>
+            <div className="p-4 pt-0 flex gap-2">
+                <div className="flex-grow">
+                    <Label htmlFor="signupEmail" className="text-2xl font-semibold">Username</Label>
+                    <Input
+                        id="username"
+                        type="username"
+                        className="mt-2 h-12 text-2xl"
+                        aria-describedby="username"
+                        placeholder="ex. my-username"
+                        value={username}
+                        onChange={handleUsernameInput}
+                        onBlur={handleUsernameInput}
+                    />
+                    {usernameError.length > 0 && (
+                        <div className="flex gap-4 items-center pt-2">
+                            <TriangleAlert />
+                            <div className="text-xl">{usernameError}</div>
+                        </div>
+                    )}
                 </div>
-                <div className="p-4 pt-0 flex gap-2">
-                    <div className="flex-grow">
-                        <Label htmlFor="signupEmail" className="text-2xl font-semibold">Username</Label>
-                        <Input
-                            id="username"
-                            type="username"
-                            className="mt-2 h-12 text-2xl"
-                            aria-describedby="username"
-                            placeholder="ex. my-username"
-                            value={username}
-                            onChange={handleUsernameInput}
-                            onBlur={handleUsernameInput}
-                        />
-                        {usernameError.length > 0 && (
-                            <div className="flex gap-4 items-center pt-2">
-                                <TriangleAlert />
-                                <div className="text-xl">{usernameError}</div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-                <div className="p-4 pt-0 flex gap-2">
-                    <Button
-                        type="submit"
-                        onClick={saveProfile}
-                        disabled={username.length <= 0 || usernameError.length > 0 || !duplicateCheckComplete}
-                    >
-                        Complete
-                    </Button>
-                </div>
-            </form>
+            </div>
+            <div className="p-4 pt-0 flex gap-2">
+                <Button
+                    onClick={saveProfile}
+                    disabled={username.length <= 0 || usernameError.length > 0 || !duplicateCheckComplete}
+                >
+                    Complete
+                </Button>
+            </div>
         </div>
     )
 }
