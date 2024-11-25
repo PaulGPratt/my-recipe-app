@@ -1,17 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2, X } from "lucide-react";
+import { redirect } from "next/navigation";
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { api } from "../client";
-import { ImageUploader } from "../components/image-uploader";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Textarea } from "../components/ui/textarea";
-import { FirebaseContext } from "../lib/firebase";
-import getRequestClient from "../lib/get-request-client";
+import { ImageUploader } from "../../components/image-uploader";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import { Textarea } from "../../components/ui/textarea";
+import { api } from "../../lib/client";
+import { FirebaseContext } from "../../lib/firebase";
+import getRequestClient from "../../lib/get-request-client";
 
 export default function AddRecipe() {
     const { auth } = useContext(FirebaseContext);
-    const navigate = useNavigate();
 
     const [isUploadingFiles, setIsUploadingFiles] = useState<boolean>(false);
     const [isSubmittingText, setIsSubmittingText] = useState<boolean>(false);
@@ -20,7 +19,7 @@ export default function AddRecipe() {
     const [recipeText, setRecipeText] = useState<string>("");
 
     const handleBack = () => {
-        navigate(`/recipes/`);
+        redirect(`/recipes/`);
     };
 
     const handleImagesUpload = (files: File[]) => {

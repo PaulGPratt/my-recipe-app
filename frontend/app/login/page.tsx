@@ -1,14 +1,14 @@
+import { Input } from ".../../components/ui/input.tsx";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/button.tsx";
-import { Input } from "../components/ui/input.tsx";
-import { Label } from "../components/ui/label.tsx";
-import { FirebaseContext } from "../lib/firebase.tsx";
+import { Button } from "../../components/ui/button.tsx";
+import { Label } from "../../components/ui/label.tsx";
+import { FirebaseContext } from "../../lib/firebase.tsx";
 
 function Login () {
   const { auth } = useContext(FirebaseContext);
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [notice, setNotice] = useState("");
@@ -20,7 +20,7 @@ function Login () {
 
     try {
       await signInWithEmailAndPassword(auth!, email, password);
-      navigate("/");
+      redirect("/");
     } catch {
       setNotice("You entered a wrong username or password.");
     }
@@ -71,7 +71,7 @@ function Login () {
           </Button>
         </div>
         <div className="p-4 pt-0 text-xl">
-          <Link to="/signup">Sign up for an account</Link>
+          <Link href="/signup">Sign up for an account</Link>
         </div>
       </form>
     </div>

@@ -1,6 +1,6 @@
 import { ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { api } from '../client';
+import { redirect } from 'next/navigation';
+import { api } from '../lib/client';
 import { Button } from './ui/button';
 
 interface RecipeCardButtonProps {
@@ -8,10 +8,9 @@ interface RecipeCardButtonProps {
 }
 
 const RecipeCardButton: React.FC<RecipeCardButtonProps> = ({ item }) => {
-    const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate(`/recipes/${item.username}/${item.slug}`);
+        redirect(`/recipes/${item.username}/${item.slug}`);
     };
 
     return (

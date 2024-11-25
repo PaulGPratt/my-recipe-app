@@ -1,23 +1,23 @@
 import { MilkdownProvider } from "@milkdown/react";
 import { ArrowLeft, Flame, Heart, Pencil, Timer } from "lucide-react";
+import { redirect } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { api } from "../client";
-import BreadCrumbs from "../components/breadcrumbs";
-import MarkdownEditor from "../components/markdown-editor";
-import { Button } from "../components/ui/button";
-import { ScrollArea } from "../components/ui/scroll-area";
-import { Separator } from "../components/ui/separator";
-import { FirebaseContext } from "../lib/firebase";
-import getRequestClient from "../lib/get-request-client";
+import BreadCrumbs from "../../../../components/breadcrumbs";
+import MarkdownEditor from "../../../../components/markdown-editor";
+import { Button } from "../../../../components/ui/button";
+import { ScrollArea } from "../../../../components/ui/scroll-area";
+import { Separator } from "../../../../components/ui/separator";
+import { api } from "../../../../lib/client";
+import { FirebaseContext } from "../../../../lib/firebase";
+import getRequestClient from "../../../../lib/get-request-client";
 
 
-function Recipe() {
+export default async function  Recipe({
+    params,
+}: {
+    params: { username: string, slug: string };
+}) {
 
-    const navigate = useNavigate();
-
-    // Get the 'id' from the route parameters
-    const { username, slug } = useParams();
     const { auth } = useContext(FirebaseContext);
 
     const [isLoading, setIsLoading] = useState(true);
@@ -31,12 +31,12 @@ function Recipe() {
     useEffect(() => {
 
         const loadRecipes = async () => {
-            if (!username || !slug) return;
+            if (!params.username || !params.slug) return;
 
             try {
                 const token = await auth?.currentUser?.getIdToken();
                 const client = getRequestClient(token ?? undefined);
-                const freshRecipe = await client.api.GetRecipe(username, slug);
+                const freshRecipe = await client.api.GetRecipe(params.username, params.slug);
                 setRecipeState(freshRecipe);
             } catch (err) {
                 console.error(err);
@@ -45,7 +45,7 @@ function Recipe() {
         };
 
         loadRecipes();
-    }, [username, slug]);
+    }, [params.username, params.slug]);
 
 
 
@@ -67,18 +67,18 @@ function Recipe() {
             const token = await auth?.currentUser?.getIdToken();
             const client = getRequestClient(token ?? undefined);
             const copyResponse = await client.api.CopyRecipe(recipe?.id);
-            navigate(`/recipes/${copyResponse.username}/${copyResponse.slug}`)
+            redirect(`/recipes/${copyResponse.username}/${copyResponse.slug}`)
         } catch (err) {
             console.error(err);
         }
     }
 
     const editRecipe = async () => {
-        navigate(`/recipes/${username}/${slug}/edit`);
+        redirect(`/recipes/${params.username}/${params.slug}/edit`);
     }
 
     const handleBack = () => {
-        navigate(`/recipes/${username}`);
+        redirect(`/recipes/${params.username}`);
     };
 
     return (
@@ -86,8 +86,10 @@ function Recipe() {
 
             <div className="flex p-4 gap-4 justify-between">
                 <div className="flex gap-4 items-center">
-                    <Button size="icon" variant="ghost" onClick={handleBack} role="link" title={`Back to recipes by ${username}`}><ArrowLeft size={30} /></Button>
-                    <BreadCrumbs></BreadCrumbs>
+                    <Button size="icon" variant="ghost" onClick={handleBack} role="link" title={`Back to recipes by ${params.username}`}><ArrowLeft size={30} /></Button>
+                    <BreadCrumbs params={{
+                        username: params.username
+                    }}></BreadCrumbs>
                 </div>
                 {(auth?.currentUser?.uid && auth.currentUser.uid !== recipe?.profile_id) && (
                     <Button size="icon" variant="ghost" onClick={copyRecipe} title="Save to My Recipes"><Heart /></Button>
@@ -153,5 +155,3 @@ function Recipe() {
         </div>
     );
 }
-
-export default Recipe;

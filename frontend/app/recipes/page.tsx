@@ -1,4 +1,4 @@
-import RecipeListBase from "../components/recipe-list-base";
+import RecipeListBase from "../../components/recipe-list-base";
 
 function AllRecipes() {
     return (

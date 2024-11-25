@@ -1,4 +1,4 @@
-import Client, { Environment, Local } from "../client.ts";
+import Client, { Environment, Local } from "./client";
 
 /**
  * Returns the generated Encore request client for either the local or staging environment.

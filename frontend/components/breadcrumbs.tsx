@@ -1,20 +1,22 @@
-import { Link, useParams } from "react-router-dom";
+import Link from "next/link";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from "./ui/breadcrumb";
 
-function BreadCrumbs() {
-    const { username } = useParams();
-
+export default async function BreadCrumbs({
+    params,
+}: {
+    params: { username?: string };
+}) {
     return (
         <Breadcrumb>
             <BreadcrumbList>
                 <BreadcrumbItem>
-                    <Link to={`/recipes`} className="transition-colors hover:underline text-2xl">recipes</Link>
+                    <Link href={`/recipes`} className="transition-colors hover:underline text-2xl">recipes</Link>
                 </BreadcrumbItem>
-                {username && (
+                {params.username && (
                     <>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <Link to={`/recipes/${username}`} className="transition-colors hover:underline text-2xl">{username}</Link>
+                            <Link href={`/recipes/${params.username}`} className="transition-colors hover:underline text-2xl">{params.username}</Link>
                         </BreadcrumbItem>
                     </>
                 )}
@@ -22,5 +24,3 @@ function BreadCrumbs() {
         </Breadcrumb>
     )
 }
-
-export default BreadCrumbs;

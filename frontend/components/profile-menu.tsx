@@ -1,16 +1,14 @@
 import { signOut } from "firebase/auth";
 import { User } from "lucide-react";
+import { redirect } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { api } from "../client";
+import { api } from "../lib/client";
 import { FirebaseContext } from "../lib/firebase";
 import { fetchStoredProfile, removeStoredProfile } from "../lib/profile-utils";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 function ProfileMenu() {
-
-  const navigate = useNavigate();
   const { auth } = useContext(FirebaseContext);
   const [profile, setProfile] = useState<api.Profile>();
   const user = auth?.currentUser;
@@ -24,7 +22,7 @@ function ProfileMenu() {
       try {
         const freshProfile = await fetchStoredProfile(auth);
         if (freshProfile.username.length === 0) {
-          navigate("/complete-profile");
+          redirect("/complete-profile");
         } else {
           setProfile(freshProfile);
         }
@@ -39,24 +37,24 @@ function ProfileMenu() {
     if (auth) {
       await signOut(auth);
       removeStoredProfile();
-      navigate("/");
+      redirect("/");
     }
   }
 
   const navigateToAllRecipes = async () => {
-    navigate(`/recipes`);
+    redirect(`/recipes`);
   }
 
   const navigateToMyRecipes = async () => {
-    navigate(`/recipes/${profile?.username}`);
+    redirect(`/recipes/${profile?.username}`);
   }
 
   const openLogin = () => {
-    navigate("/login");
+    redirect("/login");
   }
 
   const openSignUp = () => {
-    navigate("/signup");
+    redirect("/signup");
   }
 
   return (

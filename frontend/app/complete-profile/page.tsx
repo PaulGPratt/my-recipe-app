@@ -1,17 +1,15 @@
 import { TriangleAlert } from "lucide-react";
+import { redirect } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { api } from "../client";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { FirebaseContext } from "../lib/firebase";
-import getRequestClient from "../lib/get-request-client";
-import { fetchStoredProfile, storeProfile } from "../lib/profile-utils";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { api } from "../../lib/client";
+import { FirebaseContext } from "../../lib/firebase";
+import getRequestClient from "../../lib/get-request-client";
+import { fetchStoredProfile, storeProfile } from "../../lib/profile-utils";
 
 function CompleteProfile() {
-
-    const navigate = useNavigate();
     const { auth } = useContext(FirebaseContext);
     const [_, setProfile] = useState<api.Profile>();
     const [username, setUsername] = useState("");
@@ -24,7 +22,7 @@ function CompleteProfile() {
                 try {
                     const freshProfile = await fetchStoredProfile(auth);
                     if (freshProfile && freshProfile.username.length > 0) {
-                        navigate(`/recipes/${freshProfile.username}`);
+                        redirect(`/recipes/${freshProfile.username}`);
                     }
                     setProfile(freshProfile);
                 } catch (err) {
@@ -44,7 +42,7 @@ function CompleteProfile() {
                 username: username
             });
             storeProfile(freshProfile);
-            navigate(`/recipes/${freshProfile.username}`);
+            redirect(`/recipes/${freshProfile.username}`);
         } catch (err) {
             console.error(err);
         }

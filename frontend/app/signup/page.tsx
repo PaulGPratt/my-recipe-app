@@ -1,14 +1,14 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/button.tsx";
-import { Input } from "../components/ui/input.tsx";
-import { Label } from "../components/ui/label.tsx";
-import { FirebaseContext } from "../lib/firebase.tsx";
+import { Button } from "../../components/ui/button.tsx";
+import { Input } from "../../components/ui/input.tsx";
+import { Label } from "../../components/ui/label.tsx";
+import { FirebaseContext } from "../../lib/firebase.tsx";
 
 function Signup () {
   const { auth } = useContext(FirebaseContext);
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,7 +22,7 @@ function Signup () {
     if (password === confirmPassword) {
       try {
         await createUserWithEmailAndPassword(auth!, email, password);
-        navigate("/");
+        redirect("/");
       } catch {
         setNotice("Sorry, something went wrong. Please try again.");
       }
@@ -87,7 +87,7 @@ function Signup () {
           </Button>
         </div>
         <div className="p-4 pt-0 text-xl">
-          <Link to="/login">Already have an account?</Link>
+          <Link href="/login">Already have an account?</Link>
         </div>
       </form>
     </div>

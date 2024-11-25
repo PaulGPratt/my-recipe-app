@@ -1,26 +1,28 @@
 import { MilkdownProvider } from "@milkdown/react";
 import { ArrowLeft, Flame, MoveDown, Plus, Timer, Trash, TriangleAlert } from "lucide-react";
+import { redirect } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
-import { api } from "../client";
-import MarkdownEditor from "../components/markdown-editor";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog";
-import { Button, buttonVariants } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { ScrollArea } from "../components/ui/scroll-area";
-import { Separator } from "../components/ui/separator";
-import { FirebaseContext } from "../lib/firebase";
-import getRequestClient from "../lib/get-request-client";
-import { cn } from "../lib/utils";
-import { fetchStoredProfile } from "../lib/profile-utils";
+import MarkdownEditor from "../../../../../components/markdown-editor";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../../../../../components/ui/alert-dialog";
+import { Button, buttonVariants } from "../../../../../components/ui/button";
+import { Input } from "../../../../../components/ui/input";
+import { Label } from "../../../../../components/ui/label";
+import { ScrollArea } from "../../../../../components/ui/scroll-area";
+import { Separator } from "../../../../../components/ui/separator";
+import { api } from "../../../../../lib/client";
+import { FirebaseContext } from "../../../../../lib/firebase";
+import getRequestClient from "../../../../../lib/get-request-client";
+import { fetchStoredProfile } from "../../../../../lib/profile-utils";
+import { cn } from "../../../../../lib/utils";
 
-function EditRecipe() {
+function EditRecipe({
+    params,
+}: {
+    params: { username: string, slug: string };
+}) {
 
-    const navigate = useNavigate();
     const { auth } = useContext(FirebaseContext);
-    const { username, slug } = useParams();
 
     const [token, setToken] = useState<string | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(true);
@@ -38,14 +40,14 @@ function EditRecipe() {
 
     useEffect(() => {
         const loadRecipe = async () => {
-            if (!username || !slug || !auth) return;
+            if (!params.username || !params.slug || !auth) return;
 
             try {
                 const token = await fetchToken();
                 const client = getRequestClient(token ?? undefined);
-                const freshRecipe = await client.api.GetRecipe(username, slug);
+                const freshRecipe = await client.api.GetRecipe(params.username, params.slug);
                 const profile = await fetchStoredProfile(auth);
-                if(profile.username != username) {
+                if(profile.username != params.username) {
                     handleBack();
                 }
                 setRecipeState(freshRecipe);
@@ -57,7 +59,7 @@ function EditRecipe() {
         };
 
         loadRecipe();
-    }, [username, slug, auth]);
+    }, [params.username, params.slug, auth]);
 
     const fetchToken = async () => {
         if (!token) {
@@ -82,7 +84,7 @@ function EditRecipe() {
     }
 
     const handleBack = async () => {
-        navigate(`/recipes/` + username + '/' + slug);
+        redirect(`/recipes/` + params.username + '/' + params.slug);
     }
 
     const handleTitleChange = (event: { target: { value: any; }; }) => {
@@ -96,7 +98,7 @@ function EditRecipe() {
         setRecipeSlug(slugVal);
 
         // Only check if the event is a blur and the slug has changed
-        if (event.type === "blur" && slugVal !== slug) {
+        if (event.type === "blur" && slugVal !== params.slug) {
             const slugPattern = /^[a-z0-9]+(-[a-z0-9]+)*$/;
             let isValidSlug = slugPattern.test(slugVal);
             if (!isValidSlug) {
@@ -156,7 +158,7 @@ function EditRecipe() {
                 cook_time_minutes: cookTime,
                 tags: Array.from(new Set(filteredTags)),
             });
-            navigate(`/recipes/` + username + '/' + recipeSlug);
+            redirect(`/recipes/` + params.username + '/' + recipeSlug);
         } catch (err) {
             console.error(err);
         }
@@ -171,7 +173,7 @@ function EditRecipe() {
             const token = await fetchToken();
             const client = getRequestClient(token ?? undefined);
             await client.api.DeleteRecipe(recipeId)
-            navigate(`/recipes/`);
+            redirect(`/recipes/`);
         } catch (err) {
             console.error(err)
         }

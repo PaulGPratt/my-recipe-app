@@ -1,17 +1,17 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plus, Search } from "lucide-react";
 import { SetStateAction, useContext, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Client, { api } from "../client";
 import ProfileMenu from "../components/profile-menu";
 import RecipeCardButton from "../components/recipe-card-button";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Separator } from "../components/ui/separator";
-import { FirebaseContext } from "../lib/firebase";
-import getRequestClient from "../lib/get-request-client";
-import { getLocalStorage, setLocalStorage } from '../lib/localStorage';
 import BreadCrumbs from "./breadcrumbs";
+import Client, { api } from "../lib/client";
+import { FirebaseContext } from "../lib/firebase";
+import { redirect } from "next/navigation";
+import { getLocalStorage, setLocalStorage } from "../lib/localStorage";
+import getRequestClient from "../lib/get-request-client";
 
 export interface TagRecipe {
   tag: string,
@@ -21,12 +21,12 @@ export interface TagRecipe {
 interface RecipeListBaseProps {
   fetchRecipes: (client: Client) => Promise<api.RecipeListResponse>;
   cacheKey: string;
+  username?: string;
 }
 
-function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
+function RecipeListBase({ fetchRecipes, cacheKey, username }: RecipeListBaseProps) {
   const { auth } = useContext(FirebaseContext);
   const user = auth?.currentUser;
-  const navigate = useNavigate();
 
   const [recipeList, setRecipeList] = useState<api.RecipeCard[]>([]);
   const [tagList, setTagList] = useState<string[]>([]);
@@ -43,11 +43,11 @@ function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
   };
 
   const goToAddRecipe = () => {
-    navigate(`/add-recipe/`);
+    redirect(`/add-recipe/`);
   };
 
   const goToAllRecipes = () => {
-    navigate(`/recipes/`);
+    redirect(`/recipes/`);
   };
 
   const toggleShowSearch = () => {
@@ -152,7 +152,9 @@ function RecipeListBase({ fetchRecipes, cacheKey }: RecipeListBaseProps) {
       <div className="flex p-4 pb-0 justify-between">
         <div className="flex gap-4 items-center">
           <ProfileMenu></ProfileMenu>
-          <BreadCrumbs></BreadCrumbs>
+          <BreadCrumbs params={{
+            username: username
+          }}></BreadCrumbs>
         </div>
         <div className="flex gap-2">
           {!noRecipesFound && (
