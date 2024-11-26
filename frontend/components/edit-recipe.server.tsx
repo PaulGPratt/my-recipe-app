@@ -8,7 +8,7 @@ interface EditRecipeProps {
 }
 
 export default async function EditRecipe({ params }: EditRecipeProps) {
-  const { username, slug } = params;
+  const { username, slug } = await params;
 
   if (!username || !slug) {
     throw new Error("Missing required parameters.");
