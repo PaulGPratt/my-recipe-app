@@ -7,12 +7,14 @@ interface RecipeServerProps {
 }
 
 export default async function Recipe({ params }: RecipeServerProps) {
-  if (!params.username || !params.slug) {
+  const { username, slug } = await params;
+
+  if (!username || !slug) {
     throw new Error("Missing required parameters.");
   }
 
   const client = getRequestClient(undefined);
-  const recipe = await client.api.GetRecipe(params.username, params.slug);
+  const recipe = await client.api.GetRecipe(username, slug);
 
-  return <RecipeClient recipe={recipe} username={params.username} />;
+  return <RecipeClient recipe={recipe} username={username} />;
 }
