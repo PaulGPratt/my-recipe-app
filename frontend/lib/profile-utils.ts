@@ -1,11 +1,13 @@
 import { Auth } from "firebase/auth";
-import { api } from "../client";
 import getRequestClient from "./get-request-client";
 import {
   getLocalStorage,
   removeLocalStorage,
   setLocalStorage,
 } from "./localStorage";
+import { cookies } from "next/headers";
+import { api } from "./client";
+import { verifyIdToken } from "./firebase-admin";
 
 const profile_key = "profile";
 
@@ -41,4 +43,14 @@ export function storeProfile(profile: api.Profile): void {
 
 export function removeStoredProfile(): void {
   removeLocalStorage(profile_key);
+}
+
+export async function getDecodedTokenCookie() {
+  const cookieStore = await cookies();
+  const tokenCookie = cookieStore.get("firebaseToken");
+
+  if (!tokenCookie?.value) {
+    return undefined;
+  }
+  return await verifyIdToken(tokenCookie.value);
 }
