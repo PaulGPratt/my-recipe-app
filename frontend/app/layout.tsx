@@ -1,8 +1,14 @@
+import { Quicksand } from 'next/font/google';
 import React from "react";
 import { ThemeProvider } from "../components/theme-provider";
 import { Toaster } from "../components/ui/toaster";
-import { FirebaseProvider } from "../lib/firebase";
 import "../globals.css";
+import { FirebaseProvider } from "../lib/firebase";
+
+const quicksand = Quicksand({
+  weight: ['400', '600'],
+  subsets: ['latin'],
+})
 
 export default function RootLayout({
   children,
@@ -12,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head />
-      <body>
+      <body className={quicksand.className}>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <FirebaseProvider>
             {children}
