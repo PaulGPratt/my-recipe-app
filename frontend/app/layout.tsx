@@ -2,7 +2,7 @@ import React from "react";
 import { ThemeProvider } from "../components/theme-provider";
 import { Toaster } from "../components/ui/toaster";
 import { FirebaseProvider } from "../lib/firebase";
-import "../index.css";
+import "../globals.css";
 
 export default function RootLayout({
   children,

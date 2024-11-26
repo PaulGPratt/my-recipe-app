@@ -6,7 +6,10 @@ import Client, { Environment, Local } from "./client";
  * backend is also running locally.
  */
 const getRequestClient = (token: string | undefined) => {
-  const env = import.meta.env.DEV ? Local : Environment("staging");
+  const env =
+  process.env.NODE_ENV === "development"
+    ? Local
+    : Environment("staging");
 
   return new Client(env, {
     auth: token,

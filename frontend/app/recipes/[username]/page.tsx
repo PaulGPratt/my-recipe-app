@@ -1,4 +1,4 @@
-import RecipeListBase from '../../../components/recipe-list-base';
+import RecipeListServer from '../../../components/recipe-list.server';
 
 export default async function UserRecipes({
   params,
@@ -7,10 +7,9 @@ export default async function UserRecipes({
 }) {
   
   return (
-    <RecipeListBase
+    <RecipeListServer
       cacheKey={`user_recipes_${params.username}`}
       fetchRecipes={(client) => client.api.GetRecipesByProfileId(params.username!)}
-      username={params.username}
     />
   );
 }

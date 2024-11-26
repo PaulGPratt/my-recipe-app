@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from "./ui/breadcrumb";
 
-export default async function BreadCrumbs({
+export default function BreadCrumbs({
     params,
 }: {
     params: { username?: string };
