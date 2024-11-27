@@ -1,12 +1,13 @@
 "use client";
 
 import { signInWithEmailAndPassword } from "firebase/auth";
-import React, { useContext, useState } from "react";
+import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import React, { useContext, useState } from "react";
 import { FirebaseContext } from "../lib/firebase";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 
 export default function LoginClient() {
   const { auth } = useContext(FirebaseContext);
@@ -16,14 +17,35 @@ export default function LoginClient() {
   const router = useRouter();
 
   const loginWithUsernameAndPassword = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
 
     try {
-      await signInWithEmailAndPassword(auth!, email, password);
+      if (!auth) {
+        throw new Error("Firebase Auth is not initialized.");
+      }
+
+      // Sign in with email and password
+      await signInWithEmailAndPassword(auth, email, password);
+
+      const user = auth.currentUser;
+      if (user) {
+        // Get Firebase token
+        const token = await user.getIdToken();
+
+        // Set the token in a secure cookie (using js-cookie)
+        Cookies.set("firebaseToken", token, {
+          secure: true, // Use HTTPS
+          sameSite: "Strict", // Protect against CSRF
+          path: "/", // Available site-wide
+        });
+      }
+
+      // Redirect to the homepage or another secure page
       router.push("/");
-    } catch {
+    } catch (error) {
+      console.error("Login error:", error);
       setNotice("You entered a wrong username or password.");
     }
   };

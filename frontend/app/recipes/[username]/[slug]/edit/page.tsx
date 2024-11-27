@@ -1,5 +1,5 @@
-import EditRecipe from "../../../../../components/edit-recipe.server";
+import EditRecipeServer from "../../../../../components/edit-recipe.server";
 
-export default function EditRecipePage({ params }: { params: { username: string; slug: string } }) {
-  return <EditRecipe params={params} />;
+export default async function EditRecipePage({ params }: { params: { username: string; slug: string } }) {
+  return <EditRecipeServer params={params} />;
 }

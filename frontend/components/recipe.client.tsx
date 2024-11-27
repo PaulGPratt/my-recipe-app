@@ -58,12 +58,12 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
                     <BreadCrumbs params={{ username }} />
                 </div>
                 <div className="flex gap-2">
-                    <Button size="icon" variant="ghost" onClick={copyRecipe} title="Save to My Recipes">
-                        <Heart />
-                    </Button>
-                    <Button size="icon" variant="ghost" onClick={editRecipe} title="Edit Recipe">
-                        <Pencil />
-                    </Button>
+                    {(auth?.currentUser?.uid && auth.currentUser.uid !== recipe?.profile_id) && (
+                        <Button size="icon" variant="ghost" onClick={copyRecipe} title="Save to My Recipes"><Heart /></Button>
+                    )}
+                    {(auth?.currentUser?.uid && auth.currentUser.uid === recipe?.profile_id) && (
+                        <Button size="icon" variant="ghost" onClick={editRecipe} title="Edit Recipe"><Pencil /></Button>
+                    )}
                 </div>
             </div>
             <Separator />

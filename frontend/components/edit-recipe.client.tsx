@@ -28,16 +28,16 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
 
     const [token, setToken] = useState<string | undefined>(undefined);
     const [slugError, setSlugError] = useState<string>("");
-    const [recipeId, setRecipeId] = useState<string>("");
-    const [recipeProfileId, setRecipeProfileId] = useState<string>("");
-    const [recipeTitle, setRecipeTitle] = useState<string>("");
-    const [recipeSlug, setRecipeSlug] = useState<string>("");
-    const [tags, setTags] = useState<string[]>([]);
-    const [ingredients, setIngredients] = useState<string>("");
-    const [instructions, setInstructions] = useState<string>("");
-    const [notes, setNotes] = useState<string>("");
-    const [cookTime, setCookTime] = useState<number>(0);
-    const [cookTemp, setCookTemp] = useState<number>(0);
+    const [recipeId] = useState<string>(recipe.id);
+    const [recipeProfileId] = useState<string>(recipe.profile_id);
+    const [recipeTitle, setRecipeTitle] = useState<string>(recipe.title);
+    const [recipeSlug, setRecipeSlug] = useState<string>(recipe.slug);
+    const [tags, setTags] = useState<string[]>(recipe.tags);
+    const [ingredients, setIngredients] = useState<string>(recipe.ingredients);
+    const [instructions, setInstructions] = useState<string>(recipe.instructions);
+    const [notes, setNotes] = useState<string>(recipe.notes);
+    const [cookTime, setCookTime] = useState<number>(recipe.cook_time_minutes);
+    const [cookTemp, setCookTemp] = useState<number>(recipe.cook_temp_deg_f);
 
     const fetchToken = async () => {
         if (!token) {
@@ -47,19 +47,6 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
         }
         return token;
     };
-
-    const setRecipeState = (recipeResponse: api.Recipe) => {
-        setRecipeId(recipeResponse.id);
-        setRecipeProfileId(recipeResponse.profile_id);
-        setRecipeTitle(recipeResponse.title);
-        setRecipeSlug(recipeResponse.slug);
-        setTags(recipeResponse.tags ?? []);
-        setIngredients(recipeResponse.ingredients);
-        setInstructions(recipeResponse.instructions);
-        setNotes(recipeResponse.notes);
-        setCookTemp(recipeResponse.cook_temp_deg_f);
-        setCookTime(recipeResponse.cook_time_minutes);
-    }
 
     const handleBack = async () => {
         router.push(`/recipes/` + username + '/' + recipe.slug);
