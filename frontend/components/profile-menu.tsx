@@ -17,7 +17,7 @@ function ProfileMenu() {
     const fetchMyProfile = async () => {
       if (!auth?.currentUser) {
         return;
-      }
+      } 
 
       try {
         const freshProfile = await fetchStoredProfile(auth);
