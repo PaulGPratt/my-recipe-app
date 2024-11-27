@@ -5,11 +5,12 @@ export default async function UserRecipes({
 }: {
   params: { username: string };
 }) {
-  
+  const { username } = await params;
+
   return (
     <RecipeListServer
-      cacheKey={`user_recipes_${params.username}`}
-      fetchRecipes={(client) => client.api.GetRecipesByProfileId(params.username!)}
+      username={username}
+      fetchRecipes={(client) => client.api.GetRecipesByProfileId(username)}
     />
   );
 }

@@ -4,19 +4,19 @@ import { api } from "../lib/client";
 import RecipeListClient from "./recipe-list.client";
 
 interface RecipeListServerProps {
-  cacheKey: string;
+  username?: string;
   fetchRecipes: (client: any) => Promise<api.RecipeListResponse>;
 }
 
-export default async function RecipeListServer({ cacheKey, fetchRecipes }: RecipeListServerProps) {
+export default async function RecipeListServer({ username, fetchRecipes }: RecipeListServerProps) {
   const client = getRequestClient(undefined);
   const recipeListResponse = await fetchRecipes(client);
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <RecipeListClient
-        recipeList={recipeListResponse.Recipes}
-        cacheKey={cacheKey}
+        recipeCards={recipeListResponse.Recipes}
+        username={username}
       />
     </Suspense>
   );
