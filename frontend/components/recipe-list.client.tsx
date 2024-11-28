@@ -1,17 +1,17 @@
 "use client";
 
-import { SetStateAction, useContext, useEffect, useRef, useState } from "react";
-import { Input } from "./ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import RecipeCardButton from "./recipe-card-button";
-import { Separator } from "./ui/separator";
-import { api } from "../lib/client";
-import BreadCrumbs from "./breadcrumbs";
-import { Button } from "./ui/button";
-import router from "next/router";
-import { FirebaseContext } from "../lib/firebase";
 import { Plus, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { SetStateAction, useContext, useEffect, useRef, useState } from "react";
+import { api } from "../lib/client";
+import { FirebaseContext } from "../lib/firebase";
+import BreadCrumbs from "./breadcrumbs";
 import ProfileMenu from "./profile-menu";
+import RecipeCardButton from "./recipe-card-button";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Separator } from "./ui/separator";
 
 interface RecipeListClientProps {
   recipeCards: api.RecipeCard[];
@@ -26,7 +26,8 @@ export interface TagRecipe {
 export default function RecipeListClient({ recipeCards, username }: RecipeListClientProps) {
   const { auth } = useContext(FirebaseContext);
   const user = auth?.currentUser;
-  
+  const router = useRouter();
+
   const [recipeList, setRecipeList] = useState<api.RecipeCard[]>([]);
   const [tagList, setTagList] = useState<string[]>([]);
   const [tagRecipes, setTagRecipes] = useState<TagRecipe[]>([]);
