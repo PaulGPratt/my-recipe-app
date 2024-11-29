@@ -1,5 +1,7 @@
 import { signOut } from "firebase/auth";
+import Cookies from "js-cookie";
 import { User } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { api } from "../lib/client";
@@ -17,7 +19,7 @@ function ProfileMenu() {
     const fetchMyProfile = async () => {
       if (!auth?.currentUser) {
         return;
-      } 
+      }
 
       try {
         const freshProfile = await fetchStoredProfile(auth);
@@ -36,25 +38,10 @@ function ProfileMenu() {
   const logoutUser = async () => {
     if (auth) {
       await signOut(auth);
+      Cookies.remove("firebaseToken");
       removeStoredProfile();
       redirect("/");
     }
-  }
-
-  const navigateToAllRecipes = async () => {
-    redirect(`/recipes`);
-  }
-
-  const navigateToMyRecipes = async () => {
-    redirect(`/recipes/${profile?.username}`);
-  }
-
-  const openLogin = () => {
-    redirect("/login");
-  }
-
-  const openSignUp = () => {
-    redirect("/signup");
   }
 
   return (
@@ -63,7 +50,7 @@ function ProfileMenu() {
         {profile?.username ? (
           <Button size="icon" variant="secondary" className="text-2xl font-bold" title="User Menu">{profile.username.slice(0, 1).toUpperCase()}</Button>
         ) : (
-          <Button size="icon" variant="secondary"title="User Menu"><User /></Button>
+          <Button size="icon" variant="secondary" title="User Menu"><User /></Button>
         )}
 
       </DropdownMenuTrigger>
@@ -74,8 +61,8 @@ function ProfileMenu() {
               {profile?.username}
             </DropdownMenuLabel>
             <DropdownMenuSeparator></DropdownMenuSeparator>
-            <DropdownMenuItem onClick={navigateToMyRecipes} className="text-2xl">
-              My Recipes
+            <DropdownMenuItem className="text-2xl">
+              <Link href={`/recipes/${profile?.username}`} className="w-full">My Recipes</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator></DropdownMenuSeparator>
             <DropdownMenuItem onClick={logoutUser} className="text-2xl">
@@ -89,15 +76,15 @@ function ProfileMenu() {
               Welcome Guest!
             </DropdownMenuLabel>
             <DropdownMenuSeparator></DropdownMenuSeparator>
-            <DropdownMenuItem onClick={navigateToAllRecipes} className="text-2xl">
-              All Recipes
+            <DropdownMenuItem className="text-2xl">
+              <Link href={`/recipes/`} className="w-full">All Recipes</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator></DropdownMenuSeparator>
-            <DropdownMenuItem onClick={openLogin} className="text-2xl">
-              Log In
+            <DropdownMenuItem className="text-2xl">
+              <Link href={`/login`} className="w-full">Log in</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={openSignUp} className="text-2xl">
-              Sign Up
+            <DropdownMenuItem className="text-2xl">
+              <Link href={`/signup`} className="w-full">Sign up</Link>
             </DropdownMenuItem>
           </>
         )}

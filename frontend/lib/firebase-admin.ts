@@ -1,8 +1,8 @@
-import admin from 'firebase-admin';
+import admin from "firebase-admin";
 import { cookies } from "next/headers";
 
 const serviceAccount = JSON.parse(
-  process.env.FIREBASE_SERVICE_ACCOUNT_KEY || '{}'
+  process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "{}"
 );
 
 if (!admin.apps.length) {
@@ -15,8 +15,8 @@ export const verifyIdToken = async (token: string) => {
   try {
     return await admin.auth().verifyIdToken(token);
   } catch (error) {
-    console.error('Error verifying Firebase ID token:', error);
-    throw new Error('Unauthorized');
+    console.log("Error verifying Firebase ID token:", error);
+    throw new Error("Unauthorized");
   }
 };
 
@@ -27,5 +27,13 @@ export async function getDecodedTokenCookie() {
   if (!tokenCookie?.value) {
     return undefined;
   }
-  return await verifyIdToken(tokenCookie.value);
+
+  const decodedToken = await verifyIdToken(tokenCookie.value);
+
+  if (!decodedToken) {
+    cookieStore.delete("firebaseToken");
+    return undefined;
+  }
+
+  return decodedToken;
 }
