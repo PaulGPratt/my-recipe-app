@@ -24,6 +24,7 @@ function ProfileMenu() {
       try {
         const freshProfile = await fetchStoredProfile(auth);
         if (freshProfile.username.length === 0) {
+          console.log("You must complete profile");
           redirect("/complete-profile");
         } else {
           setProfile(freshProfile);

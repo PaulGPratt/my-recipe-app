@@ -72,7 +72,7 @@ export default function AddRecipeClient() {
         try {
             setIsUploadingFiles(true);
             const token = await fetchToken();
-            const client = getRequestClient(token ?? undefined);
+            const client = getRequestClient(token);
             const response = await client.api.GenerateFromImages({
                 files: filesData,
             } as api.FileUploadRequest);
@@ -88,7 +88,7 @@ export default function AddRecipeClient() {
         try {
             setIsSubmittingText(true);
             const token = await fetchToken();
-            const client = getRequestClient(token ?? undefined);
+            const client = getRequestClient(token);
             const response = await client.api.GenerateFromText({
                 text: recipeText,
             } as api.GenerateFromTextRequest);

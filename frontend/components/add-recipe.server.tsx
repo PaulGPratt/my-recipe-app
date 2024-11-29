@@ -16,7 +16,7 @@ export default async function AddRecipeServer() {
   try {
       const idToken = await getDecodedTokenCookie();
       if (!idToken) {
-          redirect(`/recipes`);
+          redirect(`/login`);
       }
 
     return <AddRecipeClient />;

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import getRequestClient from "../lib/get-request-client";
 import { getDecodedTokenCookie } from "../lib/firebase-admin";
 import EditRecipeClient from "./edit-recipe.client";
+import { cookies } from "next/headers";
 
 interface EditRecipeProps {
   params: { username: string; slug: string };
@@ -9,12 +10,18 @@ interface EditRecipeProps {
 
 export default async function EditRecipeServer({ params }: EditRecipeProps) {
   const { username, slug } = await params;
+  const cookieStore = await cookies();
+  const firebaseToken = cookieStore.get("firebaseToken");
 
   if (!username || !slug) {
     redirect("/");
   }
 
-  const client = getRequestClient(undefined);
+  if (!firebaseToken) {
+    redirect("/login");
+  }
+
+  const client = getRequestClient(firebaseToken.value);
 
   try {
     const recipe = await client.api.GetRecipe(username, slug);

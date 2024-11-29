@@ -28,6 +28,8 @@ export async function getDecodedTokenCookie() {
     return undefined;
   }
 
+  console.log(tokenCookie.value);
+
   const decodedToken = await verifyIdToken(tokenCookie.value);
 
   if (!decodedToken) {
