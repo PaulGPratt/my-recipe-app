@@ -25,15 +25,15 @@ export default function CompleteProfileClient({ userId }: CompleteProfileClientP
 
   const fetchToken = async () => {
     if (!token) {
-        const newToken = await auth?.currentUser?.getIdToken();
-        setToken(newToken);
-        return newToken;
+      const newToken = await auth?.currentUser?.getIdToken();
+      setToken(newToken);
+      return newToken;
     }
     return token;
-};
+  };
 
   const handleUsernameInput = async (event: React.ChangeEvent<HTMLInputElement> | React.FocusEvent<HTMLInputElement>) => {
-    const usernameVal = event.target.value;
+    const usernameVal = event.target.value.toLowerCase();
 
     setUsername(usernameVal);
     setUsernameError("");
@@ -63,7 +63,7 @@ export default function CompleteProfileClient({ userId }: CompleteProfileClientP
 
   const saveProfile = async () => {
     try {
-        const token = await fetchToken();
+      const token = await fetchToken();
       const client = getRequestClient(token);
       const newProfile = await client.api.SaveProfile({
         id: userId,

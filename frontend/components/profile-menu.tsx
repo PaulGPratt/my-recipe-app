@@ -2,7 +2,7 @@ import { signOut } from "firebase/auth";
 import Cookies from "js-cookie";
 import { User } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { api } from "../lib/client";
 import { FirebaseContext } from "../lib/firebase";
@@ -11,6 +11,7 @@ import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 function ProfileMenu() {
+  const router = useRouter();
   const { auth } = useContext(FirebaseContext);
   const [profile, setProfile] = useState<api.Profile>();
   const user = auth?.currentUser;
@@ -25,7 +26,7 @@ function ProfileMenu() {
         const freshProfile = await fetchStoredProfile(auth);
         if (freshProfile.username.length === 0) {
           console.log("You must complete profile");
-          redirect("/complete-profile");
+          router.push("/complete-profile");
         } else {
           setProfile(freshProfile);
         }
