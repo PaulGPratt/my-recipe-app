@@ -2,7 +2,7 @@ import getRequestClient from "../lib/get-request-client";
 import RecipeClient from "./recipe.client";
 
 
-interface RecipeServerProps {
+export interface RecipeServerProps {
   username: string; slug: string ;
 }
 
