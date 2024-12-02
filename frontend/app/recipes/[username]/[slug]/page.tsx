@@ -14,7 +14,7 @@ export const generateMetadata = async (props: {
   const client = getRequestClient(undefined);
   const recipe = await client.api.GetRecipe(username, slug);
 
-  const baseurl = "https://prattprojects-recipes-em6wxitpe-pauls-projects-43465636.vercel.app";
+  const baseurl = "https://prattprojects-recipes.vercel.app";
   const { title } = recipe;
   const description = `Check out ${title} by ${username}!`;
   const ogImageUrl = `${baseurl}/og-image.jpg`
