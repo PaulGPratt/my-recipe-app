@@ -3,11 +3,10 @@ import RecipeClient from "./recipe.client";
 
 
 interface RecipeServerProps {
-  params: { username: string; slug: string };
+  username: string; slug: string ;
 }
 
-export default async function Recipe({ params }: RecipeServerProps) {
-  const { username, slug } = await params;
+export default async function Recipe({ username, slug }: RecipeServerProps) {
 
   if (!username || !slug) {
     throw new Error("Missing required parameters.");

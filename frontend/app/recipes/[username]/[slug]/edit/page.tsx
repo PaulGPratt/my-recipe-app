@@ -1,9 +1,10 @@
 import EditRecipeServer from "../../../../../components/edit-recipe.server";
 
-export default async function EditRecipePage({
-  params,
-}: {
-  params: { username: string; slug: string };
+type Params = Promise<{ username: string; slug: string }>
+
+export default async function EditRecipePage(props: {
+  params: Params
 }) {
-  return <EditRecipeServer params={params} />;
+  const {username, slug} = await props.params
+  return <EditRecipeServer username={username} slug={slug} />;
 }

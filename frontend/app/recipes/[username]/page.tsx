@@ -1,11 +1,11 @@
 import RecipeListServer from '../../../components/recipe-list.server';
 
-export default async function UserRecipes({
-  params,
-}: {
-  params: { username: string };
+type Params = Promise<{ username: string }>
+
+export default async function UserRecipesRecipePage(props: {
+  params: Params
 }) {
-  const { username } = await params;
+  const {username} = await props.params
 
   return (
     <RecipeListServer
