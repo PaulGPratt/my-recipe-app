@@ -4,12 +4,12 @@ import { getDecodedTokenCookie } from "../lib/firebase-admin";
 import EditRecipeClient from "./edit-recipe.client";
 import { cookies } from "next/headers";
 
-export interface EditRecipeProps {
-  params: Promise<{ username: string; slug: string }>;
+export interface EditRecipeProps  {
+  params: { username: string; slug: string };
 }
 
 export default async function EditRecipeServer({ params }: EditRecipeProps) {
-  const { username, slug } = await params;
+  const { username, slug } = params;
   const cookieStore = await cookies();
   const firebaseToken = cookieStore.get("firebaseToken");
 
