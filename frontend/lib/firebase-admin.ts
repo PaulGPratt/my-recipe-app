@@ -1,5 +1,6 @@
 import admin from "firebase-admin";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const serviceAccount = JSON.parse(
   process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "{}"
@@ -28,14 +29,18 @@ export async function getDecodedTokenCookie() {
     return undefined;
   }
 
-  console.log(tokenCookie.value);
+  try {
+    const decodedToken = await verifyIdToken(tokenCookie.value);
 
-  const decodedToken = await verifyIdToken(tokenCookie.value);
-
-  if (!decodedToken) {
-    cookieStore.delete("firebaseToken");
-    return undefined;
+    if (!decodedToken) {
+      console.log("NO TOKEN");
+      await fetch('/logout', { method: 'DELETE' });
+      redirect("/");
+    }
+    return decodedToken;
+  } catch (error) {
+    console.log("TOKEN ERROR");
+    await fetch('/logout', { method: 'DELETE' });
+    redirect("/");
   }
-
-  return decodedToken;
 }

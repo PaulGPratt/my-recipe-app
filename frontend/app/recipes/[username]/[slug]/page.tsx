@@ -8,7 +8,6 @@ export const generateMetadata = async (props: {
   params: Params
 }): Promise<Metadata> => {
 
-  console.log("hello");
   const {username, slug} = await props.params;
 
   const client = getRequestClient(undefined);
@@ -19,8 +18,6 @@ export const generateMetadata = async (props: {
   const description = `Check out ${title} by ${username}!`;
   const ogImageUrl = `${baseurl}/og-image.jpg`
   const xImageUrl = `${baseurl}/x-image.jpg`
-
-  console.log(xImageUrl);
 
   return {
     title: title,

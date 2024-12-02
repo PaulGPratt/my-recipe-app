@@ -1,5 +1,4 @@
 import { signOut } from "firebase/auth";
-import Cookies from "js-cookie";
 import { User } from "lucide-react";
 import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
@@ -25,7 +24,6 @@ function ProfileMenu() {
       try {
         const freshProfile = await fetchStoredProfile(auth);
         if (freshProfile.username.length === 0) {
-          console.log("You must complete profile");
           router.push("/complete-profile");
         } else {
           setProfile(freshProfile);
@@ -40,7 +38,7 @@ function ProfileMenu() {
   const logoutUser = async () => {
     if (auth) {
       await signOut(auth);
-      Cookies.remove("firebaseToken");
+      await fetch('/logout', { method: 'DELETE' });
       removeStoredProfile();
       redirect("/");
     }

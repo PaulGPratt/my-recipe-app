@@ -7,7 +7,6 @@ export const generateMetadata = async (props: {
   params: Params
 }): Promise<Metadata> => {
 
-  console.log("hello");
   const {username } = await props.params;
 
   const baseurl = "https://prattprojects-recipes.vercel.app";
@@ -15,9 +14,7 @@ export const generateMetadata = async (props: {
   const description = `Check out this collection of recipes by ${username}!`;
   const ogImageUrl = `${baseurl}/og-image.jpg`
   const xImageUrl = `${baseurl}/x-image.jpg`
-
-  console.log(xImageUrl);
-
+  
   return {
     title: title,
     description: description,
