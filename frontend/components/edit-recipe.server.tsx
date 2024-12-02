@@ -4,7 +4,7 @@ import { getDecodedTokenCookie } from "../lib/firebase-admin";
 import EditRecipeClient from "./edit-recipe.client";
 import { cookies } from "next/headers";
 
-export interface EditRecipeProps {
+export interface EditRecipeProps  {
   params: { username: string; slug: string };
 }
 
