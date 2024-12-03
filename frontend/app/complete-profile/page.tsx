@@ -16,19 +16,23 @@ export default async function CompleteProfilePage() {
     redirect("/login");
   }
 
+  let profile = null;
+
   try {
     const client = getRequestClient(firebaseToken.value);
-    const profile = await client.api.GetMyProfile();
-
-    // Redirect if the user already has a profile with a username
-    if (profile?.username?.length > 0) {
-      redirect(`/recipes/${profile.username}`);
-    }
-
-    // Pass the user ID to the client component
-    return <CompleteProfileClient userId={profile.id} />;
+    profile = await client.api.GetMyProfile();
   } catch (err) {
     console.error("Error verifying token or fetching profile:", err);
     redirect("/login");
   }
+
+  if (profile?.username?.length > 0) {
+    redirect(`/recipes/${profile.username}`);
+  }
+
+  if (!profile?.id) {
+    redirect("/login");
+  }
+
+  return <CompleteProfileClient userId={profile.id} />;
 }
