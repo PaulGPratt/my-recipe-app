@@ -1,7 +1,7 @@
 import { signOut } from "firebase/auth";
 import { User } from "lucide-react";
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { api } from "../lib/client";
 import { FirebaseContext } from "../lib/firebase";
@@ -37,10 +37,15 @@ function ProfileMenu() {
 
   const logoutUser = async () => {
     if (auth) {
-      await signOut(auth);
-      await fetch('/logout', { method: 'DELETE' });
-      removeStoredProfile();
-      redirect("/");
+      try {
+        await signOut(auth);
+        await fetch('/logout', { method: 'DELETE' });
+        removeStoredProfile();
+        setProfile(undefined); // Reset the profile state
+        router.push("/"); // Navigate to the homepage
+      } catch (err) {
+        console.error("Error logging out:", err);
+      }
     }
   }
 
