@@ -1,6 +1,5 @@
 import admin from "firebase-admin";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 const serviceAccount = JSON.parse(
   process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "{}"
