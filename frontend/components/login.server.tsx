@@ -1,14 +1,7 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { getDecodedTokenCookie } from "../lib/firebase-admin";
 import LoginClient from "./login.client";
 
 export default async function LoginServer() {
-  const cookie = await getDecodedTokenCookie();
-
-  if (cookie) {
-    return redirect("/");
-  }
 
   return (
     <div className="h-full mx-auto max-w-xl">

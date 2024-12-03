@@ -6,6 +6,8 @@ const serviceAccount = JSON.parse(
   process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "{}"
 );
 
+const logoutUrl = new URL('/logout', process.env.BASE_URL || 'http://localhost:3000');
+
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -34,13 +36,13 @@ export async function getDecodedTokenCookie() {
 
     if (!decodedToken) {
       console.log("NO TOKEN");
-      await fetch('/logout', { method: 'DELETE' });
-      redirect("/");
+      await fetch(logoutUrl, { method: 'DELETE' });
+      return undefined;
     }
     return decodedToken;
   } catch (error) {
     console.log("TOKEN ERROR");
-    await fetch('/logout', { method: 'DELETE' });
-    redirect("/");
+    await fetch(logoutUrl, { method: 'DELETE' });
+    return undefined;
   }
 }

@@ -17,11 +17,14 @@ function ProfileMenu() {
 
   useEffect(() => {
     const fetchMyProfile = async () => {
+      console.log("auth:" + auth);
       if (!auth?.currentUser) {
+        console.log("no current user");
         return;
       }
 
       try {
+        console.log("fetching stored profile");
         const freshProfile = await fetchStoredProfile(auth);
         if (freshProfile.username.length === 0) {
           router.push("/complete-profile");
@@ -39,7 +42,8 @@ function ProfileMenu() {
     if (auth) {
       try {
         await signOut(auth);
-        await fetch('/logout', { method: 'DELETE' });
+        const logoutUrl = new URL('/logout', process.env.BASE_URL || 'http://localhost:3000');
+        await fetch(logoutUrl, { method: 'DELETE' });
         removeStoredProfile();
         setProfile(undefined); // Reset the profile state
         router.push("/"); // Navigate to the homepage
