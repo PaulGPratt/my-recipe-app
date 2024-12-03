@@ -5,12 +5,14 @@ import EditRecipeClient from "../../../../../components/edit-recipe.client";
 import { getDecodedTokenCookie } from "../../../../../lib/firebase-admin";
 import getRequestClient from "../../../../../lib/get-request-client";
 
+type Params = Promise<{ username: string; slug: string }>
+
 export const metadata: Metadata = {
   title: 'Edit Recipe',
 };
 
-export default async function EditRecipePage({ params }: { params: { username: string; slug: string } }) {
-  const { username, slug } = await params;
+export default async function EditRecipePage(props: { params: Params }) {
+  const { username, slug } = await props.params;
 
   if (!username || !slug) {
     redirect("/");
