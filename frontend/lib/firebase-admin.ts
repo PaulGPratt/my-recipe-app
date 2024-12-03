@@ -5,7 +5,7 @@ const serviceAccount = JSON.parse(
   process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "{}"
 );
 
-const logoutUrl = new URL('/logout', process.env.BASE_URL || 'http://localhost:3000');
+const logoutUrl = new URL('/logout', process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
 
 if (!admin.apps.length) {
   admin.initializeApp({

@@ -15,7 +15,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const appAuth = getAuth(app);
-const setTokenUrl = new URL('/api/setTokenCookie', process.env.BASE_URL || 'http://localhost:3000');
+const setTokenUrl = new URL('/api/setTokenCookie', process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
 
 interface FirebaseContextState {
   auth: Auth | undefined;

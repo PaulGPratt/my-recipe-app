@@ -42,7 +42,7 @@ function ProfileMenu() {
     if (auth) {
       try {
         await signOut(auth);
-        const logoutUrl = new URL('/logout', process.env.BASE_URL || 'http://localhost:3000');
+        const logoutUrl = new URL('/logout', process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
         await fetch(logoutUrl, { method: 'DELETE' });
         removeStoredProfile();
         setProfile(undefined); // Reset the profile state
