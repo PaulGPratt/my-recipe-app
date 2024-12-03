@@ -15,6 +15,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const appAuth = getAuth(app);
+const setTokenUrl = new URL('/api/setTokenCookie', process.env.BASE_URL || 'http://localhost:3000');
 
 interface FirebaseContextState {
   auth: Auth | undefined;
@@ -28,11 +29,34 @@ export const FirebaseContext = React.createContext<FirebaseContextState>(
 export const FirebaseProvider: FC<PropsWithChildren> = ({ children }) => {
   const [auth, setAuth] = useState<Auth>();
   const [isLoading, setIsLoading] = useState(true);
+
+  // Manage loading state with onAuthStateChanged
   useEffect(() => {
-    appAuth?.authStateReady().then(() => {
+    const unsubscribe = appAuth.onAuthStateChanged(() => {
       setAuth(appAuth);
       setIsLoading(false);
     });
+    return () => unsubscribe();
+  }, []);
+
+  // Refresh token and set cookie
+  useEffect(() => {
+    const unsubscribe = appAuth.onIdTokenChanged(async (user) => {
+      console.log("Id token changed");
+      try {
+        if (user) {
+          const token = await user.getIdToken(true); // Force refresh
+          await fetch(setTokenUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token }),
+          });
+        }
+      } catch (error) {
+        console.error("Error refreshing token or setting cookie:", error);
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   return (
