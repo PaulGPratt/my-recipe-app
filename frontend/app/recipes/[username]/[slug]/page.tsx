@@ -1,14 +1,11 @@
 import { Metadata } from "next";
-import Recipe from "../../../../components/recipe.server";
+import RecipeClient from "../../../../components/recipe.client";
 import getRequestClient from "../../../../lib/get-request-client";
 
 type Params = Promise<{ username: string; slug: string }>
 
-export const generateMetadata = async (props: {
-  params: Params
-}): Promise<Metadata> => {
-
-  const {username, slug} = await props.params;
+export const generateMetadata = async (props: { params: Params }): Promise<Metadata> => {
+  const { username, slug } = await props.params;
 
   const client = getRequestClient(undefined);
   const recipe = await client.api.GetRecipe(username, slug);
@@ -16,8 +13,8 @@ export const generateMetadata = async (props: {
   const baseurl = "https://prattprojects-recipes.vercel.app";
   const { title } = recipe;
   const description = `Check out ${title} by ${username}!`;
-  const ogImageUrl = `${baseurl}/og-image.jpg`
-  const xImageUrl = `${baseurl}/x-image.jpg`
+  const ogImageUrl = `${baseurl}/og-image.jpg`;
+  const xImageUrl = `${baseurl}/x-image.jpg`;
 
   return {
     title: title,
@@ -38,22 +35,27 @@ export const generateMetadata = async (props: {
     twitter: {
       title: title,
       description: description,
-      images : [
+      images: [
         {
           url: xImageUrl,
           alt: `${title} - a recipe by ${username}`,
           height: 600,
           width: 1200,
-        }
+        },
       ],
-    }
+    },
   };
-}
+};
 
+export default async function RecipePage(props: { params: Params }) {
+  const { username, slug } = await props.params;
 
-export default async function RecipePage(props: {
-  params: Params
-}) {
-  const {username, slug} = await props.params;
-  return <Recipe username={username} slug={slug} />;
+  if (!username || !slug) {
+    throw new Error("Missing required parameters.");
+  }
+
+  const client = getRequestClient(undefined);
+  const recipe = await client.api.GetRecipe(username, slug);
+
+  return <RecipeClient recipe={recipe} username={username} />;
 }

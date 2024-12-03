@@ -3,7 +3,7 @@ import Link from "next/link";
 import LoginClient from "../../components/login.client";
 
 export const metadata: Metadata = {
-  title: 'Login',
+  title: 'Log in',
 };
 
 export default function LoginPage() {
