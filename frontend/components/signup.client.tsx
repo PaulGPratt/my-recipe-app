@@ -15,7 +15,6 @@ import { storeProfile } from "../lib/profile-utils";
 export default function SignupClient() {
   const { auth } = useContext(FirebaseContext);
 
-  const [token, setToken] = useState<string | undefined>(undefined);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -23,15 +22,6 @@ export default function SignupClient() {
   const [duplicateCheckComplete, setDuplicateCheckComplete] = useState(false);
   const [notice, setNotice] = useState("");
   const router = useRouter();
-
-  const fetchToken = async () => {
-    if (!token) {
-      const newToken = await auth?.currentUser?.getIdToken();
-      setToken(newToken);
-      return newToken;
-    }
-    return token;
-  };
 
   const signupWithEmailAndPassword = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -63,7 +53,7 @@ export default function SignupClient() {
           id: user.uid,
           username,
         });
-  
+
         storeProfile(newProfile);
         router.push(`/recipes/${newProfile.username}`);
       }
@@ -110,9 +100,9 @@ export default function SignupClient() {
     <>
       {notice && (
         <div className="p-4 pt-0 flex gap-4 items-center">
-        <TriangleAlert size={30}/>
-        <div className="text-xl">{notice}</div>
-      </div>
+          <TriangleAlert size={30} />
+          <div className="text-xl">{notice}</div>
+        </div>
       )}
       <div className="p-4 pt-0 flex gap-2">
         <div className="flex-grow">
@@ -161,7 +151,7 @@ export default function SignupClient() {
           />
           {usernameError.length > 0 && (
             <div className="flex gap-4 items-center pt-2">
-              <TriangleAlert size={30}/>
+              <TriangleAlert size={30} />
               <div className="text-xl">{usernameError}</div>
             </div>
           )}
