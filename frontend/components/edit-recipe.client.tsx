@@ -67,7 +67,7 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
             const slugPattern = /^[a-z0-9]+(-[a-z0-9]+)*$/;
             let isValidSlug = slugPattern.test(slugVal);
             if (!isValidSlug) {
-                setSlugError(`Please only use lowercase letters and numbers separated by hyphens.`)
+                setSlugError(`Please use lowercase letters and numbers separated by hyphens.`)
                 return;
             }
 

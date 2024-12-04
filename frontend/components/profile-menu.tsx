@@ -26,11 +26,7 @@ function ProfileMenu() {
       try {
         console.log("fetching stored profile");
         const freshProfile = await fetchStoredProfile(auth);
-        if (freshProfile.username.length === 0) {
-          router.push("/complete-profile");
-        } else {
-          setProfile(freshProfile);
-        }
+        setProfile(freshProfile);
       } catch (err) {
         console.log(err);
       }
@@ -72,6 +68,9 @@ function ProfileMenu() {
             <DropdownMenuSeparator></DropdownMenuSeparator>
             <DropdownMenuItem className="text-2xl">
               <Link href={`/recipes/${profile?.username}`} className="w-full">My Recipes</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="text-2xl">
+              <Link href={`/profile`} className="w-full">My Profile</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator></DropdownMenuSeparator>
             <DropdownMenuItem onClick={logoutUser} className="text-2xl">

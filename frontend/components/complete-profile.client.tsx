@@ -42,7 +42,7 @@ export default function CompleteProfileClient({ userId }: CompleteProfileClientP
     if (event.type === "blur") {
       const slugPattern = /^[a-z0-9]+(-[a-z0-9]+)*$/;
       if (!slugPattern.test(usernameVal)) {
-        setUsernameError("Please only use lowercase letters and numbers separated by hyphens.");
+        setUsernameError("Please use lowercase letters and numbers separated by hyphens.");
         return;
       }
 

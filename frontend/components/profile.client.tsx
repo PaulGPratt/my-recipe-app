@@ -48,7 +48,7 @@ export default function ProfileClient({ profile }: CompleteProfileClientProps) {
             setDuplicateCheckComplete(false);
             const slugPattern = /^[a-z0-9]+(-[a-z0-9]+)*$/;
             if (!slugPattern.test(usernameVal)) {
-                setUsernameError("Please only use lowercase letters and numbers separated by hyphens.");
+                setUsernameError("Please use lowercase letters and numbers separated by hyphens.");
                 return;
             }
 
@@ -99,7 +99,7 @@ export default function ProfileClient({ profile }: CompleteProfileClientProps) {
                 <div className="flex-grow">
                     <Label htmlFor="username" className="text-2xl font-semibold">Username</Label>
                     <div className="text-xl text-muted-foreground">
-                        Your recipes will be found at /recipes/your-username.
+                        Your recipes will be found at /recipes/my-username.
                     </div>
                     <Input
                         id="username"
