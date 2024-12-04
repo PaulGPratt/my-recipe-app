@@ -17,7 +17,7 @@ export const verifyIdToken = async (token: string) => {
   try {
     return await admin.auth().verifyIdToken(token);
   } catch (error) {
-    console.log("Error verifying Firebase ID token:", error);
+    console.error("Error verifying Firebase ID token:", error);
     throw new Error("Unauthorized");
   }
 };
@@ -34,13 +34,11 @@ export async function getDecodedTokenCookie() {
     const decodedToken = await verifyIdToken(tokenCookie.value);
 
     if (!decodedToken) {
-      console.log("NO TOKEN");
       await fetch(logoutUrl, { method: 'DELETE' });
       return undefined;
     }
     return decodedToken;
   } catch (error) {
-    console.log("TOKEN ERROR");
     await fetch(logoutUrl, { method: 'DELETE' });
     return undefined;
   }

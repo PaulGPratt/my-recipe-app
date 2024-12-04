@@ -17,18 +17,15 @@ function ProfileMenu() {
 
   useEffect(() => {
     const fetchMyProfile = async () => {
-      console.log("auth:" + auth);
       if (!auth?.currentUser) {
-        console.log("no current user");
         return;
       }
 
       try {
-        console.log("fetching stored profile");
         const freshProfile = await fetchStoredProfile(auth);
         setProfile(freshProfile);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     };
     fetchMyProfile();
@@ -81,7 +78,7 @@ function ProfileMenu() {
         ) : (
           <>
             <DropdownMenuLabel className="text-2xl">
-              Welcome Guest!
+              Guest
             </DropdownMenuLabel>
             <DropdownMenuSeparator></DropdownMenuSeparator>
             <DropdownMenuItem className="text-2xl">

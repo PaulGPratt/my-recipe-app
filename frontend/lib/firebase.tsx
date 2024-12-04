@@ -42,7 +42,6 @@ export const FirebaseProvider: FC<PropsWithChildren> = ({ children }) => {
   // Refresh token and set cookie
   useEffect(() => {
     const unsubscribe = appAuth.onIdTokenChanged(async (user) => {
-      console.log("Id token changed");
       try {
         if (user) {
           const token = await user.getIdToken(true); // Force refresh

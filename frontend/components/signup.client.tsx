@@ -1,6 +1,8 @@
 "use client";
 
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import Cookies from "js-cookie";
+import { TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useContext, useState } from "react";
 import { Button } from "../components/ui/button";
@@ -8,7 +10,6 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
-import { TriangleAlert } from "lucide-react";
 import { storeProfile } from "../lib/profile-utils";
 
 export default function SignupClient() {
@@ -39,17 +40,33 @@ export default function SignupClient() {
 
 
     try {
-      // Sign up using Firebase Authentication
-      const signupResult = await createUserWithEmailAndPassword(auth!, email, password);
-      const token = await fetchToken();
-      const client = getRequestClient(token);
-      const newProfile = await client.api.SaveProfile({
-        id: signupResult.user.uid,
-        username,
-      });
+      if (!auth) {
+        throw new Error("Firebase Auth is not initialized.");
+      }
 
-      storeProfile(newProfile);
-      router.push(`/recipes/${newProfile.username}`);
+      await createUserWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
+      const user = auth.currentUser;
+      if (user) {
+        // Get Firebase token
+        const token = await user.getIdToken();
+
+        // Set the token in a secure cookie (using js-cookie)
+        Cookies.set("firebaseToken", token, {
+          secure: true, // Use HTTPS
+          sameSite: "Strict", // Protect against CSRF
+          path: "/", // Available site-wide
+        });
+
+        const client = getRequestClient(token);
+        const newProfile = await client.api.SaveProfile({
+          id: user.uid,
+          username,
+        });
+  
+        storeProfile(newProfile);
+        router.push(`/recipes/${newProfile.username}`);
+      }
 
     } catch (error: any) {
       if (error.code === "auth/email-already-in-use") {

@@ -26,7 +26,7 @@ export async function fetchStoredProfile(auth: Auth): Promise<api.Profile> {
       return freshProfile;
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 
   return {
