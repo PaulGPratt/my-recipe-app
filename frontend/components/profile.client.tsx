@@ -110,7 +110,7 @@ export default function ProfileClient({ profile }: CompleteProfileClientProps) {
 
             <div className="flex p-4 justify-between">
                 <div className="flex gap-4 items-center">
-                    <Button size="icon" variant="ghost" onClick={handleBack} role="link" title="Back to Recipe"><ArrowLeft size={30} /></Button>
+                    <Button size="icon" variant="ghost" onClick={handleBack} role="link" title="Back to Recipes"><ArrowLeft size={30} /></Button>
                     <div className="text-2xl font-semibold">My Profile</div>
                 </div>
                 <div className="flex gap-2">

@@ -11,9 +11,10 @@ export const metadata: Metadata = {
 export default async function ProfilePage() {
   const cookieStore = await cookies();
   const firebaseToken = cookieStore.get("firebaseToken");
+  const loginRedirect = `/login?redirect=${encodeURIComponent("/profile")}`;
 
   if (!firebaseToken) {
-    redirect("/login");
+    redirect(loginRedirect);
   }
 
   let profile = null;
@@ -23,11 +24,11 @@ export default async function ProfilePage() {
     profile = await client.api.GetMyProfile();
   } catch (err) {
     console.error("Error verifying token or fetching profile:", err);
-    redirect("/login");
+    redirect(loginRedirect);
   }
 
   if (!profile?.id) {
-    redirect("/login");
+    redirect(loginRedirect);
   }
 
   return (

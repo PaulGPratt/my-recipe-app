@@ -22,7 +22,8 @@ export default async function EditRecipePage(props: { params: Params }) {
   const firebaseToken = cookieStore.get("firebaseToken");
 
   if (!firebaseToken) {
-    redirect("/login");
+    const loginRedirect = `/login?redirect=${encodeURIComponent(`/recipes/${username}/${slug}/edit`)}`;
+    redirect(loginRedirect);
   }
 
   const client = getRequestClient(firebaseToken.value);

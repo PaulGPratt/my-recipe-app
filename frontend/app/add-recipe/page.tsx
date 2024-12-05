@@ -5,26 +5,28 @@ import AddRecipeClient from "../../components/add-recipe.client";
 import { getDecodedTokenCookie } from "../../lib/firebase-admin";
 
 export const metadata: Metadata = {
-  title: 'Add Recipe',
+  title: "Add Recipe",
 };
 
 export default async function AddRecipePage() {
   const cookieStore = await cookies();
   const firebaseToken = cookieStore.get("firebaseToken");
+  const loginRedirect = `/login?redirect=${encodeURIComponent("/add-recipe")}`;
 
   if (!firebaseToken) {
-    redirect("/login");
+    redirect(loginRedirect);
   }
 
   try {
     const idToken = await getDecodedTokenCookie();
     if (!idToken) {
-      redirect(`/login`);
+      redirect(loginRedirect);
     }
 
+    // Render the client-side component
     return <AddRecipeClient />;
   } catch (error) {
     console.error("Error validating token:", error);
-    redirect("/login");
+    redirect(loginRedirect);
   }
 }

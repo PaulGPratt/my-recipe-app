@@ -2,7 +2,7 @@
 
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useContext, useState } from "react";
 import { FirebaseContext } from "../lib/firebase";
 import { Button } from "./ui/button";
@@ -16,6 +16,7 @@ export default function LoginClient() {
   const [password, setPassword] = useState("");
   const [notice, setNotice] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const loginWithUsernameAndPassword = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -43,8 +44,11 @@ export default function LoginClient() {
         });
       }
 
-      // Redirect to the homepage or another secure page
-      router.push("/");
+      // Get the referrer path from query params
+      const redirectTo = searchParams.get("redirect") || "/";
+
+      // Redirect to the referrer page or a default page
+      router.push(redirectTo);
     } catch (error) {
       console.error("Login error:", error);
       setNotice("You entered a wrong username or password.");
