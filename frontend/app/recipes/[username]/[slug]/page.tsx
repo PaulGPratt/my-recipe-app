@@ -32,7 +32,7 @@ export const generateMetadata = async (props: { params: Params }): Promise<Metad
             width: 1200,
           },
         ],
-        url: `${baseurl}/recipes/${username}/${slug}`,
+        url: `${baseurl}recipes/${username}/${slug}`,
       },
       twitter: {
         title: title,
@@ -64,7 +64,7 @@ export const generateMetadata = async (props: { params: Params }): Promise<Metad
             width: 1200,
           },
         ],
-        url: `${baseurl}/recipes`,
+        url: `${baseurl}recipes`,
       },
       twitter: {
         title: title,

@@ -8,7 +8,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
   const xImageUrl = `${baseurl}x-image.jpg`;
 
   const title = `All Recipes`
-  const description = `Check out these recipes at ${baseurl}!`;
+  const description = `Check out this collection of recipes!`;
   return {
     title: title,
     description: description,
@@ -23,7 +23,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
           width: 1200,
         },
       ],
-      url: `${baseurl}/recipes`,
+      url: `${baseurl}recipes`,
     },
     twitter: {
       title: title,

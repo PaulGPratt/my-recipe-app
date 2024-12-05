@@ -29,7 +29,7 @@ export const generateMetadata = async (props: {
           width: 1200,
         },
       ],
-      url: `${baseurl}/recipes/${username}`,
+      url: `${baseurl}recipes/${username}`,
     },
     twitter: {
       title: title,
