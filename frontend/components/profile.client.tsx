@@ -23,7 +23,7 @@ export default function ProfileClient({ profile }: CompleteProfileClientProps) {
     const [token, setToken] = useState<string | undefined>(undefined);
     const [username, setUsername] = useState(profile.username);
     const [usernameError, setUsernameError] = useState<string>("");
-    const [saveProfileEnabled, setSaveProfileEnabled] = useState(false);
+    const [usernameVerified, setUsernameVerified] = useState(false);
 
     const fetchToken = async () => {
         if (!token) {
@@ -47,20 +47,20 @@ export default function ProfileClient({ profile }: CompleteProfileClientProps) {
 
         if (!usernameVal) {
             setUsernameError("Username cannot be empty.");
-            setSaveProfileEnabled(false);
+            setUsernameVerified(false);
             return;
         }
 
         const slugPattern = /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/;
         if (!slugPattern.test(usernameVal)) {
-            setSaveProfileEnabled(false);
-            setUsernameError("Please use letters and numbers separated by hyphens.");
+            setUsernameVerified(false);
+            setUsernameError("Please use letters and numbers (separated by hyphens if needed).");
             return;
         }
 
         // Allow case changes of current username
         if (usernameVal.toLowerCase() === profile.username.toLowerCase()) {
-            setSaveProfileEnabled(true);
+            setUsernameVerified(true);
             return;
         }
 
@@ -71,18 +71,19 @@ export default function ProfileClient({ profile }: CompleteProfileClientProps) {
 
         debounceTimeout.current = setTimeout(async () => {
             try {
-                setSaveProfileEnabled(false);
+                setUsernameVerified(false);
                 const token = await fetchToken();
                 const client = getRequestClient(token);
                 const { available } = await client.api.CheckIfUsernameIsAvailable({ username: usernameVal });
 
                 if (available) {
-                    setSaveProfileEnabled(true);
+                    setUsernameVerified(true);
                 } else {
-                    setSaveProfileEnabled(false);
-                    setUsernameError(`${usernameVal} is already in use.`);
+                    setUsernameVerified(false);
+                    setUsernameError(`Username is already in use.`);
                 }
             } catch (err) {
+                setUsernameVerified(false);
                 console.error("Error checking username availability:", err);
                 setUsernameError("Could not verify username availability. Please try again later.");
             }
@@ -113,7 +114,7 @@ export default function ProfileClient({ profile }: CompleteProfileClientProps) {
                     <div className="text-2xl font-semibold">My Profile</div>
                 </div>
                 <div className="flex gap-2">
-                    <Button size="header" variant="secondary" disabled={username.length <= 0 || usernameError.length > 0 || !saveProfileEnabled} onClick={saveProfile}>Save Changes</Button>
+                    <Button size="header" variant="secondary" disabled={username.length <= 0 || usernameError.length > 0 || !usernameVerified} onClick={saveProfile}>Save Changes</Button>
                 </div>
             </div>
             <Separator />
