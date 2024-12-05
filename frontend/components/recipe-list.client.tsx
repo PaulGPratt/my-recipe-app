@@ -152,7 +152,8 @@ export default function RecipeListClient({ recipeCards, username }: RecipeListCl
         </div>
       </div>
       {tagList && tagList.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-4">
+        <>
+        <div className="flex flex-wrap gap-2 p-4 pb-2">
           {tagList?.map((tag) => (
             <Button
               size="tag"
@@ -165,6 +166,8 @@ export default function RecipeListClient({ recipeCards, username }: RecipeListCl
             </Button>
           ))}
         </div>
+        <Separator></Separator>
+        </>
       )}
 
 
@@ -197,12 +200,12 @@ export default function RecipeListClient({ recipeCards, username }: RecipeListCl
       <ScrollArea className="h-full w-full">
         {tagRecipes?.map((tagRecipe) => (
           <div key={tagRecipe.tag}>
-            <div className="px-4 mb-2 text-2xl flex gap-2 items-center">
+            <div className="px-4 py-2 text-2xl flex gap-2 items-center">
               <div className="w-2"><Separator className="bg-muted-foreground" /></div>
               <span className="text-muted-foreground">{tagRecipe.tag}</span>
               <div className="flex-grow"><Separator className="bg-muted-foreground" /></div>
             </div>
-            <div className="px-4 mb-6 gap-2 flex flex-col">
+            <div className="px-4 gap-2 flex flex-col">
               {tagRecipe.recipes?.map((recipe) => (
                 <RecipeCardButton
                   key={recipe.id}

@@ -27,7 +27,7 @@ const buttonVariants = cva(
         bae: "min-h-12 px-4 py-2 rounded-md text-2xl font-semibold",
         icon: "rounded-full h-10 min-w-10",
         header: "text-2xl h-10 px-3 font-semibold",
-        tag: "rounded-full px-4 py-1 text-2xl font-semibold"
+        tag: "rounded-full px-3 py-0.5 text-xl font-semibold"
       },
     },
     defaultVariants: {
