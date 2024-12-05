@@ -153,23 +153,22 @@ export default function RecipeListClient({ recipeCards, username }: RecipeListCl
       </div>
       {tagList && tagList.length > 0 && (
         <>
-        <div className="flex flex-wrap gap-2 p-4 pb-2">
-          {tagList?.map((tag) => (
-            <Button
-              size="tag"
-              key={tag}
-              variant={activeTag === tag ? "default" : "secondary"}
-              className={activeTag === tag ? "text-background" : ""}
-              onClick={() => handleTagClick(tag)}
-            >
-              {tag}
-            </Button>
-          ))}
-        </div>
-        <Separator></Separator>
+          <div className="flex flex-wrap gap-2 p-4">
+            {tagList?.map((tag) => (
+              <Button
+                size="tag"
+                key={tag}
+                variant={activeTag === tag ? "default" : "secondary"}
+                className={activeTag === tag ? "text-background" : ""}
+                onClick={() => handleTagClick(tag)}
+              >
+                {tag}
+              </Button>
+            ))}
+          </div>
+
         </>
       )}
-
 
       {showSearch && (
         <div className="flex px-4 pb-4">
@@ -185,6 +184,8 @@ export default function RecipeListClient({ recipeCards, username }: RecipeListCl
           </div>
         </div>
       )}
+
+      <Separator></Separator>
 
       {noRecipesFound && (
         <div className="flex flex-col px-4 py-16">
