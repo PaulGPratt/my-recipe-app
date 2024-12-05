@@ -2,21 +2,24 @@
 
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Cookies from "js-cookie";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { Suspense, useContext, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useContext, useState } from "react";
 import { FirebaseContext } from "../lib/firebase";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { PasswordInput } from "./ui/password-input";
 
-export default function LoginClient() {
+interface LoginClientProps {
+  redirectTo: string;
+}
+
+export default function LoginClient({ redirectTo }: LoginClientProps) {
   const { auth } = useContext(FirebaseContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [notice, setNotice] = useState("");
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const loginWithUsernameAndPassword = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -44,9 +47,6 @@ export default function LoginClient() {
         });
       }
 
-      // Get the referrer path from query params
-      const redirectTo = searchParams.get("redirect") || "/";
-
       // Redirect to the referrer page or a default page
       router.push(redirectTo);
     } catch (error) {
@@ -56,7 +56,7 @@ export default function LoginClient() {
   };
 
   return (
-    <Suspense>
+    <>
       {notice && (
         <div role="alert" className="px-4 pt-6 pb-0 text-2xl">
           {notice}
@@ -102,6 +102,6 @@ export default function LoginClient() {
           Log in
         </Button>
       </div>
-    </Suspense>
+    </>
   );
 }
