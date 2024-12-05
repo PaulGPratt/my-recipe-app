@@ -6,12 +6,12 @@ export const metadata: Metadata = {
   title: 'Log in',
 };
 
-interface LoginPageProps {
-  searchParams: { [key: string]: string | undefined };
-}
-
-export default function LoginPage({ searchParams }: LoginPageProps) {
-  const redirectTo = searchParams.redirect || "/";
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const redirectTo  = (await searchParams).redirect as string || "/";
 
   return (
     <div className="h-full mx-auto max-w-xl">
