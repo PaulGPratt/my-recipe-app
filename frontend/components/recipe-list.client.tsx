@@ -185,7 +185,9 @@ export default function RecipeListClient({ recipeCards, username }: RecipeListCl
         </div>
       )}
 
-      <Separator></Separator>
+      {tagRecipes?.length > 0 && (
+        <Separator></Separator>
+      )}
 
       {noRecipesFound && (
         <div className="flex flex-col px-4 py-16">
