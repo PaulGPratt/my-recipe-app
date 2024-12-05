@@ -12,7 +12,7 @@ export default async function SignupPage() {
   const cookie = await getDecodedTokenCookie();
 
   if (cookie) {
-    redirect("/");
+    redirect("/recipes");
   }
 
   return (

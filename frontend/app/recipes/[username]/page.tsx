@@ -9,11 +9,11 @@ export const generateMetadata = async (props: {
 
   const {username } = await props.params;
 
-  const baseurl = "https://prattprojects-recipes.vercel.app";
+  const baseurl = process.env.NEXT_PUBLIC_BASE_URL;
   const title = `Recipes by ${username}`;
   const description = `Check out this collection of recipes by ${username}!`;
-  const ogImageUrl = `${baseurl}/og-image.jpg`
-  const xImageUrl = `${baseurl}/x-image.jpg`
+  const ogImageUrl = `${baseurl}og-image.jpg`
+  const xImageUrl = `${baseurl}x-image.jpg`
   
   return {
     title: title,
