@@ -324,6 +324,18 @@ func CopyRecipe(ctx context.Context, id string) (*GenerateRecipeResponse, error)
 		return nil, fmt.Errorf("error generating new recipe ID: %w", err)
 	}
 
+	var title string
+	err = db.QueryRow(ctx, `SELECT title FROM recipe WHERE id = $1`, id).Scan(&title)
+	if err != nil {
+		return nil, fmt.Errorf("error finding existing recipe: %w", err)
+	}
+
+	var slug string
+	slug, err = createUniqueSlug(ctx, title)
+	if err != nil {
+		return nil, fmt.Errorf("error generating slug: %w", err)
+	}
+
 	// Step 3: Perform the recipe duplication in a single query
 	_, err = db.Exec(ctx, `
         INSERT INTO recipe (
@@ -332,7 +344,7 @@ func CopyRecipe(ctx context.Context, id string) (*GenerateRecipeResponse, error)
         SELECT 
             $1, -- New UUID
             $2, -- New profile_id
-            slug, 
+            $3, -- New slug 
             title, 
             ingredients, 
             instructions, 
@@ -341,8 +353,8 @@ func CopyRecipe(ctx context.Context, id string) (*GenerateRecipeResponse, error)
             cook_time_minutes, 
             tags
         FROM recipe
-        WHERE id = $3
-    `, newRecipeId.String(), authProfileId, id)
+        WHERE id = $4
+    `, newRecipeId.String(), authProfileId, slug, id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy recipe in database: %w", err)
 	}
