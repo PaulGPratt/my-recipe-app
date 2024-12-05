@@ -3,7 +3,7 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Cookies from "js-cookie";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useContext, useState } from "react";
+import React, { Suspense, useContext, useState } from "react";
 import { FirebaseContext } from "../lib/firebase";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -56,7 +56,7 @@ export default function LoginClient() {
   };
 
   return (
-    <>
+    <Suspense>
       {notice && (
         <div role="alert" className="px-4 pt-6 pb-0 text-2xl">
           {notice}
@@ -102,6 +102,6 @@ export default function LoginClient() {
           Log in
         </Button>
       </div>
-    </>
+    </Suspense>
   );
 }
