@@ -8,6 +8,7 @@ import { FirebaseContext } from "../lib/firebase";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { PasswordInput } from "./ui/password-input";
 
 export default function LoginClient() {
   const { auth } = useContext(FirebaseContext);
@@ -81,8 +82,7 @@ export default function LoginClient() {
             Password
           </Label>
           <div className="flex-grow">
-            <Input
-              type="password"
+            <PasswordInput
               className="mt-2 h-12 text-2xl"
               id="inputPassword"
               placeholder="Password"

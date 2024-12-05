@@ -11,6 +11,7 @@ import { Label } from "../components/ui/label";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
 import { storeProfile } from "../lib/profile-utils";
+import { PasswordInput } from "./ui/password-input";
 
 export default function SignupClient() {
   const { auth } = useContext(FirebaseContext);
@@ -124,9 +125,8 @@ export default function SignupClient() {
           <Label htmlFor="signupPassword" className="text-2xl font-semibold">
             Password
           </Label>
-          <Input
+          <PasswordInput
             id="signupPassword"
-            type="password"
             className="mt-2 h-12 text-2xl"
             placeholder="Password"
             value={password}
