@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "fire
 import Cookies from "js-cookie";
 import { TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -69,6 +69,8 @@ export default function SignupClient() {
     }
   };
 
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+  
   const handleUsernameInput = async (event: React.ChangeEvent<HTMLInputElement> | React.FocusEvent<HTMLInputElement>) => {
     const usernameVal = event.target.value.toLowerCase();
 
@@ -76,6 +78,12 @@ export default function SignupClient() {
     setUsernameError("");
 
     if (event.type === "blur") {
+
+      if (!usernameVal.trim()) {
+        setUsernameError("Username cannot be empty.");
+        return;
+      }
+
       setDuplicateCheckComplete(false);
       const slugPattern = /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/;
       if (!slugPattern.test(usernameVal)) {
@@ -93,6 +101,7 @@ export default function SignupClient() {
         }
       } catch (err) {
         console.error("Error checking username availability:", err);
+        setUsernameError("Could not verify username availability. Please try again later.");
       }
     }
   };
@@ -100,8 +109,8 @@ export default function SignupClient() {
   return (
     <>
       {notice && (
-        <div className="p-4 pt-0 flex gap-4 items-center">
-          <TriangleAlert size={30} />
+        <div className="p-4 pt-0 flex gap-2 items-center">
+          <TriangleAlert size={28} />
           <div className="text-xl">{notice}</div>
         </div>
       )}
@@ -150,8 +159,8 @@ export default function SignupClient() {
             onBlur={handleUsernameInput}
           />
           {usernameError.length > 0 && (
-            <div className="flex gap-4 items-center pt-2">
-              <TriangleAlert size={30} />
+            <div className="flex gap-2 items-center pt-2">
+              <TriangleAlert size={28} />
               <div className="text-xl">{usernameError}</div>
             </div>
           )}

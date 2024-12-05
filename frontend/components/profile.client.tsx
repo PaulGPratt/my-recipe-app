@@ -2,7 +2,7 @@
 
 import { ArrowLeft, TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -23,7 +23,7 @@ export default function ProfileClient({ profile }: CompleteProfileClientProps) {
     const [token, setToken] = useState<string | undefined>(undefined);
     const [username, setUsername] = useState(profile.username);
     const [usernameError, setUsernameError] = useState<string>("");
-    const [duplicateCheckComplete, setDuplicateCheckComplete] = useState(false);
+    const [saveProfileEnabled, setSaveProfileEnabled] = useState(false);
 
     const fetchToken = async () => {
         if (!token) {
@@ -38,40 +38,55 @@ export default function ProfileClient({ profile }: CompleteProfileClientProps) {
         router.push(`/recipes/${profile.username}`);
     }
 
-    const handleUsernameInput = async (event: React.ChangeEvent<HTMLInputElement> | React.FocusEvent<HTMLInputElement>) => {
-        const usernameVal = event.target.value;
+    const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
+    const handleUsernameInput = async (event: React.ChangeEvent<HTMLInputElement> | React.FocusEvent<HTMLInputElement>) => {
+        const usernameVal = event.target.value.trim();
         setUsername(usernameVal);
         setUsernameError("");
 
-        if (event.type === "blur" && usernameVal !== profile.username) {
+        if (!usernameVal) {
+            setUsernameError("Username cannot be empty.");
+            setSaveProfileEnabled(false);
+            return;
+        }
 
-            // Allow case changes of current username
-            if (usernameVal.toLowerCase() === profile.username.toLowerCase()) {
-                setDuplicateCheckComplete(true);
-                return;
-            }
+        const slugPattern = /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/;
+        if (!slugPattern.test(usernameVal)) {
+            setSaveProfileEnabled(false);
+            setUsernameError("Please use letters and numbers separated by hyphens.");
+            return;
+        }
 
-            setDuplicateCheckComplete(false);
-            const slugPattern = /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/;
-            if (!slugPattern.test(usernameVal)) {
-                setUsernameError("Please use letters and numbers separated by hyphens.");
-                return;
-            }
+        // Allow case changes of current username
+        if (usernameVal.toLowerCase() === profile.username.toLowerCase()) {
+            setSaveProfileEnabled(true);
+            return;
+        }
 
+        // Clear existing debounce timeout
+        if (debounceTimeout.current) {
+            clearTimeout(debounceTimeout.current);
+        }
+
+        debounceTimeout.current = setTimeout(async () => {
             try {
+                setSaveProfileEnabled(false);
                 const token = await fetchToken();
                 const client = getRequestClient(token);
                 const { available } = await client.api.CheckIfUsernameIsAvailable({ username: usernameVal });
+
                 if (available) {
-                    setDuplicateCheckComplete(true);
+                    setSaveProfileEnabled(true);
                 } else {
-                    setUsernameError(`${usernameVal} is already in use`);
+                    setSaveProfileEnabled(false);
+                    setUsernameError(`${usernameVal} is already in use.`);
                 }
             } catch (err) {
                 console.error("Error checking username availability:", err);
+                setUsernameError("Could not verify username availability. Please try again later.");
             }
-        }
+        }, 300);
     };
 
     const saveProfile = async () => {
@@ -98,7 +113,7 @@ export default function ProfileClient({ profile }: CompleteProfileClientProps) {
                     <div className="text-2xl font-semibold">My Profile</div>
                 </div>
                 <div className="flex gap-2">
-                    <Button size="header" variant="secondary" disabled={username.length <= 0 || usernameError.length > 0 || !duplicateCheckComplete} onClick={saveProfile}>Save Changes</Button>
+                    <Button size="header" variant="secondary" disabled={username.length <= 0 || usernameError.length > 0 || !saveProfileEnabled} onClick={saveProfile}>Save Changes</Button>
                 </div>
             </div>
             <Separator />
@@ -115,7 +130,6 @@ export default function ProfileClient({ profile }: CompleteProfileClientProps) {
                         placeholder="ex. my-username"
                         value={username}
                         onChange={handleUsernameInput}
-                        onBlur={handleUsernameInput}
                     />
                     {usernameError.length > 0 && (
                         <div className="flex gap-4 items-center pt-2">
