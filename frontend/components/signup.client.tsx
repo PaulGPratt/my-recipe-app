@@ -77,9 +77,9 @@ export default function SignupClient() {
 
     if (event.type === "blur") {
       setDuplicateCheckComplete(false);
-      const slugPattern = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+      const slugPattern = /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/;
       if (!slugPattern.test(usernameVal)) {
-        setUsernameError("Please use lowercase letters and numbers separated by hyphens.");
+        setUsernameError("Please use letters and numbers separated by hyphens.");
         return;
       }
 

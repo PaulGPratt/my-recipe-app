@@ -39,16 +39,23 @@ export default function ProfileClient({ profile }: CompleteProfileClientProps) {
     }
 
     const handleUsernameInput = async (event: React.ChangeEvent<HTMLInputElement> | React.FocusEvent<HTMLInputElement>) => {
-        const usernameVal = event.target.value.toLowerCase();
+        const usernameVal = event.target.value;
 
         setUsername(usernameVal);
         setUsernameError("");
 
         if (event.type === "blur" && usernameVal !== profile.username) {
+
+            // Allow case changes of current username
+            if (usernameVal.toLowerCase() === profile.username.toLowerCase()) {
+                setDuplicateCheckComplete(true);
+                return;
+            }
+
             setDuplicateCheckComplete(false);
-            const slugPattern = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+            const slugPattern = /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/;
             if (!slugPattern.test(usernameVal)) {
-                setUsernameError("Please use lowercase letters and numbers separated by hyphens.");
+                setUsernameError("Please use letters and numbers separated by hyphens.");
                 return;
             }
 

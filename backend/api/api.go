@@ -151,7 +151,7 @@ func checkUsernameExists(ctx context.Context, username string) (bool, error) {
 		SELECT EXISTS (
 			SELECT 1
 			FROM profile
-			WHERE username = $1
+			WHERE LOWER(username) = LOWER($1)
 		)
 	`, username).Scan(&exists)
 
