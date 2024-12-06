@@ -213,6 +213,7 @@ export default function RecipeListClient({ recipeCards, username }: RecipeListCl
                 <RecipeCardButton
                   key={recipe.id}
                   item={recipe}
+                  showUsername={!username}
                 />
               ))}
             </div>
