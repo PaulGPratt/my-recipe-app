@@ -331,7 +331,7 @@ func CopyRecipe(ctx context.Context, id string) (*GenerateRecipeResponse, error)
 	}
 
 	var slug string
-	slug, err = createUniqueSlug(ctx, title)
+	slug, err = createUniqueSlug(ctx, title, string(authResult))
 	if err != nil {
 		return nil, fmt.Errorf("error generating slug: %w", err)
 	}
@@ -386,7 +386,7 @@ func GenerateFromImages(ctx context.Context, req FileUploadRequest) (*GenerateRe
 	}
 	recipe.Id = recipeId.String()
 
-	recipe.Slug, err = createUniqueSlug(ctx, recipe.Title)
+	recipe.Slug, err = createUniqueSlug(ctx, recipe.Title, string(authResult))
 	if err != nil {
 		return nil, fmt.Errorf("error generating slug: %w", err)
 	}
@@ -423,7 +423,7 @@ func GenerateFromText(ctx context.Context, req GenerateFromTextRequest) (*Genera
 	}
 	recipe.Id = recipeId.String()
 
-	recipe.Slug, err = createUniqueSlug(ctx, recipe.Title)
+	recipe.Slug, err = createUniqueSlug(ctx, recipe.Title, string(authResult))
 	if err != nil {
 		return nil, fmt.Errorf("error generating slug: %w", err)
 	}
@@ -462,9 +462,15 @@ func getAddRecipeResponse(ctx context.Context, recipeId string) (*GenerateRecipe
 	return recipe, nil
 }
 
-//encore:api public method=POST path=/api/slug/available
+//encore:api auth method=POST path=/api/slug/available
 func CheckIfSlugIsAvailable(ctx context.Context, req IsSlugAvailableRequest) (IsSlugAvailableResponse, error) {
-	exists, err := checkSlugExists(ctx, req.Slug)
+	authResult, authBool := auth.UserID()
+	if !authBool {
+		err := fmt.Errorf("not authorized")
+		return IsSlugAvailableResponse{}, err
+	}
+
+	exists, err := checkSlugExists(ctx, req.Slug, string(authResult))
 	if err != nil {
 		return IsSlugAvailableResponse{}, err
 	}
@@ -472,13 +478,13 @@ func CheckIfSlugIsAvailable(ctx context.Context, req IsSlugAvailableRequest) (Is
 	return IsSlugAvailableResponse{Available: !exists}, nil
 }
 
-func createUniqueSlug(ctx context.Context, title string) (string, error) {
+func createUniqueSlug(ctx context.Context, title string, profileId string) (string, error) {
 	// Step 1: Slugify the title
 	reg := regexp.MustCompile(`[^a-z0-9]+`)
 	slugCandidate := reg.ReplaceAllString(strings.ToLower(title), "-")
 
 	// Step 2: Check if the plain slug already exists
-	exists, err := checkSlugExists(ctx, slugCandidate)
+	exists, err := checkSlugExists(ctx, slugCandidate, profileId)
 	if err != nil {
 		return "", err
 	}
@@ -505,15 +511,15 @@ func createUniqueSlug(ctx context.Context, title string) (string, error) {
 	return fmt.Sprintf("%s-%d", slugCandidate, maxSuffix+1), nil
 }
 
-func checkSlugExists(ctx context.Context, slug string) (bool, error) {
+func checkSlugExists(ctx context.Context, slug string, profileId string) (bool, error) {
 	var exists bool
 	err := db.QueryRow(ctx, `
 		SELECT EXISTS (
 			SELECT 1
 			FROM recipe
-			WHERE slug = $1
+			WHERE LOWER(slug) = LOWER($1) AND profile_id = $2
 		)
-	`, slug).Scan(&exists)
+	`, slug, profileId).Scan(&exists)
 
 	if err != nil {
 		return false, err

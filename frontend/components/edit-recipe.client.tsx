@@ -64,10 +64,10 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
 
         // Only check if the event is a blur and the slug has changed
         if (event.type === "blur" && slugVal !== recipe.slug) {
-            const slugPattern = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+            const slugPattern = /^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$/;
             let isValidSlug = slugPattern.test(slugVal);
             if (!isValidSlug) {
-                setSlugError(`Please use lowercase letters and numbers separated by hyphens.`)
+                setSlugError(`Please use letters and numbers (separated by hyphens if needed).`)
                 return;
             }
 
@@ -76,7 +76,7 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
                 const client = getRequestClient(token ?? undefined);
                 const availableResp = await client.api.CheckIfSlugIsAvailable({ slug: slugVal });
                 if (!availableResp.available) {
-                    setSlugError(`${slugVal} is already in use`)
+                    setSlugError(`You already have a recipe with that path.`)
                 }
             } catch (err) {
                 console.error(err);
@@ -169,7 +169,7 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
                 </div>
 
                 <div className="p-4 pt-0">
-                    <Label htmlFor="title" className="text-2xl font-semibold">URL Segment (ex. /recipe-name)</Label>
+                    <Label htmlFor="title" className="text-2xl font-semibold">URL Path (ex. /recipe-name)</Label>
                     <Input
                         id="title"
                         className="mt-2 h-12 text-2xl"
