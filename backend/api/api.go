@@ -197,7 +197,7 @@ func GetRecipesByProfileId(ctx context.Context, username string) (*RecipeListRes
 		SELECT r.id, p.username, r.slug, r.title, r.tags
 		FROM recipe r
 		INNER JOIN profile p ON r.profile_id = p.id
-		WHERE p.username = $1
+		WHERE LOWER(p.username) = LOWER($1)
 	`, username)
 	if err != nil {
 		return nil, err
@@ -231,7 +231,7 @@ func GetRecipe(ctx context.Context, username string, slug string) (*Recipe, erro
 		       r.cook_temp_deg_f, r.cook_time_minutes, r.tags
 		FROM recipe r
 		INNER JOIN profile p ON r.profile_id = p.id
-		WHERE p.username = $1 AND r.slug = $2
+		WHERE LOWER(p.username) = LOWER($1) AND LOWER(r.slug) = LOWER($2)
 	`, username, slug).Scan(
 		&recipe.Id,
 		&recipe.ProfileId,
