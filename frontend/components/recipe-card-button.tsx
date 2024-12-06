@@ -17,10 +17,12 @@ const RecipeCardButton: React.FC<RecipeCardButtonProps> = ({ item, showUsername 
                 className="text-left text-wrap"
                 asChild>
                 <div className="flex justify-between items-center w-full">
-                    <div>
-                        {item.title}
+                    <div className="flex flex-col w-full">
+                        <div className="truncate overflow-hidden whitespace-nowrap">
+                            {item.title}
+                        </div>
                         {showUsername && (
-                            <div className='font-normal text-xl text-muted-foreground'>
+                            <div className="font-normal text-xl text-muted-foreground">
                                 {item.username}
                             </div>
                         )}
@@ -29,6 +31,7 @@ const RecipeCardButton: React.FC<RecipeCardButtonProps> = ({ item, showUsername 
             </Button>
         </Link>
     );
+    
 };
 
 export default RecipeCardButton;
