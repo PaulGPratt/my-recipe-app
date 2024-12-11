@@ -21,6 +21,7 @@ interface RecipeClientProps {
 export default function RecipeClient({ recipe, username }: RecipeClientProps) {
     const { auth } = useContext(FirebaseContext);
 
+    const [imageUrl] = useState(recipe.image_url || "");
     const [ingredients, setIngredients] = useState(recipe.ingredients || "");
     const [instructions, setInstructions] = useState(recipe.instructions || "");
     const [notes, setNotes] = useState(recipe.notes || "");
@@ -51,6 +52,7 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
     return (
         <div className="h-full mx-auto max-w-4xl flex flex-col">
             <div className="flex p-4 gap-4 justify-between">
+
                 <div className="flex gap-4 items-center">
                     <Button size="icon" variant="ghost" onClick={handleBack} title={`Back to recipes by ${username}`}>
                         <ArrowLeft size={30} />
@@ -68,21 +70,30 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
             </div>
             <Separator />
             <ScrollArea className="h-full w-full">
-                <div className="text-4xl px-4 pt-4 font-semibold text-center">{recipe.title}</div>
-                {(cookTime > 0 || cookTemp > 0) && (
-                    <div className="px-4 pt-2 text-3xl flex flex-row items-center justify-center gap-x-2 font-semibold">
-                        {cookTime > 0 && (
-                            <div className="flex items-center">
-                                <Timer size={26} /> {cookTime}min
-                            </div>
-                        )}
-                        {cookTemp > 0 && (
-                            <div className="flex items-center">
-                                <Flame size={26} /> {cookTemp}°F
+
+                <div className="text-4xl px-4 pt-4 font-semibold flex flex-row gap-4">
+                    {imageUrl !== "" && (
+                        <img src={imageUrl} alt={recipe.title} className="w-2/6 object-cover" />
+                    )}
+                    <div className="flex-grow flex flex-col justify-evenly">
+                        <div className="text-center md:text-5xl lg:text-6xl">{recipe.title}</div>
+                        {(cookTime > 0 || cookTemp > 0) && (
+                            <div className="px-4 pt-2 text-3xl sm:text-4xl md:text-5xl flex flex-row items-center justify-center gap-x-2 font-semibold">
+                                {cookTime > 0 && (
+                                    <div className="flex items-center">
+                                        <Timer size={26} /> {cookTime}min
+                                    </div>
+                                )}
+                                {cookTemp > 0 && (
+                                    <div className="flex items-center">
+                                        <Flame size={26} /> {cookTemp}°F
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
-                )}
+                </div>
+
                 <Separator className="m-4" />
                 <div className="px-4 pb-4 flex flex-col flex-grow items-start gap-2 transition-all">
                     <div className="text-3xl font-semibold">Ingredients</div>

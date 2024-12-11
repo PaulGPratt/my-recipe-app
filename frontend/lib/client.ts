@@ -141,6 +141,7 @@ export namespace api {
         "cook_temp_deg_f": number
         "cook_time_minutes": number
         tags: string[]
+        "image_url": string
     }
 
     export interface RecipeCard {

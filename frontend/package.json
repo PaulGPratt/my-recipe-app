@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-client:staging": "encore gen client my-recipe-app-3p6i --output=./app/lib/client.ts --env=staging",
-    "generate-client:local": "encore gen client my-recipe-app-3p6i --output=./app/lib/client.ts --env=local"
+    "generate-client:staging": "encore gen client my-recipe-app-3p6i --output=lib/client.ts --env=staging",
+    "generate-client:local": "encore gen client my-recipe-app-3p6i --output=lib/client.ts --env=local"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
