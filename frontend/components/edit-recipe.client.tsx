@@ -32,6 +32,7 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
     const [recipeProfileId] = useState<string>(recipe.profile_id);
     const [recipeTitle, setRecipeTitle] = useState<string>(recipe.title);
     const [recipeSlug, setRecipeSlug] = useState<string>(recipe.slug);
+    const [imageUrl, setImageUrl] = useState<string>(recipe.image_url);
     const [tags, setTags] = useState<string[]>(recipe.tags);
     const [ingredients, setIngredients] = useState<string>(recipe.ingredients);
     const [instructions, setInstructions] = useState<string>(recipe.instructions);
@@ -122,6 +123,7 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
                 cook_temp_deg_f: cookTemp,
                 cook_time_minutes: cookTime,
                 tags: Array.from(new Set(filteredTags)),
+                image_url: imageUrl,
             });
             router.push(`/recipes/` + username + '/' + recipeSlug);
         } catch (err) {

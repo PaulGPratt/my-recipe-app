@@ -73,7 +73,7 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
 
                 <div className="text-4xl px-4 pt-4 font-semibold flex flex-row gap-4">
                     {imageUrl !== "" && (
-                        <img src={imageUrl} alt={recipe.title} className="w-2/6 object-cover" />
+                        <img src={imageUrl} alt={recipe.title} className="w-2/6 aspect-square object-cover" />
                     )}
                     <div className="flex-grow flex flex-col justify-evenly">
                         <div className="text-center md:text-5xl lg:text-6xl">{recipe.title}</div>
