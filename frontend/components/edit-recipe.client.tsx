@@ -191,25 +191,54 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
                     <Label className="text-2xl font-semibold">Recipe Image</Label>
                     <div className="flex flex-row gap-4">
 
-                        {imageUrl !== "" && (
-                            <img src={imageUrl} alt={recipe.title} className="mt-2 w-2/6 aspect-square object-cover rounded-md" />
-                        )}
+                        {imageUrl !== "" ? (
+                            <div className="relative mt-2">
+                                {/* Background Image */}
+                                <img
+                                    src={imageUrl}
+                                    alt="Background"
+                                    className="absolute inset-0 w-full h-full object-cover rounded-md z-0"
+                                />
 
-                        <UploadDropzone
-                            className="
+
+                                {/* Dropzone */}
+                                <UploadDropzone
+                                    className="
+                                        border-input rounded-md relative z-10 mt-0
+                                        ut-upload-icon:text-opacity-0
+                                        ut-button:bg-secondary ut-button:text-2xl ut-button:font-semibold ut-button:w-40
+                                        ut-label:text-2xl ut-label:text-opacity-0
+                                        ut-allowed-content:text-xl ut-allowed-content:text-opacity-0"
+                                    endpoint="imageUploader"
+                                    onClientUploadComplete={(res) => {
+                                        setImageUrl(res[0].url);
+                                    }}
+                                    onUploadError={(error: Error) => {
+                                        // Do something with the error.
+                                        alert(`ERROR! ${error.message}`);
+                                    }}
+                                />
+                            </div>
+                        ) : (
+                            <UploadDropzone
+                                className="
                             border-input rounded-md
                             ut-button:bg-secondary ut-button:text-2xl ut-button:font-semibold ut-button:w-40
                             ut-label:text-2xl ut-label:text-muted-foreground ut-label:hover:text-primary
                             ut-allowed-content:text-xl ut-allowed-content:text-muted-foreground"
-                            endpoint="imageUploader"
-                            onClientUploadComplete={(res) => {
-                                setImageUrl(res[0].url)
-                            }}
-                            onUploadError={(error: Error) => {
-                                // Do something with the error.
-                                alert(`ERROR! ${error.message}`);
-                            }}
-                        />
+                                endpoint="imageUploader"
+                                onClientUploadComplete={(res) => {
+                                    setImageUrl(res[0].url)
+                                }}
+                                onUploadError={(error: Error) => {
+                                    // Do something with the error.
+                                    alert(`ERROR! ${error.message}`);
+                                }}
+                            />
+                        )}
+
+
+
                     </div>
                 </div>
 
