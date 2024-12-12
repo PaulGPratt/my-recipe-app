@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { api } from "../lib/client";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
+import { UploadDropzone } from "../lib/uploadthing";
 import { cn } from "../lib/utils";
 import MarkdownEditor from "./markdown-editor";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
@@ -184,6 +185,32 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
                             <div className="text-xl">{slugError}</div>
                         </div>
                     )}
+                </div>
+
+                <div className="p-4 pt-0">
+                    <Label className="text-2xl font-semibold">Recipe Image</Label>
+                    <div className="flex flex-row gap-4">
+
+                        {imageUrl !== "" && (
+                            <img src={imageUrl} alt={recipe.title} className="mt-2 w-2/6 aspect-square object-cover rounded-md" />
+                        )}
+
+                        <UploadDropzone
+                            className="
+                            border-input rounded-md
+                            ut-button:bg-secondary ut-button:text-2xl ut-button:font-semibold ut-button:w-40
+                            ut-label:text-2xl ut-label:text-muted-foreground ut-label:hover:text-primary
+                            ut-allowed-content:text-xl ut-allowed-content:text-muted-foreground"
+                            endpoint="imageUploader"
+                            onClientUploadComplete={(res) => {
+                                setImageUrl(res[0].url)
+                            }}
+                            onUploadError={(error: Error) => {
+                                // Do something with the error.
+                                alert(`ERROR! ${error.message}`);
+                            }}
+                        />
+                    </div>
                 </div>
 
                 <div className="p-4 pt-0">
