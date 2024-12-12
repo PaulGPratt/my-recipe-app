@@ -9,14 +9,19 @@ export const generateMetadata = async (props: { params: Params }): Promise<Metad
   const { username, slug } = await props.params;
 
   const baseurl = process.env.NEXT_PUBLIC_BASE_URL;
-  const ogImageUrl = `${baseurl}og-image.jpg`;
-  const xImageUrl = `${baseurl}x-image.jpg`;
+  let ogImageUrl = `${baseurl}og-image.jpg`;
+  let xImageUrl = `${baseurl}x-image.jpg`;
 
   try {
     const client = getRequestClient(undefined);
     const recipe = await client.api.GetRecipe(username, slug);
     const { title } = recipe;
     const description = `Check out ${title} by ${username}!`;
+
+    if (recipe.image_url && recipe.image_url.trim().length > 0) {
+      ogImageUrl = recipe.image_url;
+      xImageUrl = recipe.image_url;
+    }
 
     return {
       title: title,
@@ -28,8 +33,6 @@ export const generateMetadata = async (props: { params: Params }): Promise<Metad
           {
             url: ogImageUrl,
             alt: `${title} - a recipe by ${username}`,
-            height: 630,
-            width: 1200,
           },
         ],
         url: `${baseurl}recipes/${username}/${slug}`,
@@ -41,8 +44,6 @@ export const generateMetadata = async (props: { params: Params }): Promise<Metad
           {
             url: xImageUrl,
             alt: `${title} - a recipe by ${username}`,
-            height: 600,
-            width: 1200,
           },
         ],
       },
@@ -92,7 +93,7 @@ export default async function RecipePage(props: { params: Params }) {
   try {
     const client = getRequestClient(undefined);
     const recipe = await client.api.GetRecipe(username, slug);
-  
+
     return <RecipeClient recipe={recipe} username={username} />;
   } catch {
     redirect("/recipes");
