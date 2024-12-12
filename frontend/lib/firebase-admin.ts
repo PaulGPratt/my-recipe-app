@@ -32,20 +32,6 @@ export const verifyIdToken = async (token: string) => {
   }
 };
 
-export async function refreshIdTokenIfNeeded(token: string) {
-  const decodedToken = await verifyIdToken(token);
-  const currentTime = Math.floor(Date.now() / 1000);
-  
-  // More precise expiration check
-  if (!decodedToken || 
-      (decodedToken.exp && decodedToken.exp - currentTime < 300)) { // Within 5 minutes of expiration
-    console.log("Token is expired or about to expire");
-    return null;
-  }
-
-  return decodedToken;
-}
-
 export async function getDecodedTokenCookie() {
   const cookieStore = await cookies();
   const tokenCookie = cookieStore.get("firebaseToken");
@@ -56,7 +42,7 @@ export async function getDecodedTokenCookie() {
 
   try {
     // Attempt to verify and refresh the token if needed
-    const decodedToken = await refreshIdTokenIfNeeded(tokenCookie.value);
+    const decodedToken = await verifyIdToken(tokenCookie.value);
 
     if (!decodedToken) {
       // Invalid or unverified token, trigger logout
