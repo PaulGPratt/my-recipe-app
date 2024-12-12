@@ -73,7 +73,7 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
 
                 <div className="text-4xl px-4 pt-4 font-semibold flex flex-row gap-4">
                     {imageUrl !== "" && (
-                        <img src={imageUrl} alt={recipe.title} className="w-2/6 aspect-square object-cover" />
+                        <img src={imageUrl} alt={recipe.title} className="w-2/6 aspect-square object-cover rounded-md" />
                     )}
                     <div className="flex-grow flex flex-col justify-evenly">
                         <div className="text-center md:text-5xl lg:text-6xl">{recipe.title}</div>
@@ -81,12 +81,12 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
                             <div className="px-4 pt-2 text-3xl sm:text-4xl md:text-5xl flex flex-row items-center justify-center gap-x-2 font-semibold">
                                 {cookTime > 0 && (
                                     <div className="flex items-center">
-                                        <Timer size={26} /> {cookTime}min
+                                        <Timer className="w-7 h-7 sm:w-8 sm:h-8 md:w-11 md:h-11" /> {cookTime}min
                                     </div>
                                 )}
                                 {cookTemp > 0 && (
                                     <div className="flex items-center">
-                                        <Flame size={26} /> {cookTemp}°F
+                                        <Flame className="w-7 h-7 sm:w-8 sm:h-8 md:w-11 md:h-11" /> {cookTemp}°F
                                     </div>
                                 )}
                             </div>
