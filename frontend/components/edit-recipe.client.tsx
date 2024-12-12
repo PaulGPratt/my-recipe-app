@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { api } from "../lib/client";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
+import { UploadDropzone } from "../lib/uploadthing";
 import { cn } from "../lib/utils";
 import MarkdownEditor from "./markdown-editor";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
@@ -32,6 +33,7 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
     const [recipeProfileId] = useState<string>(recipe.profile_id);
     const [recipeTitle, setRecipeTitle] = useState<string>(recipe.title);
     const [recipeSlug, setRecipeSlug] = useState<string>(recipe.slug);
+    const [imageUrl, setImageUrl] = useState<string>(recipe.image_url);
     const [tags, setTags] = useState<string[]>(recipe.tags);
     const [ingredients, setIngredients] = useState<string>(recipe.ingredients);
     const [instructions, setInstructions] = useState<string>(recipe.instructions);
@@ -122,6 +124,7 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
                 cook_temp_deg_f: cookTemp,
                 cook_time_minutes: cookTime,
                 tags: Array.from(new Set(filteredTags)),
+                image_url: imageUrl,
             });
             router.push(`/recipes/` + username + '/' + recipeSlug);
         } catch (err) {
@@ -182,6 +185,61 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
                             <div className="text-xl">{slugError}</div>
                         </div>
                     )}
+                </div>
+
+                <div className="p-4 pt-0">
+                    <Label className="text-2xl font-semibold">Recipe Image</Label>
+                    <div className="flex flex-row gap-4">
+
+                        {imageUrl !== "" ? (
+                            <div className="relative mt-2">
+                                {/* Background Image */}
+                                <img
+                                    src={imageUrl}
+                                    alt="Background"
+                                    className="absolute inset-0 w-full h-full object-cover rounded-md z-0"
+                                />
+
+
+                                {/* Dropzone */}
+                                <UploadDropzone
+                                    className="
+                                        border-input rounded-md relative z-10 mt-0
+                                        ut-upload-icon:text-opacity-0
+                                        ut-button:bg-secondary ut-button:text-2xl ut-button:font-semibold ut-button:w-40
+                                        ut-label:text-2xl ut-label:text-opacity-0
+                                        ut-allowed-content:text-xl ut-allowed-content:text-opacity-0"
+                                    endpoint="imageUploader"
+                                    onClientUploadComplete={(res) => {
+                                        setImageUrl(res[0].url);
+                                    }}
+                                    onUploadError={(error: Error) => {
+                                        // Do something with the error.
+                                        alert(`ERROR! ${error.message}`);
+                                    }}
+                                />
+                            </div>
+                        ) : (
+                            <UploadDropzone
+                                className="
+                            border-input rounded-md
+                            ut-button:bg-secondary ut-button:text-2xl ut-button:font-semibold ut-button:w-40
+                            ut-label:text-2xl ut-label:text-muted-foreground ut-label:hover:text-primary
+                            ut-allowed-content:text-xl ut-allowed-content:text-muted-foreground"
+                                endpoint="imageUploader"
+                                onClientUploadComplete={(res) => {
+                                    setImageUrl(res[0].url)
+                                }}
+                                onUploadError={(error: Error) => {
+                                    // Do something with the error.
+                                    alert(`ERROR! ${error.message}`);
+                                }}
+                            />
+                        )}
+
+
+
+                    </div>
                 </div>
 
                 <div className="p-4 pt-0">

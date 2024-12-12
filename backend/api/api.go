@@ -32,6 +32,7 @@ type Recipe struct {
 	CookTempDegF    int16    `json:"cook_temp_deg_f"`
 	CookTimeMinutes int16    `json:"cook_time_minutes"`
 	Tags            []string `json:"tags"`
+	ImageUrl        string   `json:"image_url"`
 }
 
 type RecipeCard struct {
@@ -228,7 +229,7 @@ func GetRecipe(ctx context.Context, username string, slug string) (*Recipe, erro
 	// Use a JOIN to get the profile_id by username and retrieve recipe details in one query
 	err := db.QueryRow(ctx, `
 		SELECT r.id, r.profile_id, r.title, r.ingredients, r.instructions, r.notes, 
-		       r.cook_temp_deg_f, r.cook_time_minutes, r.tags
+		       r.cook_temp_deg_f, r.cook_time_minutes, r.tags, r.image_url
 		FROM recipe r
 		INNER JOIN profile p ON r.profile_id = p.id
 		WHERE LOWER(p.username) = LOWER($1) AND LOWER(r.slug) = LOWER($2)
@@ -242,6 +243,7 @@ func GetRecipe(ctx context.Context, username string, slug string) (*Recipe, erro
 		&recipe.CookTempDegF,
 		&recipe.CookTimeMinutes,
 		&recipe.Tags,
+		&recipe.ImageUrl,
 	)
 
 	if err != nil {
@@ -263,10 +265,10 @@ func SaveRecipe(ctx context.Context, recipe *Recipe) (*Recipe, error) {
 	}
 
 	_, err := db.Exec(ctx, `
-		INSERT INTO recipe (id, profile_id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-		ON CONFLICT (id) DO UPDATE SET profile_id=$2, slug=$3, title=$4, ingredients=$5, instructions=$6, notes=$7, cook_temp_deg_f=$8, cook_time_minutes=$9, tags=$10
-	`, recipe.Id, recipe.ProfileId, recipe.Slug, recipe.Title, recipe.Ingredients, recipe.Instructions, recipe.Notes, recipe.CookTempDegF, recipe.CookTimeMinutes, recipe.Tags)
+		INSERT INTO recipe (id, profile_id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags, image_url)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		ON CONFLICT (id) DO UPDATE SET profile_id=$2, slug=$3, title=$4, ingredients=$5, instructions=$6, notes=$7, cook_temp_deg_f=$8, cook_time_minutes=$9, tags=$10, image_url=$11
+	`, recipe.Id, recipe.ProfileId, recipe.Slug, recipe.Title, recipe.Ingredients, recipe.Instructions, recipe.Notes, recipe.CookTempDegF, recipe.CookTimeMinutes, recipe.Tags, recipe.ImageUrl)
 
 	// If there was an error saving to the database, then we return that error.
 	if err != nil {
@@ -339,7 +341,7 @@ func CopyRecipe(ctx context.Context, id string) (*GenerateRecipeResponse, error)
 	// Step 3: Perform the recipe duplication in a single query
 	_, err = db.Exec(ctx, `
         INSERT INTO recipe (
-            id, profile_id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags
+            id, profile_id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags, image_url
         )
         SELECT 
             $1, -- New UUID
@@ -351,7 +353,8 @@ func CopyRecipe(ctx context.Context, id string) (*GenerateRecipeResponse, error)
             notes, 
             cook_temp_deg_f, 
             cook_time_minutes, 
-            tags
+            tags,
+			image_url
         FROM recipe
         WHERE id = $4
     `, newRecipeId.String(), authProfileId, slug, id)

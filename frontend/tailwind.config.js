@@ -1,7 +1,8 @@
 import typography from "@tailwindcss/typography";
 import animate from "tailwindcss-animate";
+import { withUt } from "uploadthing/tw";
 
-export default {
+export default withUt({
   darkMode: ["class"],
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
@@ -63,4 +64,4 @@ export default {
     },
   },
   plugins: [typography, animate],
-};
+});

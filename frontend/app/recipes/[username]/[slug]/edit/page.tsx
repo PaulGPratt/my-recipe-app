@@ -1,9 +1,9 @@
 import { Metadata } from "next";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import EditRecipeClient from "../../../../../components/edit-recipe.client";
 import { getDecodedTokenCookie } from "../../../../../lib/firebase-admin";
 import getRequestClient from "../../../../../lib/get-request-client";
+import { cookies } from "next/headers";
 
 type Params = Promise<{ username: string; slug: string }>
 
@@ -19,14 +19,19 @@ export default async function EditRecipePage(props: { params: Params }) {
   }
 
   const cookieStore = await cookies();
-  const firebaseToken = cookieStore.get("firebaseToken");
-
-  if (!firebaseToken) {
-    const loginRedirect = `/login?redirect=${encodeURIComponent(`/recipes/${username}/${slug}/edit`)}`;
-    redirect(loginRedirect);
+  const tokenCookie = cookieStore.get("firebaseToken");
+  
+  // If there's a cookie, they're probably logged in, no guarantees the cookie hasn't expired though
+  if (!tokenCookie) {
+    return {
+      redirect: {
+        destination: `/login?redirect=${encodeURIComponent(`/recipes/${username}/${slug}/edit`)}`,
+        permanent: false,
+      },
+    };
   }
 
-  const client = getRequestClient(firebaseToken.value);
+  const client = getRequestClient(tokenCookie?.value);
 
   try {
     const recipe = await client.api.GetRecipe(username, slug);
