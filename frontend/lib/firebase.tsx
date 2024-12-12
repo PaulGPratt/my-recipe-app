@@ -50,12 +50,39 @@ export const FirebaseProvider: FC<PropsWithChildren> = ({ children }) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ token }),
           });
+        } else {
+          // Important: Clear the token cookie when user logs out
+          await fetch(setTokenUrl, {
+            method: "DELETE",
+          });
         }
       } catch (error) {
         console.error("Error refreshing token or setting cookie:", error);
+        // Optionally handle logout or re-authentication
       }
     });
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    // Periodic token refresh (every 55 minutes)
+    const tokenRefreshInterval = setInterval(async () => {
+      const user = appAuth.currentUser;
+      if (user) {
+        try {
+          const token = await user.getIdToken(true);
+          await fetch(setTokenUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token }),
+          });
+        } catch (error) {
+          console.error("Periodic token refresh failed:", error);
+        }
+      }
+    }, 55 * 60 * 1000); // 55 minutes
+  
+    return () => clearInterval(tokenRefreshInterval);
   }, []);
 
   return (

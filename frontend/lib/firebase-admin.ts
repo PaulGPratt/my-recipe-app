@@ -7,6 +7,7 @@ const serviceAccount = JSON.parse(
 
 const logoutUrl = new URL('/logout', process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
 
+// Ensure app is only initialized once
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -16,11 +17,34 @@ if (!admin.apps.length) {
 export const verifyIdToken = async (token: string) => {
   try {
     return await admin.auth().verifyIdToken(token);
-  } catch (error) {
-    console.error("Error verifying Firebase ID token:", error);
+  } catch (error: any) {
+    // More comprehensive error handling
+    if (
+      error.code === 'auth/id-token-expired' || 
+      error.code === 'auth/argument-error' || 
+      error.code === 'auth/invalid-argument'
+    ) {
+      console.log("Token verification failed:", error.code);
+      return null;
+    }
+    console.error("Unexpected error verifying Firebase ID token:", error);
     throw new Error("Unauthorized");
   }
 };
+
+export async function refreshIdTokenIfNeeded(token: string) {
+  const decodedToken = await verifyIdToken(token);
+  const currentTime = Math.floor(Date.now() / 1000);
+  
+  // More precise expiration check
+  if (!decodedToken || 
+      (decodedToken.exp && decodedToken.exp - currentTime < 300)) { // Within 5 minutes of expiration
+    console.log("Token is expired or about to expire");
+    return null;
+  }
+
+  return decodedToken;
+}
 
 export async function getDecodedTokenCookie() {
   const cookieStore = await cookies();
@@ -31,15 +55,21 @@ export async function getDecodedTokenCookie() {
   }
 
   try {
-    const decodedToken = await verifyIdToken(tokenCookie.value);
+    // Attempt to verify and refresh the token if needed
+    const decodedToken = await refreshIdTokenIfNeeded(tokenCookie.value);
 
     if (!decodedToken) {
-      await fetch(logoutUrl, { method: 'DELETE' });
+      // Invalid or unverified token, trigger logout
+      await fetch(logoutUrl, { method: "DELETE" });
       return undefined;
     }
+
     return decodedToken;
   } catch (error) {
-    await fetch(logoutUrl, { method: 'DELETE' });
+    console.error("Error handling token cookie:", error);
+
+    // Clear the cookie on error
+    await fetch(logoutUrl, { method: "DELETE" });
     return undefined;
   }
 }
