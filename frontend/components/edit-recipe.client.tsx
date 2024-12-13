@@ -8,8 +8,9 @@ import { v4 as uuidv4 } from "uuid";
 import { api } from "../lib/client";
 import { FirebaseContext } from "../lib/firebase";
 import getRequestClient from "../lib/get-request-client";
-import { UploadDropzone } from "../lib/uploadthing";
+import { useUploadThing } from "../lib/uploadthing-utils";
 import { cn } from "../lib/utils";
+import { ImageUploader } from "./image-uploader";
 import MarkdownEditor from "./markdown-editor";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
 import { Button, buttonVariants } from "./ui/button";
@@ -40,6 +41,8 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
     const [notes, setNotes] = useState<string>(recipe.notes);
     const [cookTime, setCookTime] = useState<number>(recipe.cook_time_minutes);
     const [cookTemp, setCookTemp] = useState<number>(recipe.cook_temp_deg_f);
+    const [imageFile, setImageFile] = useState<File>();
+    const [imagePreview, setImagePreview] = useState<(string | ArrayBuffer | null)>(recipe.image_url);
 
     const fetchToken = async () => {
         if (!token) {
@@ -106,7 +109,15 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
         setTags([...tags]);
     };
 
-    const saveRecipe = async () => {
+    const uploadAndSaveRecipe = async () => {
+        if (imageFile) {
+            startUpload([imageFile]);
+            return;
+        }
+        await saveRecipe();
+    };
+
+    const saveRecipe = async (updatedImageUrl?: string) => {
         try {
             const filteredTags = tags.filter((tag) => tag != undefined && tag != null && tag != "");
             setTags(filteredTags);
@@ -124,13 +135,13 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
                 cook_temp_deg_f: cookTemp,
                 cook_time_minutes: cookTime,
                 tags: Array.from(new Set(filteredTags)),
-                image_url: imageUrl,
+                image_url: updatedImageUrl || imageUrl,
             });
             router.push(`/recipes/` + username + '/' + recipeSlug);
         } catch (err) {
             console.error(err);
         }
-    };
+    }
 
     const deleteRecipe = async () => {
         if (!recipeId) {
@@ -147,6 +158,35 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
         }
     }
 
+    const { startUpload } = useUploadThing("imageUploader", {
+        onClientUploadComplete: async (res) => {
+            const newImageUrl = res[0].url;
+            setImageUrl(newImageUrl);
+            await saveRecipe(newImageUrl);
+        },
+        onUploadError: () => {
+            alert("error occurred while uploading");
+        },
+        onUploadBegin: (fileName) => {
+            console.log("upload has begun for", fileName);
+        },
+    });
+
+    const handleImagesUpload = (files: File[]) => {
+        console.log("handle images upload");
+        if (!files || files.length === 0) {
+            return;
+        }
+        const file = files[0];
+        setImageFile(file);
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            setImagePreview(reader.result);
+        }
+        reader.readAsDataURL(file);
+    };
+
     return (
         <div className="h-screen mx-auto max-w-4xl flex flex-col">
 
@@ -156,7 +196,7 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
                     <div className="text-2xl font-semibold">Edit Recipe</div>
                 </div>
                 <div className="flex gap-2">
-                    <Button size="header" variant="secondary" disabled={slugError.length > 0} onClick={saveRecipe}>Save Changes</Button>
+                    <Button size="header" variant="secondary" disabled={slugError.length > 0} onClick={uploadAndSaveRecipe}>Save Changes</Button>
                 </div>
             </div>
             <Separator />
@@ -189,56 +229,13 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
 
                 <div className="p-4 pt-0">
                     <Label className="text-2xl font-semibold">Recipe Image</Label>
-                    <div className="flex flex-row gap-4">
-
-                        {imageUrl !== "" ? (
-                            <div className="relative mt-2">
-                                {/* Background Image */}
-                                <img
-                                    src={imageUrl}
-                                    alt="Background"
-                                    className="absolute inset-0 w-full h-full object-cover rounded-md z-0"
-                                />
-
-
-                                {/* Dropzone */}
-                                <UploadDropzone
-                                    className="
-                                        border-input rounded-md relative z-10 mt-0
-                                        ut-upload-icon:text-opacity-0
-                                        ut-button:bg-secondary ut-button:text-2xl ut-button:font-semibold ut-button:w-40
-                                        ut-label:text-2xl ut-label:text-opacity-0
-                                        ut-allowed-content:text-xl ut-allowed-content:text-opacity-0"
-                                    endpoint="imageUploader"
-                                    onClientUploadComplete={(res) => {
-                                        setImageUrl(res[0].url);
-                                    }}
-                                    onUploadError={(error: Error) => {
-                                        // Do something with the error.
-                                        alert(`ERROR! ${error.message}`);
-                                    }}
-                                />
-                            </div>
-                        ) : (
-                            <UploadDropzone
-                                className="
-                            border-input rounded-md
-                            ut-button:bg-secondary ut-button:text-2xl ut-button:font-semibold ut-button:w-40
-                            ut-label:text-2xl ut-label:text-muted-foreground ut-label:hover:text-primary
-                            ut-allowed-content:text-xl ut-allowed-content:text-muted-foreground"
-                                endpoint="imageUploader"
-                                onClientUploadComplete={(res) => {
-                                    setImageUrl(res[0].url)
-                                }}
-                                onUploadError={(error: Error) => {
-                                    // Do something with the error.
-                                    alert(`ERROR! ${error.message}`);
-                                }}
-                            />
+                    <div className="flex flex-col gap-2 pt-2">
+                        {imagePreview && (imagePreview as string).length > 0 && (
+                            <img src={imagePreview as string} alt="Uploaded image" className="w-4/6 aspect-square object-cover rounded-md" />
                         )}
-
-
-
+                        <div className="flex">
+                            <ImageUploader onImagesUpload={handleImagesUpload} maxFiles={1} buttonText="Select Image" />
+                        </div>
                     </div>
                 </div>
 

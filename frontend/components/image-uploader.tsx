@@ -10,9 +10,11 @@ import { Input } from "./ui/input";
 
 interface ImageUploaderProps {
     onImagesUpload: (image: File[]) => void;
+    maxFiles?: number;
+    buttonText?: string;
 }
 
-export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesUpload: onImageUpload }) => {
+export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesUpload: onImageUpload, maxFiles = 5, buttonText = "Add Image" }) => {
 
     const formSchema = z.object({
         image: z
@@ -47,10 +49,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesUpload: on
     const { getRootProps, getInputProps, isDragActive, fileRejections } =
         useDropzone({
             onDrop,
-            maxFiles: 5,
+            maxFiles: maxFiles,
             maxSize: 10000000,
             multiple: true,
-            accept: { "image/png": [], "image/jpg": [], "image/jpeg": [] },
+            accept: { "image/png": [], "image/jpg": [], "image/jpeg": [], "image/webp": []  },
         });
 
     return (
@@ -65,7 +67,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImagesUpload: on
                     {isDragActive ? (
                         <p className="text-2xl font-semibold">Drop the image!</p>
                     ) : (
-                        <p className="text-2xl font-semibold">Add Image</p>
+                        <p className="text-2xl font-semibold">{buttonText}</p>
                     )}
                 </div>
 
