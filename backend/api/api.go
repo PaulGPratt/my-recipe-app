@@ -94,7 +94,7 @@ type ProfileRecipe struct {
 	RecipeCount int    `json:"recipe_count"`
 }
 
-//encore:api method=GET path=/api/top-profiles
+//encore:api public method=GET path=/api/top-profiles
 func GetTopProfiles(ctx context.Context) (*ProfileRecipesResponse, error) {
 	rows, err := db.Query(ctx, `
 		SELECT p.username, COUNT(r.id) AS recipe_count
