@@ -4,7 +4,7 @@ const nextConfig = {
     return [
       {
         source: "/", // The path to redirect from
-        destination: "/recipes", // The path to redirect to
+        destination: "/home", // The path to redirect to
         permanent: true, // Whether the redirect is permanent (308) or temporary (307)
       },
     ];

@@ -46,10 +46,6 @@ export default function RecipeListClient({ recipeCards, username }: RecipeListCl
     router.push(`/add-recipe/`);
   };
 
-  const goToAllRecipes = () => {
-    router.push(`/recipes/`);
-  };
-
   const toggleShowSearch = () => {
     setSearchQuery("");
     setShowSearch(!showSearch);
@@ -192,10 +188,7 @@ export default function RecipeListClient({ recipeCards, username }: RecipeListCl
       {noRecipesFound && (
         <div className="flex flex-col px-4 py-16">
           <div className="flex-grow text-2xl text-center">
-            It looks like there aren't any recipes here yet.
-          </div>
-          <div className="flex flex-row py-8 gap-4 justify-center">
-            <Button onClick={goToAllRecipes}>View All Recipes</Button>
+            It looks like there aren't any recipes here.
           </div>
         </div>
       )}

@@ -1,5 +1,5 @@
 import { signOut } from "firebase/auth";
-import { User } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
@@ -49,12 +49,7 @@ function ProfileMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        {profile?.username ? (
-          <Button size="icon" variant="secondary" className="text-2xl font-bold" title="User Menu">{profile.username.slice(0, 1).toUpperCase()}</Button>
-        ) : (
-          <Button size="icon" variant="secondary" title="User Menu"><User /></Button>
-        )}
-
+        <Button size="icon" variant="ghost" title="User Menu"><Menu /></Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64">
         {user?.uid ? (
@@ -63,6 +58,9 @@ function ProfileMenu() {
               {profile?.username}
             </DropdownMenuLabel>
             <DropdownMenuSeparator></DropdownMenuSeparator>
+            <DropdownMenuItem className="text-2xl">
+              <Link href={`/home`} className="w-full">Home</Link>
+            </DropdownMenuItem>
             <DropdownMenuItem className="text-2xl">
               <Link href={`/recipes/${profile?.username}`} className="w-full">My Recipes</Link>
             </DropdownMenuItem>
@@ -82,7 +80,7 @@ function ProfileMenu() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator></DropdownMenuSeparator>
             <DropdownMenuItem className="text-2xl">
-              <Link href={`/recipes/`} className="w-full">All Recipes</Link>
+              <Link href={`/home`} className="w-full">Home</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator></DropdownMenuSeparator>
             <DropdownMenuItem className="text-2xl">
