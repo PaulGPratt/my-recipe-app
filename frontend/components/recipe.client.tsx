@@ -31,10 +31,6 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
 
     const router = useRouter();
 
-    const handleBack = () => {
-        router.push(`/recipes/${username}`);
-    };
-
     const copyRecipe = async () => {
         try {
             const token = await auth?.currentUser?.getIdToken();
@@ -47,7 +43,7 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
     };
 
     const printRecipe = async () => {
-        return;
+        window.print();
     }
 
     const editRecipe = () => {
@@ -56,7 +52,7 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
 
     return (
         <div className="h-full mx-auto max-w-4xl flex flex-col">
-            <div className="flex p-4 gap-4 justify-between">
+            <div className="flex p-4 gap-4 justify-between print:hidden">
 
                 <div className="flex gap-4 items-center">
                     <ProfileMenu></ProfileMenu>
@@ -72,12 +68,12 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
                     )}
                 </div>
             </div>
-            <Separator />
+            <Separator className="print:hidden"/>
             <ScrollArea className="h-full w-full">
 
                 <div className="text-4xl px-4 pt-4 font-semibold flex flex-row gap-4">
                     {imageUrl !== "" && (
-                        <img src={imageUrl} alt={recipe.title} className="w-2/6 aspect-square object-cover rounded-md" />
+                        <img src={imageUrl} alt={recipe.title} className="w-2/6 aspect-square object-cover rounded-md print:hidden" />
                     )}
                     <div className="flex-grow flex flex-col justify-evenly gap-4">
                         <div className="text-center md:text-5xl lg:text-6xl">{recipe.title}</div>
@@ -98,16 +94,17 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
                     </div>
                 </div>
 
-                <Separator className="m-4" />
+                <Separator className="m-4 print:hidden" />
                 <div className="px-4 pb-4 flex flex-col flex-grow items-start gap-2 transition-all">
-                    <div className="text-3xl font-semibold">Ingredients</div>
+                    <div className="text-3xl font-semibold break-after-avoid">Ingredients</div>
                     <div className="text-2xl text-foreground w-full">
                         <MilkdownProvider>
                             <MarkdownEditor content={ingredients} setContent={setIngredients} isEditable={false} />
                         </MilkdownProvider>
                     </div>
+                    
                     <Separator className="my-2" />
-                    <div className="text-3xl font-semibold">Instructions</div>
+                    <div className="text-3xl font-semibold break-after-avoid">Instructions</div>
                     <div className="text-2xl text-foreground w-full">
                         <MilkdownProvider>
                             <MarkdownEditor content={instructions} setContent={setInstructions} isEditable={false} />
