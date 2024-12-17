@@ -15,7 +15,7 @@ export default async function EditRecipePage(props: { params: Params }) {
   const { username, slug } = await props.params;
 
   if (!username || !slug) {
-    redirect("/recipes");
+    redirect("/home");
   }
 
   const cookieStore = await cookies();

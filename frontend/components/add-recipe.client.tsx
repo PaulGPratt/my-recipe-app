@@ -33,7 +33,7 @@ export default function AddRecipeClient() {
     };
 
     const handleBack = () => {
-        router.push(`/recipes/`);
+        router.push(`/home/`);
     };
 
     const handleImagesUpload = (files: File[]) => {

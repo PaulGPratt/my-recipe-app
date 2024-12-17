@@ -96,7 +96,7 @@ export default async function RecipePage(props: { params: Params }) {
 
     return <RecipeClient recipe={recipe} username={username} />;
   } catch {
-    redirect("/recipes");
+    redirect("/home");
   }
 
 }

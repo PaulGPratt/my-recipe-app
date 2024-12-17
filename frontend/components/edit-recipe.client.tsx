@@ -152,7 +152,7 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
             const token = await fetchToken();
             const client = getRequestClient(token ?? undefined);
             await client.api.DeleteRecipe(recipeId)
-            router.push(`/recipes/`);
+            router.push(`/recipes/` + username);
         } catch (err) {
             console.error(err)
         }

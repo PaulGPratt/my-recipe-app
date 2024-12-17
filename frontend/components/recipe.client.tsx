@@ -1,7 +1,7 @@
 "use client";
 
 import { MilkdownProvider } from "@milkdown/react";
-import { ArrowLeft, Flame, Heart, Pencil, Timer } from "lucide-react";
+import { ArrowLeft, Flame, Heart, Pencil, Printer, Timer } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import { api } from "../lib/client";
@@ -12,6 +12,7 @@ import MarkdownEditor from "./markdown-editor";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
+import ProfileMenu from "./profile-menu";
 
 interface RecipeClientProps {
     recipe: api.Recipe;
@@ -45,6 +46,10 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
         }
     };
 
+    const printRecipe = async () => {
+        return;
+    }
+
     const editRecipe = () => {
         router.push(`/recipes/${username}/${recipe.slug}/edit`);
     };
@@ -54,12 +59,11 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
             <div className="flex p-4 gap-4 justify-between">
 
                 <div className="flex gap-4 items-center">
-                    <Button size="icon" variant="ghost" onClick={handleBack} title={`Back to recipes by ${username}`}>
-                        <ArrowLeft size={30} />
-                    </Button>
+                    <ProfileMenu></ProfileMenu>
                     <BreadCrumbs params={{ username }} />
                 </div>
                 <div className="flex gap-2">
+                    <Button size="icon" variant="ghost" onClick={printRecipe} title="Print"><Printer /></Button>
                     {(auth?.currentUser?.uid && auth.currentUser.uid !== recipe?.profile_id) && (
                         <Button size="icon" variant="ghost" onClick={copyRecipe} title="Save to My Recipes"><Heart /></Button>
                     )}
@@ -75,10 +79,10 @@ export default function RecipeClient({ recipe, username }: RecipeClientProps) {
                     {imageUrl !== "" && (
                         <img src={imageUrl} alt={recipe.title} className="w-2/6 aspect-square object-cover rounded-md" />
                     )}
-                    <div className="flex-grow flex flex-col justify-evenly">
+                    <div className="flex-grow flex flex-col justify-evenly gap-4">
                         <div className="text-center md:text-5xl lg:text-6xl">{recipe.title}</div>
                         {(cookTime > 0 || cookTemp > 0) && (
-                            <div className="px-4 pt-2 text-3xl sm:text-4xl md:text-5xl flex flex-row items-center justify-center gap-x-2 font-semibold">
+                            <div className="px-4 text-3xl sm:text-4xl md:text-5xl flex flex-row items-center justify-center gap-x-2 font-semibold">
                                 {cookTime > 0 && (
                                     <div className="flex items-center">
                                         <Timer className="w-7 h-7 sm:w-8 sm:h-8 md:w-11 md:h-11" /> {cookTime}min
