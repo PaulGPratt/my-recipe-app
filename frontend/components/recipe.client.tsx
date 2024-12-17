@@ -1,7 +1,7 @@
 "use client";
 
 import { MilkdownProvider } from "@milkdown/react";
-import { ArrowLeft, Flame, Heart, Pencil, Printer, Timer } from "lucide-react";
+import { Flame, Heart, Pencil, Printer, Timer } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import { api } from "../lib/client";

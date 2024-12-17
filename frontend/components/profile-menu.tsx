@@ -1,5 +1,5 @@
 import { signOut } from "firebase/auth";
-import { Menu, User } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
