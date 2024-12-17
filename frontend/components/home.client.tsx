@@ -53,23 +53,47 @@ export default function HomeClient() {
             </div>
             <Separator></Separator>
             <ScrollArea className="h-full w-full">
-                <div className="p-4 pb-0 flex flex-row gap-4">
-                    {profile?.username && (
-                        <Link href={`/recipes/${profile.username}`} passHref className="flex flex-grow">
-                            <Button variant="secondary" className="flex-grow min-h-32">
-                                My Recipes
-                            </Button>
-                        </Link>
-                    )}
+                <div className="p-4 flex">
+                    {profile?.username ? (
+                        <div className="flex flex-row gap-4 w-full">
+                            <Link href={`/recipes/${profile.username}`} passHref className="flex flex-grow">
+                                <Button variant="secondary" className="flex-grow">
+                                    My Recipes
+                                </Button>
+                            </Link>
+                            <Link href={`/add-recipe`} passHref className="flex flex-grow">
+                                <Button variant="secondary" className="flex-grow">
+                                    <Plus></Plus> Add Recipe
+                                </Button>
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col w-full text-xl">
+                            <div className="pb-2">If you'd like to add any recipes of your own:</div>
+                            <div className="flex flex-row items-center gap-2 w-full">
+                                <Link href={`/login`} passHref className="flex flex-grow">
+                                    <Button variant="secondary" className="flex-grow">
+                                        Log in
+                                    </Button>
+                                </Link>
+                                <div>
+                                or
+                                </div>
+                                <Link href={`/signup`} passHref className="flex flex-grow">
+                                    <Button variant="secondary" className="flex-grow">
+                                        Sign up
+                                    </Button>
+                                </Link>
+                            </div>
 
-                    <Link href={`/add-recipe`} passHref className="flex flex-grow">
-                        <Button variant="secondary" className="flex-grow min-h-32">
-                            <Plus></Plus> Add Recipe
-                        </Button>
-                    </Link>
+                        </div>
+
+                    )}
                 </div>
 
-                <div className="p-4 flex flex-row gap-2">Recipes by others</div>
+                <Separator></Separator>
+
+                <div className="p-4 flex flex-row gap-2 text-2xl">Recipes by others</div>
             </ScrollArea>
         </div>
     )
