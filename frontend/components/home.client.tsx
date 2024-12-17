@@ -11,20 +11,34 @@ import { Plus } from "lucide-react";
 import { api } from "../lib/client";
 import { fetchStoredProfile } from "../lib/profile-utils";
 
-export default function HomeClient() {
+interface HomeClientProps {
+    profileRecipes?: api.ProfileRecipe[];
+}
+
+export default function HomeClient({ profileRecipes }: HomeClientProps) {
     const { auth } = useContext(FirebaseContext);
     const user = auth?.currentUser;
 
     const [profile, setProfile] = useState<api.Profile>();
+    const [recipesByOthers, setRecipesByOthers] = useState<api.ProfileRecipe[]>();
+
     useEffect(() => {
         const fetchMyProfile = async () => {
             if (!auth?.currentUser) {
+                if (profileRecipes) {
+                    setRecipesByOthers(profileRecipes);
+                }
                 return;
             }
 
             try {
                 const freshProfile = await fetchStoredProfile(auth);
                 setProfile(freshProfile);
+                if (profileRecipes) {
+                    const filteredProfiles = profileRecipes
+                        .filter(x => x.username.toLowerCase() !== freshProfile.username.toLowerCase());
+                    setRecipesByOthers(filteredProfiles);
+                }
             } catch (err) {
                 console.error(err);
             }
@@ -38,7 +52,7 @@ export default function HomeClient() {
             <div className="flex p-4 justify-between">
                 <div className="flex gap-4 items-center">
                     <ProfileMenu></ProfileMenu>
-                    <div className="text-2xl">Home</div>
+                    <div className="text-2xl">Recipes Home</div>
                 </div>
                 <div className="flex gap-2">
                     {user?.uid && (
@@ -77,7 +91,7 @@ export default function HomeClient() {
                                     </Button>
                                 </Link>
                                 <div>
-                                or
+                                    or
                                 </div>
                                 <Link href={`/signup`} passHref className="flex flex-grow">
                                     <Button variant="secondary" className="flex-grow">
@@ -92,8 +106,27 @@ export default function HomeClient() {
                 </div>
 
                 <Separator></Separator>
+                {recipesByOthers && (
+                    <>
+                        <div className="p-4 pb-0 flex flex-row gap-2 text-2xl font-semibold">Recipes by others</div>
+                        <div className="p-4 flex flex-col gap-2">
+                            {recipesByOthers.map((profileRecipe) => (
+                                <Link
+                                    href={`/recipes/${profileRecipe.username}`}
+                                    passHref
+                                    className="flex flex-grow"
+                                    key={profileRecipe.username}>
+                                    <Button variant="secondary" className="flex flex-grow justify-start">
+                                        {profileRecipe.username}
+                                        <div className="font-normal text-muted-foreground">{profileRecipe.recipe_count} recipes</div>
+                                    </Button>
+                                </Link>
+                            ))}
+                        </div>
 
-                <div className="p-4 flex flex-row gap-2 text-2xl">Recipes by others</div>
+                    </>
+                )}
+
             </ScrollArea>
         </div>
     )

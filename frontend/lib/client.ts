@@ -130,6 +130,15 @@ export namespace api {
         username: string
     }
 
+    export interface ProfileRecipe {
+        username: string
+        "recipe_count": number
+    }
+
+    export interface ProfileRecipesResponse {
+        "profile_recipes": ProfileRecipe[]
+    }
+
     export interface Recipe {
         id: string
         "profile_id": string
@@ -219,6 +228,12 @@ export namespace api {
             // Now make the actual call to the API
             const resp = await this.baseClient.callAPI("GET", `/api/recipes/${encodeURIComponent(username)}`)
             return await resp.json() as RecipeListResponse
+        }
+
+        public async GetTopProfiles(): Promise<ProfileRecipesResponse> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callAPI("GET", `/api/top-profiles`)
+            return await resp.json() as ProfileRecipesResponse
         }
 
         public async SaveProfile(params: Profile): Promise<Profile> {

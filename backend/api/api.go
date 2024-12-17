@@ -85,6 +85,46 @@ type Profile struct {
 	Username string `json:"username"`
 }
 
+type ProfileRecipesResponse struct {
+	ProfileRecipes []*ProfileRecipe `json:"profile_recipes"`
+}
+
+type ProfileRecipe struct {
+	Username    string `json:"username"`
+	RecipeCount int    `json:"recipe_count"`
+}
+
+//encore:api method=GET path=/api/top-profiles
+func GetTopProfiles(ctx context.Context) (*ProfileRecipesResponse, error) {
+	rows, err := db.Query(ctx, `
+		SELECT p.username, COUNT(r.id) AS recipe_count
+		FROM recipe r
+		INNER JOIN profile p ON r.profile_id = p.id
+		GROUP BY p.username
+		ORDER BY recipe_count DESC
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var profileRecipes []*ProfileRecipe
+	for rows.Next() {
+		pr := &ProfileRecipe{}
+		if err := rows.Scan(&pr.Username, &pr.RecipeCount); err != nil {
+			return nil, err
+		}
+		profileRecipes = append(profileRecipes, pr)
+	}
+
+	// Check if there were any errors during iteration.
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("could not iterate over rows: %v", err)
+	}
+
+	return &ProfileRecipesResponse{ProfileRecipes: profileRecipes}, nil
+}
+
 //encore:api auth method=GET path=/api/profile
 func GetMyProfile(ctx context.Context) (*Profile, error) {
 	authResult, authBool := auth.UserID()
