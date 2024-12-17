@@ -4,17 +4,15 @@ import getRequestClient from "../../lib/get-request-client";
 import { api } from "../../lib/client";
 
 export const metadata: Metadata = {
-    title: 'Recipes Home',
+    title: 'Home | PrattProjects.com',
   };
   
 export default async function HomePage() {
     let topProfiles : api.ProfileRecipe[];
     try {
-        console.log("hello");
         const client = getRequestClient(undefined);
         const response = await client.api.GetTopProfiles();
         topProfiles = response.profile_recipes;
-        console.log(topProfiles);
         return (
             <HomeClient profileRecipes={topProfiles}></HomeClient>
         )

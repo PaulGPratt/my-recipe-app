@@ -59,7 +59,7 @@ export default function HomeClient({ profileRecipes }: HomeClientProps) {
             <div className="flex p-4 justify-between">
                 <div className="flex gap-4 items-center">
                     <ProfileMenu></ProfileMenu>
-                    <div className="text-2xl">Recipes Home</div>
+                    <div className="text-2xl">Home</div>
                 </div>
                 <div className="flex gap-2">
                     {user?.uid && (
@@ -94,7 +94,7 @@ export default function HomeClient({ profileRecipes }: HomeClientProps) {
                             </div>
                         ) : (
                             <div className="flex flex-col w-full text-xl">
-                                
+
                                 <div className="flex flex-row items-center gap-4 w-full">
                                     <Link href={`/login`} passHref className="flex flex-grow w-full">
                                         <Button variant="secondary" className="flex-grow">
