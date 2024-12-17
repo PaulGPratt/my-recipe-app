@@ -5,10 +5,12 @@ import { api } from "../../lib/client";
 
 export const metadata: Metadata = {
     title: 'Home | PrattProjects.com',
-  };
-  
+};
+
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
-    let topProfiles : api.ProfileRecipe[];
+    let topProfiles: api.ProfileRecipe[];
     try {
         const client = getRequestClient(undefined);
         const response = await client.api.GetTopProfiles();
@@ -19,7 +21,7 @@ export default async function HomePage() {
     } catch (err) {
         console.log(err);
         return (
-            
+
             <HomeClient profileRecipes={undefined}></HomeClient>
         )
     }
