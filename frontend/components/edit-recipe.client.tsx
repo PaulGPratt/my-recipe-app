@@ -228,13 +228,13 @@ export default function EditRecipeClient({ recipe, username }: EditRecipeClientP
                 </div>
 
                 <div className="p-4 pt-0">
-                    <Label className="text-2xl font-semibold">Recipe Image</Label>
+                    <Label className="text-2xl font-semibold">Photo</Label>
                     <div className="flex flex-col gap-2 pt-2">
                         {imagePreview && (imagePreview as string).length > 0 && (
                             <img src={imagePreview as string} alt="Uploaded image" className="w-4/6 aspect-square object-cover rounded-md" />
                         )}
                         <div className="flex">
-                            <ImageUploader onImagesUpload={handleImagesUpload} maxFiles={1} buttonText="Select Image" />
+                            <ImageUploader onImagesUpload={handleImagesUpload} maxFiles={1} buttonText="Choose Photo" />
                         </div>
                     </div>
                 </div>
