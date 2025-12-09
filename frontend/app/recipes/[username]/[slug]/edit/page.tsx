@@ -23,12 +23,7 @@ export default async function EditRecipePage(props: { params: Params }) {
   
   // If there's a cookie, they're probably logged in, no guarantees the cookie hasn't expired though
   if (!tokenCookie) {
-    return {
-      redirect: {
-        destination: `/login?redirect=${encodeURIComponent(`/recipes/${username}/${slug}/edit`)}`,
-        permanent: false,
-      },
-    };
+    redirect(`/login?redirect=${encodeURIComponent(`/recipes/${username}/${slug}/edit`)}`);
   }
 
   const client = getRequestClient(tokenCookie?.value);
