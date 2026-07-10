@@ -47,6 +47,10 @@ type RecipeListResponse struct {
 	Recipes []*RecipeCard
 }
 
+type RecipeExportResponse struct {
+	Recipes []*Recipe `json:"recipes"`
+}
+
 type FileUpload struct {
 	Filename string `json:"filename"`
 	Content  string `json:"content"` // base64 encoded file content
@@ -232,6 +236,52 @@ func GetAllRecipes(ctx context.Context) (*RecipeListResponse, error) {
 	return &RecipeListResponse{Recipes: recipeCards}, nil
 }
 
+//encore:api auth method=GET path=/api/my-recipes/export
+func ExportMyRecipes(ctx context.Context) (*RecipeExportResponse, error) {
+	authResult, authBool := auth.UserID()
+	if !authBool {
+		return nil, fmt.Errorf("not authorized")
+	}
+
+	rows, err := db.Query(ctx, `
+		SELECT id, profile_id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags, image_url
+		FROM recipe
+		WHERE profile_id = $1
+		ORDER BY title
+	`, string(authResult))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	recipes := []*Recipe{}
+	for rows.Next() {
+		recipe := &Recipe{}
+		if err := rows.Scan(
+			&recipe.Id,
+			&recipe.ProfileId,
+			&recipe.Slug,
+			&recipe.Title,
+			&recipe.Ingredients,
+			&recipe.Instructions,
+			&recipe.Notes,
+			&recipe.CookTempDegF,
+			&recipe.CookTimeMinutes,
+			&recipe.Tags,
+			&recipe.ImageUrl,
+		); err != nil {
+			return nil, err
+		}
+		recipes = append(recipes, recipe)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("could not iterate over rows: %v", err)
+	}
+
+	return &RecipeExportResponse{Recipes: recipes}, nil
+}
+
 //encore:api public method=GET path=/api/recipes/:username
 func GetRecipesByProfileId(ctx context.Context, username string) (*RecipeListResponse, error) {
 	rows, err := db.Query(ctx, `
@@ -268,7 +318,7 @@ func GetRecipe(ctx context.Context, username string, slug string) (*Recipe, erro
 
 	// Use a JOIN to get the profile_id by username and retrieve recipe details in one query
 	err := db.QueryRow(ctx, `
-		SELECT r.id, r.profile_id, r.title, r.ingredients, r.instructions, r.notes, 
+		SELECT r.id, r.profile_id, r.title, r.ingredients, r.instructions, r.notes,
 		       r.cook_temp_deg_f, r.cook_time_minutes, r.tags, r.image_url
 		FROM recipe r
 		INNER JOIN profile p ON r.profile_id = p.id
@@ -383,16 +433,16 @@ func CopyRecipe(ctx context.Context, id string) (*GenerateRecipeResponse, error)
         INSERT INTO recipe (
             id, profile_id, slug, title, ingredients, instructions, notes, cook_temp_deg_f, cook_time_minutes, tags, image_url
         )
-        SELECT 
+        SELECT
             $1, -- New UUID
             $2, -- New profile_id
-            $3, -- New slug 
-            title, 
-            ingredients, 
-            instructions, 
-            notes, 
-            cook_temp_deg_f, 
-            cook_time_minutes, 
+            $3, -- New slug
+            title,
+            ingredients,
+            instructions,
+            notes,
+            cook_temp_deg_f,
+            cook_time_minutes,
             tags,
 			image_url
         FROM recipe
@@ -539,8 +589,8 @@ func createUniqueSlug(ctx context.Context, title string, profileId string) (stri
 	var maxSuffix int
 	err = db.QueryRow(ctx, `
 	WITH existing_slugs AS (
-		SELECT slug 
-		FROM recipe 
+		SELECT slug
+		FROM recipe
 		WHERE slug = $1 OR slug LIKE $2
 	)
 	SELECT COALESCE(MAX(CAST(NULLIF(SUBSTRING(slug FROM LENGTH($1) + 2), '') AS INT)), 0) AS max_suffix

@@ -161,6 +161,10 @@ export namespace api {
         tags: string[]
     }
 
+    export interface RecipeExportResponse {
+        recipes: Recipe[]
+    }
+
     export interface RecipeListResponse {
         Recipes: RecipeCard[]
     }
@@ -204,6 +208,11 @@ export namespace api {
             // Now make the actual call to the API
             const resp = await this.baseClient.callAPI("POST", `/api/add-recipe/from-text`, JSON.stringify(params))
             return await resp.json() as GenerateRecipeResponse
+        }
+
+        public async ExportMyRecipes(): Promise<RecipeExportResponse> {
+            const resp = await this.baseClient.callAPI("GET", `/api/my-recipes/export`)
+            return await resp.json() as RecipeExportResponse
         }
 
         public async GetAllRecipes(): Promise<RecipeListResponse> {
