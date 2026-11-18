@@ -1,0 +1,4 @@
+# Collapse imported Wix snapshots/resources in reviews; application changes stay expanded.
+frontend/public/o4k9/pages/** text eol=lf linguist-generated=true
+frontend/public/o4k9/files/** linguist-generated=true
+frontend/public/o4k9/files/*.css text eol=lf
