@@ -1,0 +1,166 @@
+
+  .gpay-card-info-animation-container {
+    display: flex;
+    width:100%;
+    position: absolute;
+    z-index: 100;
+    height: 40px;
+    border-radius: 4px;
+  }
+
+  .gpay-card-info-placeholder-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    justify-content: center;
+  }
+
+  .gpay-card-info-animated-progress-bar-container {
+    display: flex;
+    box-sizing: border-box;
+    position: absolute;
+    width: 100%;
+  }
+
+  .gpay-card-info-animated-progress-bar-container.border-inset {
+    z-index: -1;
+  }
+
+  .gpay-card-info-animated-progress-bar {
+    border-radius: 4px 4px 0px 0px;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: 1;
+    animation-name: gpayProgressFill;
+    animation-timing-function: cubic-bezier(0.97, 0.33, 1, 1);
+    background: #caccce;
+    width: 100%;
+    height: 3px;
+    max-height: 3px;
+  }
+
+  .gpay-card-info-animated-progress-bar-indicator {
+    border-radius: 4px 4px 0px 0px;
+    max-width: 20px;
+    min-width: 20px;
+    height: 3px;
+    max-height: 3px;
+    background: linear-gradient(to right, #caccce 30%, #acaeaf 60%);
+    animation-delay: 0.5s;
+    animation-duration: 1.7s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: gpayPlaceHolderShimmer;
+  }
+
+  .gpay-card-info-animated-progress-bar.no-radius {
+    border-radius: 0;
+  }
+
+  .gpay-card-info-animated-progress-bar-indicator.no-radius {
+    border-radius: 0;
+  }
+
+  .gpay-card-info-iframe-fade-in {
+    animation-fill-mode: forwards;
+    animation-duration: 0.6s;
+    animation-name: gpayIframeFadeIn;
+  }
+
+  .gpay-card-info-iframe-show {
+    display: block;
+    opacity: 1;
+  }
+
+  .gpay-card-info-iframe-hide {
+    display: none;
+  }
+
+  .gpay-card-info-animation-container-fade-out {
+    animation-fill-mode: forwards;
+    animation-duration: 0.6s;
+    animation-name: gpayPlaceHolderFadeOut;
+  }
+
+  .gpay-card-info-animation-gpay-logo {
+    margin: 13px 7px 0px  39px;
+    background-origin: content-box;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 17px;
+    max-height: 17px;
+    max-width: 41px;
+    min-width: 41px;
+  }
+
+  .gpay-card-info-animation-gpay-logo.black {
+    background-image: url("data:,");
+  }
+
+  .gpay-card-info-animation-gpay-logo.white {
+    background-image: url("data:,");
+  }
+
+  .gpay-button-static-content-container-loading {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+  }
+
+  @keyframes gpayPlaceHolderShimmer{
+    0% {
+      margin-left: 0px;
+    }
+    100% {
+      margin-left: calc(100% - 20px);
+    }
+  }
+
+  @keyframes gpayIframeFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+  }
+
+  @keyframes gpayPlaceHolderFadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+  }
+
+  @keyframes gpayProgressFill {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+
+  .gpay-card-info-container-fill .gpay-card-info-animation-container{
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .gpay-card-info-container-fill .gpay-card-info-animation-gpay-logo{
+    background-position: right;
+    margin: 0 0 0 0;
+    max-width: none;
+    width: 25%;
+    height:inherit;
+    max-height: 50%;
+  }

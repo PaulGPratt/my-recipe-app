@@ -1,0 +1,142 @@
+
+.gpay-button {
+  background-origin: content-box;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: 0px;
+  border-radius: 4px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 1px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  cursor: pointer;
+  height: 40px;
+  min-height: 40px;
+  padding: 12px 24px 10px;
+  width: 240px;
+}
+
+.gpay-button.gpay-button-size-match-height.black,
+.gpay-button.gpay-button-size-match-height.white,
+.gpay-button-fill > .gpay-button.gpay-button-size-match-height.white,
+.gpay-button-fill > .gpay-button.gpay-button-size-match-height.black {
+  box-sizing: border-box;
+  padding: 0;
+  height: 42.5%;
+  min-height: auto;
+  outline: none;
+  background-color: transparent;
+}
+
+.gpay-button-fill.gpay-button-container-size-match-height {
+  height: 100%;
+}
+
+.gpay-button.black {
+  background-color: #000;
+  box-shadow: none;
+}
+
+.gpay-button.white {
+  background-color: #fff;
+}
+
+.gpay-button.black.border-inset,
+.gpay-button.black.border-inset {
+  outline-offset: -1px;
+}
+
+.gpay-button.white.border-inset,
+.gpay-button.white.border-inset {
+  outline-offset: -1px;
+}
+
+.gpay-button.short, .gpay-button.plain {
+  min-width: 90px;
+  width: 160px;
+}
+
+.gpay-button.black.short, .gpay-button.black.plain {
+  background-image: url(data:,);
+}
+
+.gpay-button.white.short, .gpay-button.white.plain {
+  background-image: url(data:,);
+}
+
+.gpay-button.black.short.pay-securely,
+.gpay-button.black.plain.pay-securely {
+  background-image: url(data:,);
+  padding: 10px 24px 9px;
+}
+
+.gpay-button.white.short.pay-securely,
+.gpay-button.white.plain.pay-securely {
+  background-image: url(data:,);
+  padding: 10px 24px 9px;
+}
+
+.gpay-button.black.active {
+  background-color: #5f6368;
+}
+
+.gpay-button.black.hover {
+  background-color: #3c4043;
+}
+
+.gpay-button.white.active {
+  background-color: #fff;
+}
+
+.gpay-button.white.focus {
+  box-shadow: #e8e8e8 0 1px 1px 0, #e8e8e8 0 1px 3px;
+}
+
+.gpay-button.white.hover {
+  background-color: #f8f8f8;
+}
+
+.gpay-button-fill, .gpay-button-fill > .gpay-button.white, .gpay-button-fill > .gpay-button.black {
+  width: 100%;
+  height: inherit;
+}
+
+.gpay-button-fill > .gpay-button.white,
+  .gpay-button-fill > .gpay-button.black {
+    padding: 12px 15% 10px;
+}
+
+.gpay-button.donate, .gpay-button.book,
+.gpay-button.checkout,
+.gpay-button.subscribe, .gpay-button.pay,
+.gpay-button.order {
+    padding: 9px 24px;
+}
+
+.gpay-button-fill > .gpay-button.donate,
+.gpay-button-fill > .gpay-button.book,
+.gpay-button-fill > .gpay-button.checkout,
+.gpay-button-fill > .gpay-button.order,
+.gpay-button-fill > .gpay-button.pay,
+.gpay-button-fill > .gpay-button.subscribe {
+    padding: 9px 15%;
+}
+
+/* Opt out of browser forced-colors recoloring because GPay button brand colors and borders are already high-contrast friendly. */
+@media (forced-colors: active) {
+  /* 1. Force the main button container to not adjust its colors */
+  .gpay-button {
+    forced-color-adjust: none !important;
+  }
+
+  /* 2. Deep-override all inner elements, SVG tags, and their children paths to ignore forced-colors */
+  .gpay-button * {
+    forced-color-adjust: none !important;
+    fill: revert !important;   /* Force paths to revert to their original brand inline fill values */
+    stroke: revert !important; /* Force paths to revert to their original brand inline stroke values */
+  }
+
+  /* 3. Disable any browser-injected or plugin-level image/color inversion filters */
+  .gpay-button img,
+  .gpay-button svg {
+    filter: none !important;
+  }
+}

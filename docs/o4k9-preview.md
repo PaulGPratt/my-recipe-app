@@ -1,40 +1,57 @@
-# O4K9 design preview
+# O4K9 original-site improvement preview
 
-The O4K9 client-review concept is available at **`/o4k9`**. After this branch is deployed to the existing frontend, the address is **`https://prattprojects.com/o4k9`** (or the deployment's own hostname followed by `/o4k9`). This change does not itself deploy the branch.
+Open **`/o4k9`**. This branch retains the actual O4K9 Wix presentation and applies a bounded set of proposed improvements. It does not publish to O4K9 or deploy this app. Once deployed through the recipe app's normal process, its URL would be `https://prattprojects.com/o4k9`.
 
-## Implementation
+## Preserved source
 
-- `frontend/public/o4k9/index.html` is the static entry point.
-- Styles, JavaScript, and copied O4K9 images live under `frontend/public/o4k9/`.
-- The exact `/o4k9` rewrite in `frontend/next.config.js` serves the static entry point. The normal Next.js trailing-slash normalization also handles `/o4k9/`.
-- Asset URLs are rooted at `/o4k9/`, so images/styles/scripts work when the entry point has no trailing slash.
-- Interior views use hash navigation, such as `/o4k9#/boarding` and `/o4k9#/book/daycare`, without adding routes to the recipe app's React tree.
-- The page bypasses the recipe root layout, Firebase providers, Encore API calls, and recipe CSS. No authentication or backend configuration is required to serve this static preview.
-- The existing root redirect and recipe routes are unchanged.
-- Both HTML robots metadata and an `X-Robots-Tag` response header discourage indexing. This is a preview, not the official O4K9 website. **Noindex is not access control**; after deployment the URL is public unless deployment access restrictions are added separately.
+The checked-in copy contains 98 desktop/mobile snapshots: 43 public pages and six booking UI states, each with a mobile counterpart. They include home, services, boarding, daycare, consultation, about, contact, shop, product pages, blog/posts, gift cards and subscriptions. The original HTML, stylesheet order, fonts, colors, photography, image crops, section order and published content are retained. Desktop interactive booking states came from rendered public Wix/HotelRunner screens. Mobile uses Wix's actual mobile HTML and 320px viewport model; booking widgets unavailable in mobile server HTML reuse the captured native widget markup with narrow-screen layout fixes.
 
-## Local use
+`docs/o4k9-capture.json` records page URLs and asset provenance, captured November 18, 2026. `frontend/public/o4k9/files/` contains all referenced styles, images and fonts locally (426 files, about 23 MiB). Rights remain with the source owners. There is no runtime dependency on `C:/Repos/o4k9`, Wix, HotelRunner or a capture tool.
 
-From `frontend`, install the locked dependencies with `npm ci` and run `npm run dev`. Open `http://localhost:3000/o4k9` (or the port printed by Next.js).
+This is a faithful static baseline, not an export of the Wix editor/project. Live animations are held at their visible resting state, and live integrations are replaced with local demonstrations. Not every third-party widget state is reproduced: product option menus, gallery effects, account management, search/filtering and checkout integrations are outside this preview. Captured content can become stale after the live site changes.
 
-Check the preview route and its asset URLs. Recipe-page testing additionally requires this app's usual Firebase/Encore configuration; the O4K9 preview does not use it.
+## Specific proposed changes
 
-Validation on November 18, 2026 used Node 22.23.5. `/o4k9`, its HTML entry point, styles, script, and all ten copied images returned HTTP 200 with the preview's noindex header; `/o4k9/` normalized to `/o4k9`, and `/` retained its existing `/home` redirect. Browser checks confirmed the preview loaded only its own script/styles and its daycare flow worked under the `/o4k9` prefix. See `docs/o4k9-route-checks.json` for the HTTP results.
+1. Add Daycare to the existing navigation and a matching outlined homepage button. Keep the original hero, headline, photo and existing buttons.
+2. Add a short Moscow, Idaho service/location line under the original introduction.
+3. Fix boarding links and package dead ends. Training package links open original published inclusions and relevant enquiry/consultation paths.
+4. Make the published phone, email and address visible in a restrained footer using the existing palette and typography.
+5. Clarify boarding with dog/kennel terminology, published care/rate information, and removal of irrelevant hotel amenity labels. Retain the native rate/details panels.
+6. Replace the daycare instruction to choose an 8AM-5PM start time with a request to confirm arrival arrangements. Keep the calendar presentation and 8AM daycare sample; do not invent a change to staffing, duration or capacity.
+7. Add booking help and retain sample selections/details while editing within a session.
+8. Improve local page titles/descriptions, image text and one O4K9 spelling error; hide the unavailable rewards promotion while preserving header spacing.
 
-The full Next.js production build compiled and passed lint/type checks, then stopped while collecting existing recipe/signup pages because the local checkout has no valid `FIREBASE_SERVICE_ACCOUNT_KEY` (Firebase reports a missing `project_id`). Node 26 also exposed an older dependency compatibility error; Node 22 reached the credential check. No application credentials were fabricated and no recipe/authentication code was changed. A complete production build needs the existing application's normal environment configuration.
+The small **Review changes · Demo only** control lists these edits and switches between the original baseline and proposed mode on the current route. It also downloads a local review-notes text file. Direct baseline URL: `/o4k9?mode=baseline`. The review UI is preview infrastructure, not a recommendation to add it to the live site.
 
-The local `/recipes` request compiled its existing page but returned HTTP 500 because Firebase's client API key is unconfigured and the local Encore backend refused the connection. This prevents a complete recipe-page runtime regression check in this checkout; `/o4k9` still returned 200 and completed a demo booking independently.
+Blake must confirm final arrival rules, package details, terms and housing suitability. The preview does not diagnose or fix the live intermittent booking error or availability configuration. SEO titles/copy are proposed; no production ranking or speed improvement is claimed from this static mockup.
 
-## What to review
+## Local flows and isolation
 
-Home, training packages, daycare, overnight boarding, founder biography, contact enquiries, a sample client area, and three existing shop products are interactive. Date/dog-count changes update the demo boarding total; daycare has an optional bath; booking details persist when editing within the current page session.
+Daycare uses the original add-ons → summary → calendar → client-details screens. Bath ($50), extra walks ($15) and cot rental ($3) can be added/removed from the published $25 daily base. Consultation uses a $150 base and clearly illustrative time choices. Boarding supports dates, 1-3 dogs, native rate/details views, a demo kennel selection and client details. Published nightly bases are $50/$90/$110; a three-dog, three-night sample totals $330. These exclude unverified fees/taxes and final live terms. Product carts use the captured product price. Contact and booking completion show local-only feedback.
 
-Use **Review this concept** to see assumptions, select a decision, and download feedback locally. Nothing is sent to a server. Form details are kept in memory and clear on reload. No messages, real availability checks, accounts, payments, reservations, or orders are created.
+No reservation, order, payment, email, message, login, account or calendar event is created. State stays in memory and clears on reload. All original scripts, live frames and event handlers were removed. The snapshot CSP includes `connect-src 'none'`, `frame-src 'none'` and `form-action 'none'`; the shell permits only its local iframe. External links display an inert explanation. HTML metadata and the existing response header specify noindex. Noindex does not restrict access if this preview is publicly deployed.
 
-The real logo, photographs, published program/base prices, and existing testimonial came from O4K9's public site on November 18, 2026. The optional bath was observed in the earlier booking investigation. Asset sources are recorded in `docs/o4k9-assets.json`. New copy, sample availability, the proposed daycare whole-day reservation model, final arrival/eligibility rules, terms, and the visual direction require Blake's review before a live implementation.
+## Structure and updates
 
-## Source and future updates
+- `frontend/public/o4k9/index.html`, `styles.css`, `app.js`: isolated iframe shell, route selection and review controls.
+- `routes.js`, `pages/`, `files/`: source snapshots and retained source resources. Preserve original CSS order and component IDs when updating captures.
+- `preview.js`, `preview.css`: proposed edits and offline UI behavior. Edits are gated by `mode=baseline`; static-rendering fixes and offline behavior are present in both modes.
+- `scripts/check-o4k9-preview.mjs`: checks offline CSP, scripts/frames, local resource references and optional HTTP responses.
 
-This is a checked-in copy of the local concept prepared in `C:/Repos/o4k9/mockup/dist`. There is no runtime dependency on that directory or on the live O4K9 website. All image files are included locally; no remote fonts or tracking services are used. Asset rights remain with their owners.
+Keep `/o4k9/` asset prefixes. Internal navigation uses the original paths in a hash, for example `/o4k9#/services` and `/o4k9#/service-page/dog-daycare-1`. This bypasses the recipe app's React layout, Firebase providers and backend. The existing exact `/o4k9` rewrite and noindex response header are unchanged in this branch, as are the root redirect, recipe routes and dependencies.
 
-When copying a newer concept into this app, preserve the `/o4k9/` prefixes in the HTML's stylesheet/script/favicon/image references and in the `asset()` helper in `app.js`. Keep the response header and demo-only connection/form restrictions. Repeat the route, asset, editing, pricing, and mobile checks before deployment.
+From `frontend`, install the locked app dependencies and run the existing Next development command. Node 22 was used for verification. The current review server uses port 3050. From the repository root, run:
+
+```sh
+node --check frontend/public/o4k9/app.js
+node --check frontend/public/o4k9/preview.js
+node scripts/check-o4k9-preview.mjs http://127.0.0.1:3050
+```
+
+## Validation and limits
+
+All 98 snapshots and every referenced local resource returned HTTP 200; 533 HTTP checks passed, including the existing `/` → `/home` and `/o4k9/` → `/o4k9` redirects. See `docs/o4k9-route-checks.json`. Static checks found no remote image/CSS resource, unexpected script, embedded live frame, missing resource, or missing offline/noindex policy.
+
+Browser review covered original/proposed home, mobile navigation/image loading, native add-ons/editing/summary, calendar month/date selection, consultation time selection, client form/local completion, boarding dates/dog-count/rates, product cart and review-mode switching. At a 1280×720 desktop viewport, original and baseline homepage headlines had identical measured geometry (x164.33, y282.82, width779, height210) and the original 70px Lulo font/line height. Mobile was checked at 390×844 using the original 320px Wix canvas; home has no horizontal overflow.
+
+The existing Next production build previously compiled and passed lint/type checks, then failed during recipe/signup page collection because this checkout lacks a valid `FIREBASE_SERVICE_ACCOUNT_KEY`. The existing `/recipes` page also requires Firebase client configuration and its Encore backend. This static-only revision does not resolve or alter those app configuration requirements; a complete production regression/build needs the normal deployment environment.

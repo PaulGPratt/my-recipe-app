@@ -1,0 +1,141 @@
+
+  .gpay-card-info-container {
+    padding: 0;
+    position: relative;
+    min-width: 240px;
+    height: 40px;
+    min-height: 40px;
+    border-radius: 4px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 1px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    cursor: pointer;
+    border: 0px;
+  }
+
+  .gpay-card-info-container.black,
+  .gpay-card-info-animation-container.black {
+    background-color: #000;
+    box-shadow: none;
+    outline: 1px solid #757575;
+  }
+
+  .gpay-card-info-container.white,
+  .gpay-card-info-animation-container.white {
+    background-color: #fff;
+    outline: 1px solid #3C4043;
+  }
+
+  .gpay-card-info-container.black.border-inset,
+  .gpay-card-info-animation-container.black.border-inset {
+    outline-offset: -1px;
+  }
+
+  .gpay-card-info-container.white.border-inset,
+  .gpay-card-info-animation-container.white.border-inset {
+    outline-offset: -1px;
+  }
+
+  .gpay-card-info-container.black.border-toggle,
+  .gpay-card-info-animation-container.black.border-toggle {
+    outline: none;
+  }
+
+  .gpay-card-info-container.white.border-toggle,
+  .gpay-card-info-animation-container.white.border-toggle {
+    outline: none;
+  }
+
+  .gpay-card-info-container.black.active {
+    background-color: #5f6368;
+  }
+
+  .gpay-card-info-container.black.hover,
+  .gpay-card-info-animation-container.black.hover {
+    background-color: #3c4043;
+  }
+
+  .gpay-card-info-container.white.active {
+    background-color: #fff;
+  }
+
+  .gpay-card-info-container.white.focus {
+    box-shadow: #e8e8e8 0 1px 1px 0, #e8e8e8 0 1px 3px;
+  }
+
+  .gpay-card-info-container.white.hover,
+  .gpay-card-info-animation-container.white.hover {
+    background-color: #f8f8f8;
+  }
+
+  .gpay-card-info-container.color-scheme-default {
+    color-scheme: light dark;
+  }
+
+  .gpay-card-info-iframe {
+    border: 0;
+    display: block;
+    height: 100%;
+    margin: auto;
+    max-width: 100%;
+    width: 240px;
+    pointer-events: none;
+  }
+
+  .gpay-card-info-container-fill .gpay-card-info-iframe{
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  .gpay-card-info-container-fill,
+    .gpay-card-info-container-fill > .gpay-card-info-container{
+    width: 100%;
+    height: inherit;
+  }
+
+
+  .gpay-card-info-container-fill .gpay-card-info-placeholder-container {
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding-top: 3px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .gpay-card-info-container-fill .gpay-card-info-placeholder-svg-container{
+    position: relative;
+    width: 60%;
+    height: inherit;
+    max-height: 80%;
+    margin-right: -20%;
+  }
+
+  .gpay-card-info-container-fill .gpay-card-info-placeholder-svg-container > svg {
+    position: absolute;
+    left: 0;
+    height: 100%;
+    max-width: 100%;
+  }
+
+  /* Opt out of browser forced-colors recoloring because GPay button brand colors and borders are already high-contrast friendly. */
+  @media (forced-colors: active) {
+    .gpay-card-info-container,
+    .gpay-card-info-animation-container {
+      forced-color-adjust: none !important;
+    }
+
+    .gpay-card-info-container *,
+    .gpay-card-info-animation-container * {
+      forced-color-adjust: none !important;
+      fill: revert !important;
+      stroke: revert !important;
+    }
+
+    .gpay-card-info-container img,
+    .gpay-card-info-container svg,
+    .gpay-card-info-animation-container img,
+    .gpay-card-info-animation-container svg {
+      filter: none !important;
+    }
+  }

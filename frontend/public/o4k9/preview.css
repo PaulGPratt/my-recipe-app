@@ -1,0 +1,559 @@
+/* Local preview controls and specifically proposed additions. Original CSS is retained in files/. */
+.preview-draft-note {
+  margin: 8px 24px !important;
+}
+html[data-original-device="mobile"] #TPAMultiSection_ky9sy6zq,
+html[data-original-device="mobile"] #TPAMultiSection_ky9syaq2 {
+  margin-left: 0 !important;
+  left: 0 !important;
+  width: 320px !important;
+  max-width: 320px !important;
+  min-width: 0 !important;
+}
+/* Wix reveals these entrance-animation nodes at runtime. A static snapshot uses their resting state. */
+.mu5PoX,
+.PO9MfV {
+  opacity: 1 !important;
+}
+html[data-original-device="mobile"] [data-hook="tpa-modal-content"] {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 320px !important;
+  max-width: 320px !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  margin: 0 !important;
+  overflow: auto !important;
+  background: #fff;
+  color: #000;
+  z-index: 20000 !important;
+}
+html[data-original-device="mobile"] [data-hook="dialog-container-root"] {
+  width: 100% !important;
+  max-width: 320px !important;
+  min-height: 100vh !important;
+}
+html[data-original-device="mobile"] [data-hook="tpa-modal-content"] {
+  padding: 24px !important;
+  box-sizing: border-box !important;
+  font:
+    14px/1.6 raleway,
+    Arial,
+    sans-serif !important;
+}
+html[data-original-device="mobile"] [data-hook="dialog-container-root"] {
+  max-width: 100% !important;
+  min-height: calc(100vh - 48px) !important;
+}
+html[data-original-device="mobile"] [data-hook="dialog-container-root"] > div {
+  min-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+}
+html[data-original-device="mobile"]
+  [data-hook="tpa-modal-content"]
+  [data-hook="header-root"] {
+  position: relative;
+  margin-bottom: 32px;
+  padding-right: 22px;
+}
+html[data-original-device="mobile"]
+  [data-hook="tpa-modal-content"]
+  [data-hook="header-close-button"] {
+  position: absolute;
+  right: -12px;
+  top: -12px;
+  width: 30px;
+  height: 30px;
+  background: transparent !important;
+  color: #111 !important;
+}
+html[data-original-device="mobile"]
+  [data-hook="tpa-modal-content"]
+  [data-hook="header-title"],
+html[data-original-device="mobile"]
+  [data-hook="tpa-modal-content"]
+  [data-hook="add-ons-title"] {
+  font:
+    20px/1.4 raleway,
+    Arial,
+    sans-serif !important;
+  color: #111;
+  margin: 0 0 6px;
+}
+html[data-original-device="mobile"]
+  [data-hook="tpa-modal-content"]
+  [data-hook="header-subtitle"] {
+  color: #777;
+  font-size: 14px;
+}
+html[data-original-device="mobile"]
+  [data-hook="tpa-modal-content"]
+  [data-hook="dialog-container-content"] {
+  flex: 1;
+}
+html[data-original-device="mobile"]
+  [data-hook="tpa-modal-content"]
+  [data-hook^="add-ons-picker-title"],
+html[data-original-device="mobile"]
+  [data-hook="tpa-modal-content"]
+  [data-hook^="add-ons-picker-prompt"] {
+  display: block;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 6px 0;
+}
+html[data-original-device="mobile"]
+  [data-hook="tpa-modal-content"]
+  [data-hook^="add-on-row-"] {
+  display: grid;
+  grid-template-columns: 1fr 40px 64px;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding: 16px 0;
+}
+html[data-original-device="mobile"]
+  [data-hook="tpa-modal-content"]
+  [data-hook="addon-row-add-button"] {
+  width: 64px;
+  min-height: 32px;
+  background: #000 !important;
+  color: white !important;
+  font:
+    13px raleway,
+    Arial,
+    sans-serif !important;
+  padding: 7px !important;
+}
+html[data-original-device="mobile"]
+  [data-hook="tpa-modal-content"]
+  [data-hook="footer-root"] {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #ddd;
+}
+html[data-original-device="mobile"]
+  [data-hook="tpa-modal-content"]
+  [data-hook="footer-next-button"] {
+  width: 100%;
+  min-height: 42px;
+  background: #000 !important;
+  color: white !important;
+  font:
+    14px raleway,
+    Arial,
+    sans-serif !important;
+}
+html[data-original-device="mobile"]::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+html[data-original-device="mobile"] body {
+  min-width: 320px;
+}
+a,
+button {
+  cursor: pointer;
+}
+#preview-chat {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  background: #ff653b;
+  color: white;
+  border: 0;
+  z-index: 999;
+  font-size: 28px;
+  box-shadow: 0 0 10px #0002;
+}
+#preview-chat svg {
+  width: 28px;
+  height: 28px;
+}
+dialog.preview-dialog {
+  box-sizing: border-box;
+  width: 620px;
+  max-width: calc(100% - 24px);
+  max-height: 88vh;
+  overflow: auto;
+  padding: 24px;
+  background: #fff;
+  color: #111;
+  border: 0;
+  font:
+    16px/1.6 raleway,
+    Arial,
+    sans-serif;
+  z-index: 20000;
+}
+dialog.preview-dialog::backdrop {
+  background: #000b;
+}
+dialog.preview-dialog h2 {
+  font:
+    400 22px/1.4 raleway,
+    Arial,
+    sans-serif;
+  margin: 0 35px 17px 0;
+}
+dialog.preview-dialog h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 22px 0 10px;
+}
+dialog.preview-dialog p,
+dialog.preview-dialog li {
+  font-size: 14px;
+  margin: 10px 0;
+}
+dialog.preview-dialog .preview-close {
+  position: absolute;
+  right: 18px;
+  top: 12px;
+  background: transparent;
+  border: 0;
+  font-size: 28px;
+  color: #111;
+}
+dialog.preview-dialog .preview-btn,
+.preview-btn {
+  display: inline-block;
+  box-sizing: border-box;
+  background: #000;
+  color: white;
+  border: 1px solid #000;
+  padding: 9px 23px;
+  font:
+    400 14px/1.5 raleway,
+    Arial,
+    sans-serif;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+dialog.preview-dialog label {
+  display: block;
+  margin: 15px 0 6px;
+  font-size: 14px;
+}
+dialog.preview-dialog input,
+dialog.preview-dialog select,
+dialog.preview-dialog textarea {
+  box-sizing: border-box;
+  width: 100%;
+  background: white;
+  border: 1px solid #999;
+  color: #111;
+  padding: 9px 11px;
+  min-height: 42px;
+  font:
+    14px/1.5 raleway,
+    Arial,
+    sans-serif;
+}
+dialog.preview-dialog .preview-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+dialog.preview-dialog .preview-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 23px;
+}
+dialog.preview-dialog .preview-note {
+  font-size: 12px;
+  background: #f4f4f4;
+  border-left: 3px solid #ff653b;
+  padding: 13px;
+  margin: 18px 0;
+}
+dialog.preview-dialog .preview-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid #ddd;
+  padding: 12px 0;
+  font-size: 14px;
+}
+dialog.preview-dialog .preview-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+dialog.preview-dialog .preview-check input {
+  width: 17px;
+  height: 17px;
+  min-height: 0;
+  margin-top: 4px;
+}
+dialog.preview-dialog .preview-check span {
+  font-size: 12px;
+}
+.preview-contact-footer {
+  color: #fff;
+  background: #000;
+  box-sizing: border-box;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 22px 28px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font:
+    14px/1.7 raleway,
+    Arial,
+    sans-serif;
+}
+.preview-contact-footer a {
+  color: #ff653b;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.preview-hero-location {
+  position: absolute;
+  z-index: 12;
+  pointer-events: none;
+  font:
+    14px/1.4 raleway,
+    Arial,
+    sans-serif;
+  color: white;
+  text-shadow: 0 1px 5px #000;
+}
+.preview-daycare-cta {
+  position: absolute;
+  z-index: 13;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  background: transparent;
+  border: 1px solid #ff653b;
+  font:
+    14px raleway,
+    Arial,
+    sans-serif;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+.preview-daycare-cta:hover {
+  background: #ff653b;
+  color: #000;
+}
+.preview-boarding-intro {
+  max-width: 920px;
+  margin: 24px auto 30px;
+  color: white;
+  font:
+    16px/1.6 raleway,
+    Arial,
+    sans-serif;
+}
+.preview-boarding-intro h1 {
+  font:
+    24px/1.5 lulo-clean-w01-one-bold,
+    sans-serif;
+  margin: 0 0 13px;
+}
+.preview-boarding-intro p {
+  max-width: 800px;
+  margin: 0 0 13px;
+}
+.preview-booking-help {
+  font:
+    13px/1.6 raleway,
+    Arial,
+    sans-serif;
+  color: inherit;
+  margin: 18px 0;
+  padding: 12px 0;
+  border-top: 1px solid #777;
+}
+.preview-booking-help button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-decoration: underline;
+  font: inherit;
+  padding: 0;
+}
+.preview-draft-note {
+  font:
+    12px/1.6 raleway,
+    Arial,
+    sans-serif;
+  color: inherit;
+  margin: 12px 0;
+}
+.preview-submenu {
+  position: absolute !important;
+  top: 36px;
+  left: 0;
+  min-width: 180px;
+  padding: 12px !important;
+  background: #000;
+  border: 1px solid #555;
+  z-index: 900;
+}
+.preview-submenu a {
+  display: block;
+  padding: 8px;
+  color: white;
+}
+.preview-mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  box-sizing: border-box;
+  background: #000;
+  color: #fff;
+  padding: 60px 25px;
+  font:
+    20px/1.6 raleway,
+    Arial,
+    sans-serif;
+  overflow: auto;
+}
+.preview-mobile-menu a {
+  display: block;
+  color: white;
+  border-bottom: 1px solid #333;
+  padding: 11px;
+}
+.preview-mobile-menu button {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  font-size: 30px;
+  background: none;
+  border: 0;
+  color: white;
+}
+.preview-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+.preview-calendar button {
+  background: white;
+  color: #000;
+  border: 1px solid #ddd;
+  min-height: 36px;
+  font:
+    14px raleway,
+    sans-serif;
+}
+.preview-calendar button[aria-pressed="true"] {
+  background: #000;
+  color: white;
+}
+.preview-calendar-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px 0;
+}
+.preview-calendar-head button {
+  background: white;
+  color: #000;
+  border: 1px solid #bbb;
+  padding: 4px 10px;
+}
+.preview-calendar-head strong {
+  font-weight: 400;
+}
+.preview-sample {
+  font:
+    11px/1.6 raleway,
+    Arial,
+    sans-serif;
+  opacity: 0.8;
+  margin: 9px 0;
+}
+.preview-rate-options {
+  border-top: 1px solid #888;
+  margin-top: 15px;
+  padding-top: 15px;
+}
+.preview-rate-options button {
+  background: #ff653b;
+  color: #111;
+  border: 0;
+  padding: 10px 18px;
+  font:
+    14px raleway,
+    sans-serif;
+}
+.preview-local-booking-root {
+  max-width: 920px;
+  margin: 28px auto;
+  color: #fff;
+  font:
+    16px/1.6 raleway,
+    Arial,
+    sans-serif;
+}
+.preview-local-booking-root h1 {
+  font:
+    24px/1.5 lulo-clean-w01-one-bold,
+    sans-serif;
+}
+.preview-local-booking-root .preview-btn {
+  background: #ff653b;
+  color: #111;
+  border: 0;
+}
+html[data-original-device="mobile"] .preview-contact-footer {
+  display: block;
+  padding: 18px 20px;
+  font-size: 12px;
+}
+html[data-original-device="mobile"] .preview-contact-footer > div {
+  margin-bottom: 9px;
+}
+html[data-original-device="mobile"] .preview-hero-location {
+  font-size: 10px;
+}
+html[data-original-device="mobile"] .preview-daycare-cta {
+  font-size: 12px;
+}
+html[data-original-device="mobile"] #preview-chat {
+  width: 48px;
+  height: 48px;
+  right: 12px;
+  bottom: 12px;
+}
+@media (max-width: 600px) {
+  dialog.preview-dialog {
+    padding: 23px;
+  }
+  dialog.preview-dialog .preview-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .preview-boarding-intro,
+  .preview-local-booking-root {
+    margin: 20px 18px;
+  }
+  .preview-boarding-intro h1 {
+    font-size: 18px;
+  }
+  .preview-boarding-intro p {
+    font-size: 14px;
+  }
+}
+html[data-original-device="mobile"] [data-hook="tpa-modal-content"] .su7hEzZ {
+  min-width: 0 !important;
+  width: 64px !important;
+  justify-content: flex-end;
+}
