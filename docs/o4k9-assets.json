@@ -1,0 +1,66 @@
+{
+  "retrieved": "2026-11-18",
+  "note": "Existing O4K9 site assets, copied only for the local redesign concept. Rights remain with their owners.",
+  "files": [
+    {
+      "file": "assets/logo.jpg",
+      "source": "https://static.wixstatic.com/media/308530_e0a83aaaaf2142978abe5a6ef5bbf331~mv2.jpg",
+      "bytes": 34329,
+      "contentType": "image/jpeg"
+    },
+    {
+      "file": "assets/hero.jpg",
+      "source": "https://static.wixstatic.com/media/308530_de19349cc41346d8b875590fcb50bddd~mv2.jpeg/v1/fit/w_1800,h_1800,q_85/hero.jpeg",
+      "bytes": 522519,
+      "contentType": "image/jpeg"
+    },
+    {
+      "file": "assets/blake-training.jpg",
+      "source": "https://static.wixstatic.com/media/308530_aa89b5702fdb487c8bf8c7caaf4b9ba9~mv2.jpg/v1/fit/w_1100,h_1400,q_85/training.jpg",
+      "bytes": 292359,
+      "contentType": "image/jpeg"
+    },
+    {
+      "file": "assets/blake-portrait.jpg",
+      "source": "https://static.wixstatic.com/media/308530_d3f8583baf944a8aa2fcea2f6cd80a9b~mv2.jpg/v1/fit/w_1000,h_1000,q_85/blake.jpg",
+      "bytes": 217457,
+      "contentType": "image/jpeg"
+    },
+    {
+      "file": "assets/dogs.jpg",
+      "source": "https://static.wixstatic.com/media/308530_6b7a4f7c0e0f4f89b1da748d51f72814~mv2.jpeg/v1/fit/w_1400,h_1100,q_85/dogs.jpeg",
+      "bytes": 153333,
+      "contentType": "image/jpeg"
+    },
+    {
+      "file": "assets/field.jpg",
+      "source": "https://static.wixstatic.com/media/308530_1c6a699dbd394376b5e299b6a21f9b1b~mv2.jpeg/v1/fit/w_1000,h_1300,q_85/field.jpeg",
+      "bytes": 252618,
+      "contentType": "image/jpeg"
+    },
+    {
+      "file": "assets/kennel.png",
+      "source": "https://cdn-cms4.hotelrunner.com/assets/photos/extra_large/c82e3284-dea4-4cfc-a606-bae9e8566b4e.png",
+      "bytes": 1029862,
+      "contentType": "image/jpeg"
+    },
+    {
+      "file": "assets/leash.webp",
+      "source": "https://static.wixstatic.com/media/308530_b69c2efbe6ce4786bf364da9ec7d40d0~mv2.webp",
+      "bytes": 78948,
+      "contentType": "image/webp"
+    },
+    {
+      "file": "assets/treats.png",
+      "source": "https://static.wixstatic.com/media/308530_f5425a7af93c44219e4b3fcedde53e61~mv2.png",
+      "bytes": 142243,
+      "contentType": "image/jpeg"
+    },
+    {
+      "file": "assets/food.webp",
+      "source": "https://static.wixstatic.com/media/308530_1d237d7be17d41dc949811ca4c6c8f68~mv2.webp",
+      "bytes": 35770,
+      "contentType": "image/webp"
+    }
+  ]
+}
