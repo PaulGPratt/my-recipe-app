@@ -1,0 +1,34 @@
+
+.heightByImageRatio::before {
+  display: block;
+
+  content: "";
+}
+
+.heightByImageRatio0::before {
+  padding-top: calc(100% / (3 / 2));
+}
+
+.heightByImageRatio1::before {
+  padding-top: calc(100% / (4 / 3));
+}
+
+.heightByImageRatio2::before {
+  padding-top: calc(100%);
+}
+
+.heightByImageRatio3::before {
+  padding-top: calc(100% / (3 / 4));
+}
+
+.heightByImageRatio4::before {
+  padding-top: calc(100% / (2 / 3));
+}
+
+.heightByImageRatio5::before {
+  padding-top: calc(100% / (16 / 9));
+}
+
+.heightByImageRatio6::before {
+  padding-top: calc(100% / (9 / 16));
+}

@@ -1,0 +1,24 @@
+/* END STYLABLE DIRECTIVE RULES */
+
+#comp-m39c0sa810 .style-m39c0sa93__root{-st-extends: StylableButton;transition: all 0.2s ease, visibility 0s;background: #F2633E;padding-left: 10px;padding-right: 10px}
+
+/* START STYLABLE DIRECTIVE RULES */
+
+#comp-m39c0sa810 .style-m39c0sa93__root:hover{background: #030303;border: 1px solid #F2633E}
+
+#comp-m39c0sa810 .style-m39c0sa93__root:hover .StylableButton2545352419__label{
+    color: #F2633E}
+
+#comp-m39c0sa810 .style-m39c0sa93__root:disabled{background: #E2E2E2}
+
+#comp-m39c0sa810 .style-m39c0sa93__root:disabled .StylableButton2545352419__label{color: #8F8F8F}
+
+#comp-m39c0sa810 .style-m39c0sa93__root:disabled .StylableButton2545352419__icon{fill: #8F8F8F}
+
+#comp-m39c0sa810 .style-m39c0sa93__root .StylableButton2545352419__container{transition: inherit}
+
+#comp-m39c0sa810 .style-m39c0sa93__root .StylableButton2545352419__label{transition: inherit;letter-spacing: 0em;margin: 0px 4px 0px 0px;display: inherited;text-shadow: none;font-family: avenir-lt-w01_35-light1475496,avenir-lt-w05_35-light,sans-serif;font-weight: normal;font-style: normal;font-size: 14px;color: #030303}
+
+#comp-m39c0sa810 .style-m39c0sa93__root .StylableButton2545352419__icon{transition: inherit;fill: #FFFFFF;width: 10px;height: 10px;margin: 0px 0px 0px 4px;display: none}
+
+#comp-m39c0sa810 .style-m39c0sa93__root:hover .StylableButton2545352419__icon{fill: #000000}

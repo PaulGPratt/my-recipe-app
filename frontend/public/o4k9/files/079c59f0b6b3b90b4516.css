@@ -1,0 +1,10 @@
+
+          .google-pay-button-container {
+            display: inline-block;
+          }
+          .google-pay-button-container.not-ready {
+            width: 0;
+            height: 0;
+            overflow: hidden;
+          }
+        

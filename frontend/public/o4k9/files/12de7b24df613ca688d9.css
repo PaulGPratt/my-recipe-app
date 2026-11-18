@@ -1,0 +1,39 @@
+
+  .gpay-card-info-container.black,
+  .gpay-button.black {
+    outline: 1px solid #757575;
+    box-shadow: none;
+  }
+  .gpay-card-info-container.black.border-toggle,
+  .gpay-button.black.border-toggle {
+    outline: none;
+  }
+  .gpay-card-info-container.black.focus,
+  .gpay-button.black.focus {
+    outline: 1px auto Highlight;
+    outline: 1px auto -webkit-focus-ring-color;
+    box-shadow: none;
+  }
+  .gpay-card-info-container.white,
+  .gpay-button.white {
+    outline: 1px solid #3C4043;
+    box-shadow: none;
+  }
+  .gpay-card-info-container.white.border-toggle,
+  .gpay-button.white.border-toggle {
+    outline: none;
+  }
+  .gpay-card-info-container.white.focus,
+  .gpay-button.white.focus {
+    outline: 1px auto Highlight;
+    outline: 1px auto -webkit-focus-ring-color;
+    box-shadow: none;
+  }
+
+  /* Opt out of browser forced-colors recoloring because GPay button brand colors and borders are already high-contrast friendly. */
+  @media (forced-colors: active) {
+    .gpay-card-info-container,
+    .gpay-button {
+      forced-color-adjust: none !important;
+    }
+  }
