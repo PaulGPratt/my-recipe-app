@@ -1,0 +1,120 @@
+{
+  "date": "2026-11-18",
+  "note": "Actual Next.js dev server under Node 22.23.5. Static preview served independently of recipe services.",
+  "results": [
+    {
+      "path": "/o4k9",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 3517
+    },
+    {
+      "path": "/o4k9/",
+      "status": 308,
+      "robots": null,
+      "location": "/o4k9",
+      "bytes": 5
+    },
+    {
+      "path": "/o4k9/index.html",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 3517
+    },
+    {
+      "path": "/o4k9/styles.css",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 30947
+    },
+    {
+      "path": "/o4k9/app.js",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 50085
+    },
+    {
+      "path": "/o4k9/assets/blake-portrait.jpg",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 217457
+    },
+    {
+      "path": "/o4k9/assets/blake-training.jpg",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 292359
+    },
+    {
+      "path": "/o4k9/assets/dogs.jpg",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 153333
+    },
+    {
+      "path": "/o4k9/assets/field.jpg",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 252618
+    },
+    {
+      "path": "/o4k9/assets/food.webp",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 35770
+    },
+    {
+      "path": "/o4k9/assets/hero.jpg",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 522519
+    },
+    {
+      "path": "/o4k9/assets/kennel.png",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 1029862
+    },
+    {
+      "path": "/o4k9/assets/leash.webp",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 78948
+    },
+    {
+      "path": "/o4k9/assets/logo.jpg",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 34329
+    },
+    {
+      "path": "/o4k9/assets/treats.png",
+      "status": 200,
+      "robots": "noindex, nofollow, noarchive",
+      "location": null,
+      "bytes": 142243
+    },
+    {
+      "path": "/",
+      "status": 308,
+      "robots": null,
+      "location": "/home",
+      "bytes": 5
+    }
+  ],
+  "probeRuntime": "v26.13.0",
+  "serverRuntime": "Node 22.23.5"
+}
