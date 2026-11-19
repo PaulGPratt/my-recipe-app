@@ -118,16 +118,31 @@
 
   function addHelp(root) {
     if (!root || root.querySelector(".preview-booking-help")) return;
-    const help = document.createElement("p");
+    const help = document.createElement("aside");
     help.className = "preview-booking-help";
+    help.setAttribute("aria-label", "Booking help");
     help.innerHTML =
-      'Trouble booking? (225) 773-3264 · <button type="button">Ask about your date</button>';
+      '<strong>Need help booking?</strong><p>If you see an error or cannot find your date, call <a href="/o4k9#/contact" data-preview-route="/contact">(225) 773-3264</a> or ask Blake about availability.</p><button type="button">Ask about your date</button>';
     help.querySelector("button").onclick = () => {
       state.enquiry.message =
         "I would like to ask about " + dateLabel(state.date) + ".";
       navigate("/contact");
     };
     root.append(help);
+  }
+
+  function boardingWording(value) {
+    return value.replace(/\b(adults?|rooms?)\b/gi, (word) => {
+      const replacement = {
+        adult: "dog",
+        adults: "dogs",
+        room: "kennel",
+        rooms: "kennels",
+      }[word.toLowerCase()];
+      return word[0] === word[0].toUpperCase()
+        ? replacement[0].toUpperCase() + replacement.slice(1)
+        : replacement;
+    });
   }
 
   if (proposed) {
@@ -147,7 +162,17 @@
         a.href = "/o4k9#/service-page/dog-daycare-1";
         a.removeAttribute("aria-current");
         item.querySelector("p").textContent = "Daycare";
-        source.before(item);
+        const boarding = [...nav.children].find((e) =>
+          e.querySelector('a[data-preview-route="/dog-boarding"]'),
+        );
+        source.querySelector("p").textContent = "Training";
+        source.style.width = "96px";
+        if (boarding) {
+          boarding.querySelector("p").textContent = "Boarding";
+          boarding.style.width = "100px";
+          boarding.before(source);
+          boarding.after(item);
+        } else source.after(item);
       }
     }
 
@@ -163,7 +188,16 @@
         next.textContent = "Daycare";
         next.setAttribute("data-preview-route", "/service-page/dog-daycare-1");
         next.href = "/o4k9#/service-page/dog-daycare-1";
-        a.closest("li").before(item);
+        const training = a.closest("li");
+        const boarding = mobileNav.querySelector(
+          'a[data-preview-route="/dog-boarding"]',
+        )?.closest("li");
+        a.textContent = "Training";
+        if (boarding) {
+          boarding.querySelector("a").textContent = "Boarding";
+          boarding.before(training);
+          boarding.after(item);
+        } else training.after(item);
       }
     }
 
@@ -187,18 +221,18 @@
       const contact = document.createElement("div");
       contact.className = "preview-contact-footer";
       contact.innerHTML =
-        '<div><a href="/o4k9#/contact" data-preview-route="/contact">(225) 773-3264</a><br><a href="/o4k9#/contact" data-preview-route="/contact">o4k9.training@gmail.com</a></div><div>2711 Foothill Road<br>Moscow, ID 83843</div>';
+        '<div><strong>O4K9</strong><p>Training · Boarding · Daycare</p></div><div><strong>Get in touch</strong><br><a href="/o4k9#/contact" data-preview-route="/contact">(225) 773-3264</a><br><a href="/o4k9#/contact" data-preview-route="/contact">o4k9.training@gmail.com</a></div><div><strong>Visit us</strong><p>2711 Foothill Road<br>Moscow, ID 83843</p></div>';
       footer.append(contact);
     }
 
     const descriptions = {
       home: [
-        "Dog Training, Daycare & Boarding | Moscow, Idaho | O4K9",
-        "Dog training, daycare and overnight boarding in Moscow, Idaho and Latah County. Explore programs, published prices and how to book.",
+        "Dog Training, Boarding & Daycare | Moscow, Idaho | O4K9",
+        "Dog training, overnight boarding and daycare in Moscow, Idaho and Latah County. Explore programs, published prices and how to book.",
       ],
       services: [
-        "Dog Training & Daycare Services | Moscow, ID | O4K9",
-        "Explore O4K9 dog training programs, consultations and daycare in Moscow, Idaho.",
+        "Dog Training, Boarding & Daycare Services | Moscow, ID | O4K9",
+        "Explore O4K9 dog training programs, boarding and daycare in Moscow, Idaho.",
       ],
       boarding: [
         "Dog Boarding in Moscow, Idaho | O4K9",
@@ -257,6 +291,10 @@
         e.textContent.includes("Veteran Dog Trainer"),
       );
       if (first && stay && subtitle) {
+        const stayLabel = stay.querySelector(".wixui-button__label");
+        if (stayLabel) stayLabel.textContent = "BOOK BOARDING";
+        else stay.textContent = "BOOK BOARDING";
+        stay.setAttribute("aria-label", "BOOK BOARDING");
         const heroRect = hero.getBoundingClientRect();
         const originalHeight = heroRect.height;
         const originalActionTop =
@@ -271,7 +309,7 @@
         const locationLine = document.createElement("p");
         locationLine.className = "preview-hero-location";
         locationLine.textContent =
-          "Moscow, Idaho · Dog Training, Daycare & Boarding";
+          "Moscow, Idaho · Dog Training, Boarding & Daycare";
         const actions = document.createElement("div");
         actions.className = "preview-hero-actions";
         const daycare = document.createElement("a");
@@ -317,10 +355,14 @@
     if (boardingPage) {
       const engine = $("booking-engine");
       if (engine) {
-        replaceText(engine, /adults/gi, "dogs");
-        replaceText(engine, /adult/gi, "dog");
-        replaceText(engine, /rooms/gi, "kennels");
-        replaceText(engine, /room/gi, "kennel");
+        // Match the Booking Engine language settings, including details panels.
+        replaceText(document.body, /\b(adults?|rooms?)\b/gi, boardingWording);
+        $$('[aria-label],[title]').forEach((element) => {
+          for (const attribute of ["aria-label", "title"]) {
+            const value = element.getAttribute(attribute);
+            if (value) element.setAttribute(attribute, boardingWording(value));
+          }
+        });
         $$("span")
           .filter((e) =>
             /^\d+ bedrooms$|^Mountain view$|^Pets allowed$/.test(
@@ -331,7 +373,7 @@
         const intro = document.createElement("section");
         intro.className = "preview-boarding-intro";
         intro.innerHTML =
-          "<h1>Dog Boarding in Moscow, Idaho</h1><p>Temperature-controlled kennels, five daily outings and two walks, with food included twice daily.</p><p>Published nightly rates: $50 for the first dog, + $40 for the second, + $20 for the third. Confirm shared-kennel suitability and arrival arrangements with Blake.</p>";
+          '<h1>Dog Boarding in Moscow, Idaho</h1><p>Temperature-controlled kennels, five daily outings and two walks, with food included twice daily.</p><p>Nightly rates: $50 for the first dog, + $40 for the second, + $20 for the third. Confirm shared-kennel suitability and arrival arrangements with Blake.</p>';
         engine.prepend(intro);
         addHelp(engine);
       }
@@ -1149,7 +1191,7 @@
         return;
       }
 
-      if (label === "Add room to cart") {
+      if (label === "Add room to cart" || label === "Add kennel to cart") {
         e.preventDefault();
         state.service = "boarding";
         state.kennelSelected = true;

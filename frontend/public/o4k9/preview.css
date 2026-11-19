@@ -300,19 +300,27 @@ dialog.preview-dialog .preview-check span {
   font-size: 12px;
 }
 .preview-contact-footer {
+  position: relative;
+  z-index: 2;
   color: #fff;
   background: #000;
   box-sizing: border-box;
-  max-width: 980px;
+  width: 100%;
   margin: 0 auto;
-  padding: 22px 28px;
+  padding: 32px max(28px, calc((100% - 980px) / 2));
   display: flex;
   justify-content: space-between;
   gap: 20px;
   font:
-    14px/1.7 raleway,
+    16px/1.7 raleway,
     Arial,
     sans-serif;
+}
+.preview-contact-footer p {
+  margin: 6px 0 0;
+}
+.preview-contact-footer strong {
+  font-size: 18px;
 }
 .preview-contact-footer a {
   color: #ff653b;
@@ -409,21 +417,43 @@ dialog.preview-dialog .preview-check span {
 }
 .preview-booking-help {
   font:
-    13px/1.6 raleway,
+    18px/1.6 raleway,
     Arial,
     sans-serif;
-  color: inherit;
+  color: #111;
+  background: #fff;
+  box-sizing: border-box;
+  width: 100%;
   margin: 18px 0;
-  padding: 12px 0;
-  border-top: 1px solid #777;
+  padding: 24px;
+  border-left: 5px solid #ff653b;
+}
+.preview-booking-help strong {
+  font-size: 22px;
+}
+.preview-booking-help p {
+  margin: 8px 0 16px;
+  color: #111;
+}
+.preview-booking-help a {
+  color: #111;
+  font-weight: 700;
+  text-decoration: underline;
 }
 .preview-booking-help button {
-  border: 0;
-  background: transparent;
-  color: inherit;
-  text-decoration: underline;
+  border: 2px solid #111;
+  background: #111;
+  color: #fff;
   font: inherit;
-  padding: 0;
+  font-weight: 700;
+  padding: 10px 16px;
+  min-height: 48px;
+  cursor: pointer;
+}
+.preview-booking-help :focus-visible,
+.preview-contact-footer a:focus-visible {
+  outline: 3px solid #ff653b;
+  outline-offset: 4px;
 }
 .preview-draft-note {
   font:

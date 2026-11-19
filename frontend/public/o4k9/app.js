@@ -66,7 +66,7 @@ window.addEventListener("message", (event) => {
   }
   if (msg?.type === "o4k9:review") review.showModal();
   if (msg?.type === "o4k9:title")
-    document.title = msg.title + " · Local preview";
+    document.title = msg.title + (mode === "proposed" ? " · Proposed" : " · Original");
 });
 document.getElementById("review-toggle").onclick = () => review.showModal();
 document.getElementById("review-close").onclick = () => review.close();
