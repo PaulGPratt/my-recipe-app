@@ -19,7 +19,18 @@ window.O4K9_DEMO = {
 function route() {
   let value = location.hash.slice(1) || "/";
   if (!value.startsWith("/")) value = "/";
-  const [pathname, search = ""] = value.split("?");
+  let [pathname, search = ""] = value.split("?");
+  if (mode === "proposed" && pathname === "/services") {
+    pathname = "/training";
+    history.replaceState(
+      null,
+      "",
+      location.pathname +
+        location.search +
+        "#/training" +
+        (search ? "?" + search : ""),
+    );
+  }
   let page = window.O4K9_ROUTES[pathname] || "home";
   const device = innerWidth < 768 ? "mobile" : "desktop";
   frame.style.visibility = "hidden";
@@ -66,7 +77,8 @@ window.addEventListener("message", (event) => {
   }
   if (msg?.type === "o4k9:review") review.showModal();
   if (msg?.type === "o4k9:title")
-    document.title = msg.title + (mode === "proposed" ? " · Proposed" : " · Original");
+    document.title =
+      msg.title + (mode === "proposed" ? " · Proposed" : " · Original");
 });
 document.getElementById("review-toggle").onclick = () => review.showModal();
 document.getElementById("review-close").onclick = () => review.close();

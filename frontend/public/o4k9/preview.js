@@ -145,6 +145,75 @@
     });
   }
 
+  function showTrainingPage() {
+    const root = $("#Containerv557c");
+    if (!root) return;
+    const introPhoto = $("#comp-lt8r2k0z img")?.getAttribute("src");
+    const programsPhoto = $("#comp-m398f7ff img")?.getAttribute("src");
+    const programs = [
+      {
+        name: "Bronze",
+        price: 1050,
+        weeks: "5 weeks · Management",
+        items: [
+          "Loose-leash walking",
+          "Place command",
+          "Kennel, crate and potty training",
+          "Equipment included",
+        ],
+      },
+      {
+        name: "Bronze Plus",
+        price: 1100,
+        weeks: "6 weeks",
+        items: ["Management", "Basic commands", "Equipment included"],
+      },
+      {
+        name: "Silver",
+        price: 1250,
+        weeks: "7 weeks · Off-leash preparation",
+        items: [
+          "Puppy foundations",
+          "Play and games, positions, place and recall",
+          "Equipment included",
+        ],
+      },
+      {
+        name: "Silver Plus",
+        price: 1400,
+        weeks: "8 weeks · Off-leash preparation",
+        items: ["Puppy foundations", "Public places", "Equipment included"],
+      },
+      {
+        name: "Platinum",
+        price: 2300,
+        weeks: "12+ weeks",
+        items: [
+          "Puppy foundations",
+          "Off-leash obedience",
+          "Equipment included",
+        ],
+      },
+    ];
+    const consultation = "/booking-calendar/dog-daycare-1?service=consultation";
+    const book = `<a class="preview-training-action" href="/o4k9#${consultation}" data-preview-route="${consultation}">Book a Consultation</a>`;
+    const intro = document.createElement("section");
+    intro.className = "preview-training-intro";
+    intro.innerHTML = `<div class="preview-training-inner"><h1>Dog Training</h1><p class="preview-training-lead">Obedience and behavior training in Moscow, Idaho, tailored to your dog and your goals.</p><section class="preview-training-consultation" aria-labelledby="training-consultation-title"><div><h2 id="training-consultation-title">Consultation required before training</h2><p>Every training program begins with a one-hour consultation with Blake. Discuss your dog’s behavior and goals, then choose a suitable training program together.</p></div><div><p class="preview-training-rate">1 hour · $150</p>${book}</div></section></div>`;
+    const programsSection = document.createElement("section");
+    programsSection.className = "preview-training-programs";
+    programsSection.innerHTML = `<div class="preview-training-inner"><h2>Training Programs</h2><p class="preview-training-lead">Explore the options before your consultation. Blake will help you choose the right program for your dog.</p><div class="preview-training-grid">${programs.map((p) => `<article><h3>${p.name}</h3><p class="preview-training-price">${money(p.price)}</p><p class="preview-training-duration">${p.weeks}</p><ul>${p.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div><section class="preview-training-rehab"><div><h3>Reactive Rehab</h3><p>For concerns such as lunging, growling, nipping, biting or resource guarding. Price varies; discuss your dog’s needs at the required consultation.</p></div>${book}</section><nav class="preview-training-other" aria-label="Other dog care"><span>Also looking for dog care?</span><a href="/o4k9#/dog-boarding" data-preview-route="/dog-boarding">Boarding</a><a href="/o4k9#/service-page/dog-daycare-1" data-preview-route="/service-page/dog-daycare-1">Daycare</a></nav></div>`;
+    for (const [section, photo] of [
+      [intro, introPhoto],
+      [programsSection, programsPhoto],
+    ]) {
+      if (photo)
+        section.style.backgroundImage = `linear-gradient(#0009, #000b), url("${photo}")`;
+    }
+    root.classList.add("preview-training-page");
+    root.replaceChildren(intro, programsSection);
+  }
+
   if (proposed) {
     const nav = $("#iebebgbnitemsContainer");
     if (nav) {
@@ -212,6 +281,8 @@
         a.href = "/o4k9#/dog-boarding";
         return;
       }
+      a.dataset.previewRoute = "/training";
+      a.href = "/o4k9#/training";
     });
 
     const footer = $("#SITE_FOOTER");
@@ -231,8 +302,8 @@
         "Dog training, overnight boarding and daycare in Moscow, Idaho and Latah County. Explore programs, published prices and how to book.",
       ],
       services: [
-        "Dog Training, Boarding & Daycare Services | Moscow, ID | O4K9",
-        "Explore O4K9 dog training programs, boarding and daycare in Moscow, Idaho.",
+        "Dog Training in Moscow, Idaho | O4K9",
+        "Start O4K9 dog training with a required one-hour consultation in Moscow, Idaho. Explore obedience and behavior training programs, prices and inclusions.",
       ],
       boarding: [
         "Dog Boarding in Moscow, Idaho | O4K9",
@@ -272,6 +343,8 @@
 
     if (original === "about")
       replaceText(document.body, /Let 04K9 Help/g, "Let O4K9 Help");
+
+    if (original === "services") showTrainingPage();
 
     if (["daycare", "daycare-addons", "daycare-summary"].includes(original))
       replaceText(
@@ -1038,7 +1111,7 @@
         e.preventDefault();
         info(
           "Add another service",
-          "Use the Services page to explore a consultation or daycare. No second booking is created in this local preview.",
+          "Explore Training for a consultation or the Daycare page for daycare. No second booking is created in this local preview.",
         );
         return;
       }

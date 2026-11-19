@@ -376,7 +376,7 @@ dialog.preview-dialog .preview-check span {
   background: #ff653b !important;
   border: 2px solid #ff653b !important;
   font:
-    700 18px/1.3 raleway,
+    400 18px/1.3 raleway,
     Arial,
     sans-serif;
   box-sizing: border-box;
@@ -395,6 +395,185 @@ dialog.preview-dialog .preview-check span {
 .preview-hero-actions > a:focus-visible {
   outline: 3px solid #fff;
   outline-offset: 4px;
+}
+.preview-training-page {
+  min-height: 0 !important;
+  height: auto !important;
+  pointer-events: auto;
+  color: #fff;
+  background: #000;
+  font:
+    16px/1.6 raleway,
+    Arial,
+    sans-serif;
+}
+.preview-training-page * {
+  box-sizing: border-box;
+}
+.preview-training-inner {
+  width: min(980px, 100%);
+  margin: 0 auto;
+}
+.preview-training-intro,
+.preview-training-programs {
+  padding: 44px 28px;
+  background-size: cover;
+  background-position: center;
+}
+.preview-training-page h1,
+.preview-training-page h2,
+.preview-training-page h3,
+.preview-training-page p {
+  margin: 0;
+}
+.preview-training-page h1,
+.preview-training-programs > div > h2 {
+  font:
+    28px/1.5 lulo-clean-w01-one-bold,
+    sans-serif;
+  text-align: center;
+}
+.preview-training-page .preview-training-lead {
+  max-width: 710px;
+  margin: 14px auto 28px;
+  font-size: 18px;
+  text-align: center;
+}
+.preview-training-consultation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  gap: 32px;
+  align-items: center;
+  padding: 28px;
+  background: #000;
+  border: 1px solid #777;
+}
+.preview-training-consultation h2 {
+  margin-bottom: 12px;
+  font-size: 23px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+.preview-training-consultation .preview-training-rate {
+  margin-bottom: 16px;
+  font-size: 21px;
+  text-align: center;
+}
+.preview-training-page .preview-training-action {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 52px;
+  padding: 12px 18px;
+  color: #111;
+  background: #ff653b;
+  font:
+    400 18px/1.3 raleway,
+    Arial,
+    sans-serif;
+  text-align: center;
+  text-decoration: none;
+}
+.preview-training-action:hover {
+  background: #ff825f;
+}
+.preview-training-page a:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+.preview-training-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+.preview-training-grid article {
+  padding: 24px;
+  background: #000;
+  border: 1px solid #555;
+}
+.preview-training-page h3 {
+  font-size: 23px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+.preview-training-grid .preview-training-price {
+  color: #ff653b;
+  font-size: 26px;
+  margin: 8px 0;
+}
+.preview-training-duration {
+  min-height: 52px;
+}
+.preview-training-grid ul {
+  margin: 16px 0 0;
+  padding-left: 20px;
+  list-style: disc;
+}
+.preview-training-grid li {
+  margin: 8px 0;
+}
+.preview-training-rehab {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 28px;
+  margin-top: 24px;
+  background: #000;
+  border: 1px solid #555;
+}
+.preview-training-rehab > div {
+  flex: 1;
+}
+.preview-training-rehab p {
+  margin-top: 10px;
+}
+.preview-training-other {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 32px;
+}
+.preview-training-other a {
+  color: #ff653b;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+html[data-original-device="mobile"] .preview-training-intro,
+html[data-original-device="mobile"] .preview-training-programs {
+  padding: 32px 20px;
+}
+html[data-original-device="mobile"] .preview-training-page h1,
+html[data-original-device="mobile"] .preview-training-programs > div > h2 {
+  font-size: 21px;
+}
+html[data-original-device="mobile"]
+  .preview-training-page
+  .preview-training-lead {
+  font-size: 16px;
+}
+html[data-original-device="mobile"] .preview-training-consultation,
+html[data-original-device="mobile"] .preview-training-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+html[data-original-device="mobile"] .preview-training-consultation,
+html[data-original-device="mobile"] .preview-training-grid article,
+html[data-original-device="mobile"] .preview-training-rehab {
+  padding: 20px;
+}
+html[data-original-device="mobile"] .preview-training-rehab {
+  flex-direction: column;
+  align-items: stretch;
+}
+html[data-original-device="mobile"] .preview-training-consultation h2,
+html[data-original-device="mobile"] .preview-training-page h3 {
+  font-size: 21px;
+}
+html[data-original-device="mobile"]
+  .preview-training-page
+  .preview-training-action {
+  width: 100%;
+  font-size: 16px;
 }
 .preview-boarding-intro {
   max-width: 920px;
@@ -445,7 +624,7 @@ dialog.preview-dialog .preview-check span {
   background: #111;
   color: #fff;
   font: inherit;
-  font-weight: 700;
+  font-weight: 400;
   padding: 10px 16px;
   min-height: 48px;
   cursor: pointer;
