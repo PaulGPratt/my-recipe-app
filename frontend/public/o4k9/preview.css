@@ -496,10 +496,6 @@ dialog.preview-dialog .preview-check span {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-.preview-training-page .preview-program-fee {
-  font-size: 16px;
-  margin: 12px 0;
-}
 .preview-training-page .preview-training-next {
   margin: 28px 0;
   text-align: center;

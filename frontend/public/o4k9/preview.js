@@ -146,7 +146,6 @@
   }
 
   const trainingRoute = "/service-page/one-hour-dog-training-consultation";
-  const consultationFee = 150;
   const trainingPrograms = [
     {
       name: "Bronze",
@@ -199,7 +198,7 @@
     return trainingPrograms
       .map(
         (p) =>
-          `<article><h3><a href="/o4k9#${trainingRoute}?section=pricing" data-preview-route="${trainingRoute}?section=pricing">${p.name}</a></h3><p class="preview-training-price">${programMoney(p.price)}</p><p class="preview-training-duration">${p.weeks}</p><p class="preview-program-fee">Plus $150 required consultation<br><strong>${programMoney(p.price + consultationFee)} program + consultation</strong></p><ul>${p.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`,
+          `<article><h3><a href="/o4k9#${trainingRoute}?section=pricing" data-preview-route="${trainingRoute}?section=pricing">${p.name}</a></h3><p class="preview-training-price">${programMoney(p.price)}</p><p class="preview-training-duration">${p.weeks}</p><ul>${p.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`,
       )
       .join("");
   }
@@ -233,7 +232,7 @@
     pricing.id = "training-pricing";
     pricing.className = "preview-training-page preview-consultation-pricing";
     pricing.setAttribute("aria-labelledby", "training-pricing-title");
-    pricing.innerHTML = `<h2 id="training-pricing-title">Training Programs &amp; Pricing</h2><p>All programs require the $150 consultation. The consultation fee is additional to the program price and is not credited toward it. Choose your program with Blake after the consultation.</p><table class="preview-program-prices"><caption>Program prices and the additional consultation fee</caption><thead><tr><th scope="col">Program</th><th scope="col">Duration</th><th scope="col">Program price</th><th scope="col">Program + consultation</th></tr></thead><tbody>${trainingPrograms.map((p) => `<tr><th scope="row">${p.name}</th><td data-label="Duration">${p.weeks.split(" · ")[0]}</td><td data-label="Program price">${programMoney(p.price)}</td><td data-label="Program + consultation">${programMoney(p.price + consultationFee)}</td></tr>`).join("")}</tbody></table><h3 class="preview-inclusions-title">What the programs include</h3><div class="preview-training-grid">${trainingPrograms.map((p) => `<article><h3>${p.name}</h3><ul>${p.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div><section class="preview-training-rehab"><div><h3>Reactive Rehab</h3><p>Program pricing varies with your dog’s needs. The required $150 consultation is additional to the program fee.</p></div></section>`;
+    pricing.innerHTML = `<h2 id="training-pricing-title">Training Programs &amp; Pricing</h2><p>All programs require the $150 consultation. The consultation fee is additional to the program price and is not credited toward it. Choose your program with Blake after the consultation.</p><table class="preview-program-prices"><caption>Program prices</caption><thead><tr><th scope="col">Program</th><th scope="col">Duration</th><th scope="col">Program price</th></tr></thead><tbody>${trainingPrograms.map((p) => `<tr><th scope="row">${p.name}</th><td data-label="Duration">${p.weeks.split(" · ")[0]}</td><td data-label="Program price">${programMoney(p.price)}</td></tr>`).join("")}</tbody></table><h3 class="preview-inclusions-title">What the programs include</h3><div class="preview-training-grid">${trainingPrograms.map((p) => `<article><h3>${p.name}</h3><ul>${p.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div><section class="preview-training-rehab"><div><h3>Reactive Rehab</h3><p>Program pricing varies with your dog’s needs. The required $150 consultation is additional to the program fee.</p></div></section>`;
     const before =
       body.querySelector('[data-section-type="GALLERY"]') ||
       body.querySelector('[data-section-type="POLICY"]');
