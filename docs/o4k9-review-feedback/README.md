@@ -1,6 +1,6 @@
 # O4K9 Website Proposal — current review evidence
 
-The 16-slide presentation compares the current O4K9 site with **Proposed**. Fresh November 19 browser captures show the existing consultation page, transparent program pricing, revised homepage program information and separate care services. All proposed screens come from the local disconnected mockup at `http://127.0.0.1:3050/o4k9`.
+The 16-slide presentation compares the current O4K9 site with **Proposed**. Fresh November 19 browser captures show the existing consultation page, transparent program pricing, revised homepage program information and separate care services. Slides 10 and 11 show full browser screenshots of help and the contact footer in page context, without focus-highlight boxes. The trainer-title slide uses one page image beside its metadata comparison. The decisions slide has two columns, fuller training/navigation and homepage summaries, and no booking-reliability row. The order groups homepage changes, consultation/pricing, booking language/help, contact details, SEO and the review summary. All proposed screens come from the local disconnected mockup at `http://127.0.0.1:3050/o4k9`.
 
 ## Training uses the existing consultation page
 
