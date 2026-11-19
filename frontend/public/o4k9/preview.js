@@ -145,73 +145,104 @@
     });
   }
 
-  function showTrainingPage() {
-    const root = $("#Containerv557c");
+  const trainingRoute = "/service-page/one-hour-dog-training-consultation";
+  const consultationFee = 150;
+  const trainingPrograms = [
+    {
+      name: "Bronze",
+      price: 1050,
+      weeks: "5 weeks · Management",
+      items: [
+        "Loose-leash walking",
+        "Place command",
+        "Kennel, crate and potty training",
+        "Equipment included",
+      ],
+    },
+    {
+      name: "Bronze Plus",
+      price: 1100,
+      weeks: "6 weeks",
+      items: ["Management", "Basic commands", "Equipment included"],
+    },
+    {
+      name: "Silver",
+      price: 1250,
+      weeks: "7 weeks · Off-leash preparation",
+      items: [
+        "Puppy foundations",
+        "Play and games, positions, place and recall",
+        "Equipment included",
+      ],
+    },
+    {
+      name: "Silver Plus",
+      price: 1400,
+      weeks: "8 weeks · Off-leash preparation",
+      items: ["Puppy foundations", "Public places", "Equipment included"],
+    },
+    {
+      name: "Platinum",
+      price: 2300,
+      weeks: "12+ weeks",
+      items: [
+        "Puppy foundations",
+        "Management",
+        "Off-leash obedience",
+        "Equipment included",
+      ],
+    },
+  ];
+  const programMoney = (value) => "$" + value.toLocaleString("en-US");
+
+  function programCards() {
+    return trainingPrograms
+      .map(
+        (p) =>
+          `<article><h3><a href="/o4k9#${trainingRoute}?section=pricing" data-preview-route="${trainingRoute}?section=pricing">${p.name}</a></h3><p class="preview-training-price">${programMoney(p.price)}</p><p class="preview-training-duration">${p.weeks}</p><p class="preview-program-fee">Plus $150 required consultation<br><strong>${programMoney(p.price + consultationFee)} program + consultation</strong></p><ul>${p.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`,
+      )
+      .join("");
+  }
+
+  function showHomeOfferings() {
+    const root = $("#comp-lt8r2k23");
     if (!root) return;
-    const introPhoto = $("#comp-lt8r2k0z img")?.getAttribute("src");
-    const programsPhoto = $("#comp-m398f7ff img")?.getAttribute("src");
-    const programs = [
-      {
-        name: "Bronze",
-        price: 1050,
-        weeks: "5 weeks · Management",
-        items: [
-          "Loose-leash walking",
-          "Place command",
-          "Kennel, crate and potty training",
-          "Equipment included",
-        ],
-      },
-      {
-        name: "Bronze Plus",
-        price: 1100,
-        weeks: "6 weeks",
-        items: ["Management", "Basic commands", "Equipment included"],
-      },
-      {
-        name: "Silver",
-        price: 1250,
-        weeks: "7 weeks · Off-leash preparation",
-        items: [
-          "Puppy foundations",
-          "Play and games, positions, place and recall",
-          "Equipment included",
-        ],
-      },
-      {
-        name: "Silver Plus",
-        price: 1400,
-        weeks: "8 weeks · Off-leash preparation",
-        items: ["Puppy foundations", "Public places", "Equipment included"],
-      },
-      {
-        name: "Platinum",
-        price: 2300,
-        weeks: "12+ weeks",
-        items: [
-          "Puppy foundations",
-          "Off-leash obedience",
-          "Equipment included",
-        ],
-      },
-    ];
-    const consultation = "/booking-calendar/dog-daycare-1?service=consultation";
-    const book = `<a class="preview-training-action" href="/o4k9#${consultation}" data-preview-route="${consultation}">Book a Consultation</a>`;
-    const intro = document.createElement("section");
-    intro.className = "preview-training-intro";
-    intro.innerHTML = `<div class="preview-training-inner"><h1>Dog Training</h1><p class="preview-training-lead">Obedience and behavior training in Moscow, Idaho, tailored to your dog and your goals.</p><section class="preview-training-consultation" aria-labelledby="training-consultation-title"><div><h2 id="training-consultation-title">Consultation required before training</h2><p>Every training program begins with a one-hour consultation with Blake. Discuss your dog’s behavior and goals, then choose a suitable training program together.</p></div><div><p class="preview-training-rate">1 hour · $150</p>${book}</div></section></div>`;
-    const programsSection = document.createElement("section");
-    programsSection.className = "preview-training-programs";
-    programsSection.innerHTML = `<div class="preview-training-inner"><h2>Training Programs</h2><p class="preview-training-lead">Explore the options before your consultation. Blake will help you choose the right program for your dog.</p><div class="preview-training-grid">${programs.map((p) => `<article><h3>${p.name}</h3><p class="preview-training-price">${money(p.price)}</p><p class="preview-training-duration">${p.weeks}</p><ul>${p.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div><section class="preview-training-rehab"><div><h3>Reactive Rehab</h3><p>For concerns such as lunging, growling, nipping, biting or resource guarding. Price varies; discuss your dog’s needs at the required consultation.</p></div>${book}</section><nav class="preview-training-other" aria-label="Other dog care"><span>Also looking for dog care?</span><a href="/o4k9#/dog-boarding" data-preview-route="/dog-boarding">Boarding</a><a href="/o4k9#/service-page/dog-daycare-1" data-preview-route="/service-page/dog-daycare-1">Daycare</a></nav></div>`;
-    for (const [section, photo] of [
-      [intro, introPhoto],
-      [programsSection, programsPhoto],
-    ]) {
-      if (photo)
-        section.style.backgroundImage = `linear-gradient(#0009, #000b), url("${photo}")`;
-    }
-    root.classList.add("preview-training-page");
-    root.replaceChildren(intro, programsSection);
+    const photo = root.querySelector("img")?.getAttribute("src");
+    const section = document.createElement("section");
+    section.className = "preview-training-programs";
+    section.innerHTML = `<div class="preview-training-inner"><h2>Training Programs &amp; Pricing</h2><p class="preview-training-lead">Training starts with a required one-hour consultation ($150). The consultation fee is additional to program prices. Blake will help you choose the right program for your dog.</p><div class="preview-training-grid">${programCards()}</div><p class="preview-training-next"><a class="preview-training-action" href="/o4k9#${trainingRoute}" data-preview-route="${trainingRoute}">Book a Consultation</a></p><section class="preview-training-rehab"><div><h3>Reactive Rehab</h3><p>Support for concerns such as lunging, growling, nipping, biting or resource guarding. Program pricing varies. The required $150 consultation is additional to the program fee.</p></div><a href="/o4k9#${trainingRoute}" data-preview-route="${trainingRoute}">Discuss at a consultation</a></section><section class="preview-other-care" aria-labelledby="other-care-title"><h2 id="other-care-title">Boarding &amp; Daycare</h2><div class="preview-other-care-grid"><article><h3>Dog Boarding</h3><p class="preview-training-price">$50 per night</p><p>First dog: $50/night. Add $40/night for a second dog and $20/night for a third.</p><p>Dogs are let out multiple times daily, walked, worked and played with.</p><a class="preview-training-action" href="/o4k9#/dog-boarding" data-preview-route="/dog-boarding">Book Boarding</a></article><article><h3>Dog Daycare</h3><p class="preview-training-price">$25 per day</p><p>Daycare during operating hours. Confirm arrival arrangements with Blake.</p><a class="preview-training-action" href="/o4k9#/service-page/dog-daycare-1" data-preview-route="/service-page/dog-daycare-1">Book Daycare</a></article></div></section></div>`;
+    if (photo)
+      section.style.backgroundImage = `linear-gradient(#0009, #000b), url("${photo}")`;
+    root.classList.add("preview-training-page", "preview-home-offerings");
+    root.replaceChildren(section);
+  }
+
+  function addConsultationPricing() {
+    const root = $("#TPAMultiSection_kj2y03fv");
+    const body = root?.querySelector('[data-hook="body-children-wrapper"]');
+    if (!body) return;
+    const description = body.querySelector('[data-section-type="DESCRIPTION"]');
+    const note = document.createElement("aside");
+    note.className = "preview-consultation-note";
+    note.innerHTML =
+      '<p><strong>Consultation required before training.</strong> This one-hour consultation costs $150, in addition to the training program price.</p><button type="button">View training program pricing</button>';
+    note.querySelector("button").onclick = () =>
+      $("#training-pricing")?.scrollIntoView({ block: "start" });
+    description?.before(note);
+    const pricing = document.createElement("section");
+    pricing.id = "training-pricing";
+    pricing.className = "preview-training-page preview-consultation-pricing";
+    pricing.setAttribute("aria-labelledby", "training-pricing-title");
+    pricing.innerHTML = `<h2 id="training-pricing-title">Training Programs &amp; Pricing</h2><p>All programs require the $150 consultation. The consultation fee is additional to the program price and is not credited toward it. Choose your program with Blake after the consultation.</p><table class="preview-program-prices"><caption>Program prices and the additional consultation fee</caption><thead><tr><th scope="col">Program</th><th scope="col">Duration</th><th scope="col">Program price</th><th scope="col">Program + consultation</th></tr></thead><tbody>${trainingPrograms.map((p) => `<tr><th scope="row">${p.name}</th><td data-label="Duration">${p.weeks.split(" · ")[0]}</td><td data-label="Program price">${programMoney(p.price)}</td><td data-label="Program + consultation">${programMoney(p.price + consultationFee)}</td></tr>`).join("")}</tbody></table><h3 class="preview-inclusions-title">What the programs include</h3><div class="preview-training-grid">${trainingPrograms.map((p) => `<article><h3>${p.name}</h3><ul>${p.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div><section class="preview-training-rehab"><div><h3>Reactive Rehab</h3><p>Program pricing varies with your dog’s needs. The required $150 consultation is additional to the program fee.</p></div></section>`;
+    const before =
+      body.querySelector('[data-section-type="GALLERY"]') ||
+      body.querySelector('[data-section-type="POLICY"]');
+    if (before) before.before(pricing);
+    else body.append(pricing);
+    if (new URLSearchParams(location.search).get("section") === "pricing")
+      document.fonts.ready.then(() =>
+        pricing.scrollIntoView({ block: "start" }),
+      );
   }
 
   if (proposed) {
@@ -281,8 +312,12 @@
         a.href = "/o4k9#/dog-boarding";
         return;
       }
-      a.dataset.previewRoute = "/training";
-      a.href = "/o4k9#/training";
+      a.dataset.previewRoute = trainingRoute;
+      a.href = "/o4k9#" + trainingRoute;
+    });
+
+    $$('[data-hook="breadcrumb"]').forEach((item) => {
+      if (item.textContent.trim() === "Service list") item.remove();
     });
 
     const footer = $("#SITE_FOOTER");
@@ -301,9 +336,9 @@
         "Dog Training, Boarding & Daycare | Moscow, Idaho | O4K9",
         "Dog training, overnight boarding and daycare in Moscow, Idaho and Latah County. Explore programs, published prices and how to book.",
       ],
-      services: [
-        "Dog Training in Moscow, Idaho | O4K9",
-        "Start O4K9 dog training with a required one-hour consultation in Moscow, Idaho. Explore obedience and behavior training programs, prices and inclusions.",
+      consultation: [
+        "Dog Training Consultation & Program Prices | Moscow, ID | O4K9",
+        "Book the required one-hour O4K9 dog training consultation in Moscow, Idaho for $150. Explore program prices; the consultation fee is additional.",
       ],
       boarding: [
         "Dog Boarding in Moscow, Idaho | O4K9",
@@ -344,7 +379,7 @@
     if (original === "about")
       replaceText(document.body, /Let 04K9 Help/g, "Let O4K9 Help");
 
-    if (original === "services") showTrainingPage();
+    if (original === "consultation") addConsultationPricing();
 
     if (["daycare", "daycare-addons", "daycare-summary"].includes(original))
       replaceText(
@@ -423,6 +458,7 @@
         requestAnimationFrame(place);
         window.addEventListener("resize", place);
       }
+      showHomeOfferings();
     }
 
     if (boardingPage) {

@@ -1,0 +1,99 @@
+{
+  "checkedAt": "2026-11-19",
+  "method": "Actual desktop and mobile browser review; local demonstration only",
+  "canonicalRoute": "/service-page/one-hour-dog-training-consultation",
+  "legacyAliases": [
+    "/services",
+    "/training"
+  ],
+  "aliasesNormalizeToCanonical": true,
+  "consultation": {
+    "fee": 150,
+    "additionalToProgramPrice": true,
+    "creditedTowardProgram": false,
+    "demoCheckoutTotal": 150,
+    "submitted": false
+  },
+  "programs": [
+    {
+      "name": "Bronze",
+      "weeks": "5",
+      "programPrice": 1050,
+      "programPlusConsultation": 1200
+    },
+    {
+      "name": "Bronze Plus",
+      "weeks": "6",
+      "programPrice": 1100,
+      "programPlusConsultation": 1250
+    },
+    {
+      "name": "Silver",
+      "weeks": "7",
+      "programPrice": 1250,
+      "programPlusConsultation": 1400
+    },
+    {
+      "name": "Silver Plus",
+      "weeks": "8",
+      "programPrice": 1400,
+      "programPlusConsultation": 1550
+    },
+    {
+      "name": "Platinum",
+      "weeks": "12+",
+      "programPrice": 2300,
+      "programPlusConsultation": 2450
+    }
+  ],
+  "consultationSectionOrder": [
+    "TITLE_TAGLINE",
+    "DETAILS",
+    "fee notice",
+    "DESCRIPTION",
+    "training-pricing",
+    "GALLERY",
+    "POLICY",
+    "CONTACT",
+    "PLUGIN"
+  ],
+  "home": {
+    "informationalProgramCards": 5,
+    "careCards": 2,
+    "chooseYourPlanRemoved": true,
+    "reactiveRehabSeparate": true,
+    "careDestinationsVerified": [
+      "/dog-boarding",
+      "/service-page/dog-daycare-1"
+    ]
+  },
+  "desktop": {
+    "viewport": [
+      1280,
+      720
+    ],
+    "pricingJumpTopPx": 154.94,
+    "allFivePriceRowsVisible": true
+  },
+  "mobile": {
+    "viewport": [
+      390,
+      844
+    ],
+    "wixCanvasClientWidth": 320,
+    "homeCanvasScrollWidth": 320,
+    "consultationCanvasScrollWidth": 320,
+    "tableUsesLabeledRows": true,
+    "captionWidthPx": 280,
+    "pricingJumpTopPx": 12
+  },
+  "baselineConsultation": {
+    "addedPricingSections": 0,
+    "addedFeeNotices": 0,
+    "cancellationPolicyPreserved": true
+  },
+  "daycare": {
+    "consultationPricingSections": 0
+  },
+  "noLiveSubmission": true
+}
