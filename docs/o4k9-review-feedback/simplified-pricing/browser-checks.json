@@ -1,0 +1,74 @@
+{
+  "checkedAt": "2026-11-19",
+  "desktopViewport": [
+    1280,
+    720
+  ],
+  "mobileViewport": [
+    390,
+    844
+  ],
+  "home": {
+    "programCards": 5,
+    "cardsMentioningConsultationFee": 0,
+    "feeExplanationAboveCards": true
+  },
+  "pricing": {
+    "headers": [
+      "Program",
+      "Duration",
+      "Program price"
+    ],
+    "rows": [
+      [
+        "Bronze",
+        "5 weeks",
+        "$1,050"
+      ],
+      [
+        "Bronze Plus",
+        "6 weeks",
+        "$1,100"
+      ],
+      [
+        "Silver",
+        "7 weeks",
+        "$1,250"
+      ],
+      [
+        "Silver Plus",
+        "8 weeks",
+        "$1,400"
+      ],
+      [
+        "Platinum",
+        "12+ weeks",
+        "$2,300"
+      ]
+    ],
+    "columnsPerRow": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "additionalFeeExplainedAboveTable": true,
+    "combinedCostColumn": false,
+    "beforeGalleryAndCancellationPolicy": true
+  },
+  "mobile": {
+    "homeClientWidth": 320,
+    "homeScrollWidth": 320,
+    "consultationClientWidth": 320,
+    "consultationScrollWidth": 320,
+    "captionWidth": 280,
+    "programLinkOpenedConsultationPricing": true
+  },
+  "submitted": false,
+  "presentation": {
+    "slideCount": 15,
+    "combinedSlideTitle": "Proposed Additions",
+    "addedHighlightBoxes": false
+  }
+}

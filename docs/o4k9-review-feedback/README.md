@@ -1,85 +1,90 @@
-# O4K9 review feedback — November 19, 2026
+# O4K9 Website Proposal — current review evidence
 
-The revised homepage keeps the original photograph and headline. Its three actions use solid orange backgrounds, dark labels at the original normal 400 weight, larger targets and a visible keyboard focus outline. The service/location line is larger, with dark shading behind the hero text. On mobile the actions stack inside the hero without horizontal overflow.
+The 15-slide presentation compares the current O4K9 site with **Proposed**. Fresh November 19 browser captures show the existing consultation page, transparent program pricing, revised homepage program information and separate care services. The help and footer slides show full browser screenshots of help and the contact footer in page context, without focus-highlight boxes. The trainer-title slide uses one page image beside its metadata comparison. The decisions slide has two columns, fuller training/navigation and homepage summaries, and no booking-reliability row. The order groups homepage changes, consultation/pricing, booking language/help, contact details, SEO and the review summary. All proposed screens come from the local disconnected mockup at `http://127.0.0.1:3050/o4k9`.
 
-The rejected training-package popup has been removed. Training/package links now open the dedicated Training page, with the required consultation first. The separate boarding-card destination fix remains.
+## Training uses the existing consultation page
 
-The presentation is titled **O4K9 Website Proposal** and has 15 slides. It uses “Proposed” consistently and omits repetitive comparison subtitles. The standalone spelling slide was removed; two new comparisons explain the required consultation and program inclusions. The amenities slide says **Clean up Hotel Amenities listing**. The closing slide focuses on Blake’s decisions.
+Training and Start Training open `/service-page/one-hour-dog-training-consultation`. Proposed normalizes legacy `/services` and `/training` links to this existing URL. The native consultation details and Book Now path remain. Blake confirmed that its required **$150 consultation fee is additional to the program price and is not credited**.
 
-The homepage action now says **Book Boarding**. Menus, actions and service copy consistently use **Training, Boarding, Daycare**. The help panel uses readable dark text on white, and the contact footer is visible above the original Wix background. Mobile layouts were checked at 390×844 without horizontal overflow. The date-enquiry button opens Contact with the date filled in and does not submit anything.
+Current live page:
 
-The user confirmed the language controls in Blake’s installed app at **Hotels → Property Setup → Languages → Booking Engine**. Proposed uses Dogs/Kennels wording, including the details panels and accessible labels. See [Wix Hotels feasibility and documentation links](wix-hotels-feasibility.md).
-
-These captures show the working branch served at `http://127.0.0.1:3050/o4k9#/`, pending deployment. The desktop before image is a fresh capture of the live original site. The mobile before image uses the preserved original Wix mobile snapshot in baseline mode. Screenshots are actual browser captures; the presentation crops the action area for readability.
-
-## Desktop
-
-Before:
-
-![Original live homepage](home-desktop-before.jpg)
-
-After:
-
-![Revised local homepage](home-desktop-after.jpg)
-
-## Mobile
-
-Before:
-
-![Original mobile baseline](home-mobile-before.jpg)
-
-After:
-
-![Revised local mobile homepage](home-mobile-after.jpg)
-
-## Training begins with the required consultation
-
-Blake requires a consultation before every training program. Training leads with the existing one-hour, $150 consultation. Programs preserve existing prices/durations and show the inclusions published on the homepage. The booking action opens the disconnected consultation calendar and continues to a $150 summary. No booking is submitted.
-
-Before:
-
-![Original Services page](training-before.jpg)
+![Current consultation page](consultation-pricing/consultation-before.jpg)
 
 Proposed:
 
-![Consultation-first Training page](training-proposed.jpg)
+![Consultation with additional-fee notice](simplified-pricing/consultation-proposed.jpg)
 
-![Published program inclusions](programs-proposed.jpg)
+[Combined Proposed Additions comparison](simplified-pricing/proposed-additions-slide.png)
 
-![Remaining programs and Reactive Rehab consultation action](programs-lower-proposed.jpg)
+## Program prices before the cancellation policy
 
-Mobile:
+Pricing and published inclusions appear before the gallery and cancellation policy. The table shows program name, duration and program price only. The additional $150 consultation fee is explained above the table; the consultation booking itself remains $150. The presentation combines the consultation notice and pricing into “Proposed Additions,” using actual screenshot crops focused on these new sections.
 
-![Mobile Training page](training-mobile-proposed.jpg)
+| Program | Duration | Program price |
+| --- | --- | ---: |
+| Bronze | 5 weeks | $1,050 |
+| Bronze Plus | 6 weeks | $1,100 |
+| Silver | 7 weeks | $1,250 |
+| Silver Plus | 8 weeks | $1,400 |
+| Platinum | 12+ weeks | $2,300 |
 
-![Mobile program card](programs-mobile-proposed.jpg)
+Current policy area:
 
-## Boarding wording
+![Current page without program pricing](consultation-pricing/pricing-before.jpg)
 
-![Dog and kennel wording in the boarding form](boarding-proposed.jpg)
+Proposed desktop and mobile:
 
-## Readable booking help
+![Proposed program pricing table](simplified-pricing/pricing-proposed.jpg)
 
-![Help panel and contact footer](booking-help-proposed.jpg)
+![Mobile pricing with labeled rows](simplified-pricing/pricing-mobile-proposed.jpg)
 
-## Contact footer
+![Native consultation booking summary remains $150](consultation-pricing/consultation-booking-summary.jpg)
 
-![Visible contact footer](footer-proposed.jpg)
+## Homepage explains programs before booking
 
-## Mobile menu, help and footer
+Replace “Choose your Plan” with “Training Programs & Pricing.” Five informational cards retain the published prices, durations and inclusions. The section introduction explains the extra consultation fee once, above the cards; links jump to the existing consultation page's pricing. One Book a Consultation action follows the cards. Reactive Rehab remains a separate variable-price entry with the additional consultation explained.
 
-![Consistent mobile service order](menu-mobile-proposed.jpg)
+Current live section:
 
-![Readable mobile help and footer](help-footer-mobile-proposed.jpg)
+![Current Choose your Plan section](consultation-pricing/home-training-before.jpg)
 
-## Verification
+Proposed:
 
-- Desktop labels: normal 400 weight at 18px; actions at least 54px tall.
-- Mobile labels: normal 400 weight at 16px; actions at least 48px tall on the original 320px canvas. Canvas scroll width equals client width (320px).
-- `#111111` text on `#FF653B` buttons: calculated contrast 6.45:1. [W3C text-contrast reference](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html).
-- Keyboard navigation shows a white focus outline; all three actions remain links.
-- Baseline mode adds neither the revised hero actions nor the shading.
-- Training/package links navigate to Training without package popups. Legacy Proposed `#/services` links normalize to `#/training`; the original Services snapshot remains available in baseline mode.
-- JS syntax and static isolation/resource checks pass. All 533 HTTP checks pass across 98 snapshots and 530 resources; see [route checks](../o4k9-route-checks.json).
+![Proposed training programs and pricing](simplified-pricing/home-training-proposed.jpg)
 
-Current Training/button evidence is in [training-review-checks.json](training-review-checks.json). Earlier boarding/footer checks are in [blake-review-checks.json](blake-review-checks.json), and initial button/focus geometry is in [browser-checks.json](browser-checks.json). The renamed Add kennel action was also verified: it updates only the demo stay and shows a $50 sample total. No real bookings, logins, payments or messages were submitted. Existing Firebase configuration requirements for the full recipe-app production build are described in [preview documentation](../o4k9-preview.md).
+![Mobile program card and fee disclosure](simplified-pricing/home-mobile-proposed.jpg)
+
+## Boarding and Daycare have their own care group
+
+Published rates and direct booking links sit outside the training programs. Boarding starts at $50/night for the first dog, plus $40 for a second and $20 for a third. Daycare is $25/day. Reactive Rehab has its own entry rather than sharing a numbered plan list.
+
+Current live section:
+
+![Current mixed training and care list](consultation-pricing/home-care-before.jpg)
+
+Proposed:
+
+![Separate Boarding and Daycare cards](consultation-pricing/home-care-proposed.jpg)
+
+![Separate Reactive Rehab entry](consultation-pricing/home-reactive-proposed.jpg)
+
+![Mobile care cards](consultation-pricing/home-care-mobile-proposed.jpg)
+
+## Other accepted recommendations
+
+The hero retains the original photograph and headline. Its solid orange actions use normal 400-weight labels and larger targets. Navigation and service text use Training, Boarding, Daycare consistently, with Book Boarding wording. The readable help panel, contact footer, Dogs/Kennels labels and amenities cleanup remain in the presentation.
+
+- [Desktop hero](home-desktop-after.jpg) and [mobile hero](home-mobile-after.jpg)
+- [Boarding wording](boarding-proposed.jpg)
+- [Readable help](booking-help-proposed.jpg) and [footer](footer-proposed.jpg)
+- [Mobile menu](menu-mobile-proposed.jpg) and [mobile help/footer](help-footer-mobile-proposed.jpg)
+
+The user confirmed the installed language controls at **Hotels → Property Setup → Languages → Booking Engine**. See [Wix Hotels documentation](wix-hotels-feasibility.md).
+
+## Verification and Wix implementation
+
+[Current browser checks](simplified-pricing/browser-checks.json) record all five program prices, three-column pricing, fee explanations above the cards/table, the program-to-pricing link and mobile layout. [Earlier flow checks](consultation-pricing/browser-checks.json) record canonical routing, aliases, section order, the $150 consultation summary and separate care destinations; their combined-cost display has since been removed. At 390×844, the original Wix canvas has matching client/scroll widths of 320px on home and consultation. Mobile pricing uses stacked labeled rows. Baseline has no added pricing or fee notice, and Daycare has no consultation pricing. No real booking, login, payment or message was submitted.
+
+JS syntax and isolation/resource checks pass. [Route checks](../o4k9-route-checks.json) cover 98 snapshots and 530 resources with 533 successful HTTP checks. Earlier hero/focus evidence is in [browser-checks.json](browser-checks.json), and boarding/footer checks are in [blake-review-checks.json](blake-review-checks.json). Earlier bespoke Training-page captures are historical, not the current proposal.
+
+In Wix, redirect `/services` to the existing consultation URL and point navigation there. Add pricing to the consultation's service-specific description or supported elements. Verify the editor's placement/table controls; do not add consultation content indiscriminately to the shared Daycare service-page template. This local hash redirect is a demonstration, not an HTTP 301. No production Wix content was changed. See [preview documentation](../o4k9-preview.md) for app isolation and the existing Firebase-dependent production-build limitation.

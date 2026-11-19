@@ -20,14 +20,15 @@ function route() {
   let value = location.hash.slice(1) || "/";
   if (!value.startsWith("/")) value = "/";
   let [pathname, search = ""] = value.split("?");
-  if (mode === "proposed" && pathname === "/services") {
-    pathname = "/training";
+  if (mode === "proposed" && ["/services", "/training"].includes(pathname)) {
+    pathname = "/service-page/one-hour-dog-training-consultation";
     history.replaceState(
       null,
       "",
       location.pathname +
         location.search +
-        "#/training" +
+        "#" +
+        pathname +
         (search ? "?" + search : ""),
     );
   }

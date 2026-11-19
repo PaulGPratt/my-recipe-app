@@ -491,6 +491,123 @@ dialog.preview-dialog .preview-check span {
   background: #000;
   border: 1px solid #555;
 }
+.preview-training-grid h3 a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.preview-training-page .preview-training-next {
+  margin: 28px 0;
+  text-align: center;
+}
+.preview-home-offerings,
+.preview-consultation-note,
+.preview-consultation-pricing {
+  pointer-events: auto !important;
+}
+.preview-training-rehab > a {
+  color: #ff653b;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.preview-other-care > h2 {
+  font:
+    24px/1.6 lulo-clean-w01-one-bold,
+    sans-serif;
+  margin: 52px 0 24px;
+  text-align: center;
+}
+.preview-other-care-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+.preview-other-care-grid article {
+  padding: 28px;
+  background: #000;
+  border: 1px solid #555;
+}
+.preview-other-care-grid p {
+  margin: 14px 0;
+}
+.preview-other-care-grid .preview-training-price {
+  font-size: 26px;
+  color: #ff653b;
+}
+.preview-consultation-note {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 20px;
+  margin: 24px 0;
+  background: #181818;
+  border-left: 4px solid #ff653b;
+  color: #fff;
+  font:
+    16px/1.6 raleway,
+    Arial,
+    sans-serif;
+}
+.preview-consultation-note button {
+  margin-top: 8px;
+  padding: 8px 0;
+  min-height: 44px;
+  border: 0;
+  background: none;
+  color: #ff653b;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+.preview-consultation-note button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+.preview-consultation-pricing {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 32px 0;
+  padding: 24px;
+  border-top: 1px solid #777;
+  scroll-margin-top: 18px;
+  text-align: left;
+}
+.preview-consultation-pricing > h2 {
+  font:
+    24px/1.6 lulo-clean-w01-one-bold,
+    sans-serif;
+}
+.preview-consultation-pricing > p {
+  margin: 18px 0 24px;
+}
+.preview-program-prices {
+  width: 100%;
+  border-collapse: collapse;
+  color: #fff;
+  font: inherit;
+}
+.preview-program-prices caption {
+  text-align: left;
+  padding-bottom: 12px;
+}
+.preview-program-prices th,
+.preview-program-prices td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #777;
+}
+.preview-program-prices thead {
+  background: #222;
+}
+.preview-program-prices th {
+  font-weight: 600;
+}
+.preview-consultation-pricing .preview-inclusions-title {
+  margin: 32px 0 20px;
+}
 .preview-training-page h3 {
   font-size: 23px;
   line-height: 1.4;
@@ -553,8 +670,59 @@ html[data-original-device="mobile"]
   font-size: 16px;
 }
 html[data-original-device="mobile"] .preview-training-consultation,
-html[data-original-device="mobile"] .preview-training-grid {
+html[data-original-device="mobile"] .preview-training-grid,
+html[data-original-device="mobile"] .preview-other-care-grid {
   grid-template-columns: minmax(0, 1fr);
+}
+html[data-original-device="mobile"] .preview-other-care-grid article {
+  padding: 20px;
+}
+html[data-original-device="mobile"] .preview-consultation-pricing {
+  padding: 16px 0;
+  scroll-margin-top: 12px;
+}
+html[data-original-device="mobile"] .preview-consultation-pricing > h2,
+html[data-original-device="mobile"] .preview-other-care > h2 {
+  font-size: 21px;
+}
+html[data-original-device="mobile"] .preview-program-prices thead {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+html[data-original-device="mobile"] .preview-program-prices,
+html[data-original-device="mobile"] .preview-program-prices tbody,
+html[data-original-device="mobile"] .preview-program-prices tr {
+  display: block;
+  width: 100%;
+}
+html[data-original-device="mobile"] .preview-program-prices caption {
+  display: block;
+  width: 100%;
+}
+html[data-original-device="mobile"] .preview-program-prices tr {
+  padding: 16px 0;
+  border-bottom: 1px solid #777;
+}
+html[data-original-device="mobile"] .preview-program-prices tbody th {
+  display: block;
+  border: 0;
+  padding: 4px 0 10px;
+  font-size: 20px;
+}
+html[data-original-device="mobile"] .preview-program-prices td {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border: 0;
+}
+html[data-original-device="mobile"] .preview-program-prices td::before {
+  content: attr(data-label);
+  max-width: 58%;
+  font-weight: 600;
 }
 html[data-original-device="mobile"] .preview-training-consultation,
 html[data-original-device="mobile"] .preview-training-grid article,
