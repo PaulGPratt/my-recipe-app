@@ -67,60 +67,6 @@
 
   const boardingPage = original.startsWith("boarding");
 
-  const plans = [
-    {
-      name: "Bronze",
-      price: 1050,
-      weeks: 5,
-      items: [
-        "Management",
-        "Loose-leash walking",
-        "Place command",
-        "Kennel/crate/potty training",
-        "Equipment included",
-      ],
-    },
-    {
-      name: "Bronze Plus",
-      price: 1100,
-      weeks: 6,
-      items: ["Management", "Basic commands", "Equipment included"],
-    },
-    {
-      name: "Silver",
-      price: 1250,
-      weeks: 7,
-      items: [
-        "Off-leash preparation",
-        "Puppy foundations",
-        "Play/games, positions, place and recall",
-        "Equipment included",
-      ],
-    },
-    {
-      name: "Silver Plus",
-      price: 1400,
-      weeks: 8,
-      items: [
-        "Off-leash preparation",
-        "Puppy foundations",
-        "Public places",
-        "Equipment included",
-      ],
-    },
-    {
-      name: "Platinum",
-      price: 2300,
-      weeks: "12+",
-      items: [
-        "Puppy foundations",
-        "Management",
-        "Off-leash obedience",
-        "Equipment included",
-      ],
-    },
-  ];
-
   const extras = [
     { name: "Bath", price: 50 },
     { name: "Extra Walks", price: 15 },
@@ -168,23 +114,6 @@
     const span = button.querySelector(".sLhdrcV");
     if (span) span.textContent = text;
     else button.textContent = text;
-  }
-
-  function openPlan(name) {
-    const p = plans.find((x) => x.name === name);
-    if (!p) return;
-    const el = dialog(
-      p.name,
-      `<p>${p.weeks} Weeks · ${money(p.price)}</p><ul>${p.items.map((x) => `<li>${x}</li>`).join("")}</ul><p>Ask Blake whether this program fits your dog and confirm the session arrangements before enrolling.</p><div class="preview-buttons"><button class="preview-btn" data-local="plan-enquiry">Ask about ${p.name}</button><button class="preview-btn" data-local="consultation">Book a consultation</button></div>`,
-    );
-    el.querySelector('[data-local="plan-enquiry"]').onclick = () => {
-      state.enquiry.plan = p.name;
-      navigate("/contact?plan=" + encodeURIComponent(p.name));
-    };
-    el.querySelector('[data-local="consultation"]').onclick = () => {
-      state.service = "consultation";
-      navigate("/booking-calendar/dog-daycare-1?service=consultation");
-    };
   }
 
   function addHelp(root) {
@@ -248,20 +177,6 @@
         a.dataset.previewRoute = "/dog-boarding";
         a.href = "/o4k9#/dog-boarding";
         return;
-      }
-      const context =
-        a.closest('[data-testid="richTextElement"],[id^="comp-"]')
-          ?.textContent || text;
-      const p = [...plans]
-        .sort((a, b) => b.name.length - a.name.length)
-        .find((p) => context.includes(p.name));
-      if (p) {
-        a.dataset.previewPlan = p.name;
-        a.setAttribute("aria-label", "Learn about " + p.name + " training");
-      }
-      if (context.includes("Reactive Rehab")) {
-        a.dataset.previewRoute = "/contact?plan=Reactive%20Rehab";
-        a.href = "/o4k9#/contact?plan=Reactive%20Rehab";
       }
     });
 
@@ -342,31 +257,56 @@
         e.textContent.includes("Veteran Dog Trainer"),
       );
       if (first && stay && subtitle) {
-        const locationLine = document.createElement("span");
+        const heroRect = hero.getBoundingClientRect();
+        const originalHeight = heroRect.height;
+        const originalActionTop =
+          first.getBoundingClientRect().top - heroRect.top;
+        hero.classList.add("preview-readable-hero");
+        subtitle.classList.add("preview-hero-subtitle");
+        const shade = document.createElement("div");
+        shade.className = "preview-hero-shade";
+        shade.setAttribute("aria-hidden", "true");
+        hero.querySelector("#bgLayers_comp-lt8r2k21").append(shade);
+
+        const locationLine = document.createElement("p");
         locationLine.className = "preview-hero-location";
         locationLine.textContent =
           "Moscow, Idaho · Dog Training, Daycare & Boarding";
+        const actions = document.createElement("div");
+        actions.className = "preview-hero-actions";
         const daycare = document.createElement("a");
-        daycare.className = "preview-daycare-cta";
         daycare.textContent = "BOOK DAYCARE";
         daycare.dataset.previewRoute = "/service-page/dog-daycare-1";
         daycare.href = "/o4k9#/service-page/dog-daycare-1";
-        document.body.append(locationLine, daycare);
+        actions.append(first, stay, daycare);
+        hero.append(locationLine, actions);
+
         const place = () => {
-          const a = first.getBoundingClientRect(),
-            b = stay.getBoundingClientRect(),
-            s = subtitle.getBoundingClientRect();
-          const width = b.width;
-          const fits =
-            b.right + 18 + width < document.documentElement.clientWidth - 15;
-          locationLine.style.left = s.left + scrollX + "px";
-          locationLine.style.top = s.bottom + 6 + scrollY + "px";
-          locationLine.style.maxWidth =
-            document.documentElement.clientWidth - s.left - 10 + "px";
-          daycare.style.left = (fits ? b.right + 18 : a.left) + scrollX + "px";
-          daycare.style.top = (fits ? b.top : b.bottom + 12) + scrollY + "px";
-          daycare.style.width = width + "px";
-          daycare.style.height = b.height + "px";
+          const h = hero.getBoundingClientRect();
+          const s = subtitle.getBoundingClientRect();
+          const left = Math.max(16, s.left - h.left);
+          const width = Math.min(
+            760,
+            document.documentElement.clientWidth - left * 2,
+          );
+          Object.assign(locationLine.style, {
+            left: left + "px",
+            top: s.bottom - h.top + 12 + "px",
+            width: width + "px",
+          });
+          const locationBottom =
+            locationLine.getBoundingClientRect().bottom - h.top;
+          const top = Math.max(originalActionTop, locationBottom + 20);
+          Object.assign(actions.style, {
+            left: left + "px",
+            top: top + "px",
+            width: width + "px",
+          });
+          hero.style.minHeight =
+            Math.max(
+              originalHeight,
+              top + actions.getBoundingClientRect().height + 28,
+            ) + "px";
         };
         document.fonts.ready.then(place);
         requestAnimationFrame(place);
@@ -962,12 +902,6 @@
       if (element.id === "MENU_AS_CONTAINER_TOGGLE") {
         e.preventDefault();
         showMobileMenu();
-        return;
-      }
-
-      if (element.dataset.previewPlan) {
-        e.preventDefault();
-        openPlan(element.dataset.previewPlan);
         return;
       }
 

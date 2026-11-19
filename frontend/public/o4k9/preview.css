@@ -324,31 +324,69 @@ dialog.preview-dialog .preview-check span {
   z-index: 12;
   pointer-events: none;
   font:
-    14px/1.4 raleway,
+    600 18px/1.5 raleway,
     Arial,
     sans-serif;
   color: white;
+  margin: 0;
   text-shadow: 0 1px 5px #000;
 }
-.preview-daycare-cta {
+.preview-hero-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(90deg, #000b 0%, #0009 58%, #0003 100%);
+}
+.preview-readable-hero [data-mesh-id="comp-lt8r2k21inlineContent"] {
+  position: relative;
+  z-index: 2;
+}
+.preview-readable-hero .preview-hero-subtitle {
+  color: #fff !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 5px #000;
+}
+.preview-hero-actions {
   position: absolute;
   z-index: 13;
   display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.preview-hero-actions > a {
+  display: flex;
+  position: relative;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  color: white;
-  background: transparent;
-  border: 1px solid #ff653b;
+  width: auto !important;
+  min-width: 180px;
+  min-height: 54px;
+  padding: 12px 16px;
+  color: #111 !important;
+  background: #ff653b !important;
+  border: 2px solid #ff653b !important;
   font:
-    14px raleway,
+    700 18px/1.3 raleway,
     Arial,
     sans-serif;
   box-sizing: border-box;
-  text-decoration: none;
+  text-decoration: none !important;
+  text-align: center;
+  white-space: nowrap;
 }
-.preview-daycare-cta:hover {
-  background: #ff653b;
-  color: #000;
+.preview-hero-actions > a .wixui-button__label {
+  color: inherit !important;
+  font: inherit !important;
+}
+.preview-hero-actions > a:hover {
+  background: #ff825f !important;
+  border-color: #ff825f !important;
+}
+.preview-hero-actions > a:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
 }
 .preview-boarding-intro {
   max-width: 920px;
@@ -522,10 +560,17 @@ html[data-original-device="mobile"] .preview-contact-footer > div {
   margin-bottom: 9px;
 }
 html[data-original-device="mobile"] .preview-hero-location {
-  font-size: 10px;
+  font-size: 15px;
 }
-html[data-original-device="mobile"] .preview-daycare-cta {
-  font-size: 12px;
+html[data-original-device="mobile"] .preview-hero-actions {
+  flex-direction: column;
+  gap: 12px;
+}
+html[data-original-device="mobile"] .preview-hero-actions > a {
+  min-height: 48px;
+  min-width: 0;
+  width: 100% !important;
+  font-size: 16px;
 }
 html[data-original-device="mobile"] #preview-chat {
   width: 48px;

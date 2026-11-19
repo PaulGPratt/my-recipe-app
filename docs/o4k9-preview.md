@@ -12,16 +12,16 @@ This is a faithful static baseline, not an export of the Wix editor/project. Liv
 
 ## Specific proposed changes
 
-1. Add Daycare to the existing navigation and a matching outlined homepage button. Keep the original hero, headline, photo and existing buttons.
-2. Add a short Moscow, Idaho service/location line under the original introduction.
-3. Fix boarding links and package dead ends. Training package links open original published inclusions and relevant enquiry/consultation paths.
+1. Add Daycare to the existing navigation. Following the November 19 review, all three homepage actions use solid orange backgrounds, bold dark 18px labels and at least 54px height on desktop. On the original mobile canvas they use 16px labels, 48px minimum height and a full-width stack. Preserve the original hero headline and photograph.
+2. Enlarge the Moscow, Idaho service/location line to 18px on desktop and 15px on the mobile canvas. A dark gradient over the original photo improves text contrast. The hero grows when necessary so the location line and actions do not collide with the next section. Keyboard users receive a visible white focus outline.
+3. Fix the boarding card destination. The package-details popup and package-specific enquiry/consultation shortcuts were rejected in the November 19 review and removed. Training package links retain their original Services-page behavior, including Reactive Rehab.
 4. Make the published phone, email and address visible in a restrained footer using the existing palette and typography.
 5. Clarify boarding with dog/kennel terminology, published care/rate information, and removal of irrelevant hotel amenity labels. Retain the native rate/details panels.
 6. Replace the daycare instruction to choose an 8AM-5PM start time with a request to confirm arrival arrangements. Keep the calendar presentation and 8AM daycare sample; do not invent a change to staffing, duration or capacity.
 7. Add booking help and retain sample selections/details while editing within a session.
 8. Improve local page titles/descriptions, image text and one O4K9 spelling error; hide the unavailable rewards promotion while preserving header spacing.
 
-The small **Review changes · Demo only** control lists these edits and switches between the original baseline and proposed mode on the current route. It also downloads a local review-notes text file. Direct baseline URL: `/o4k9?mode=baseline`. The review UI is preview infrastructure, not a recommendation to add it to the live site.
+The small **Review changes · Demo only** control lists these edits and switches between the original baseline and proposed mode on the current route. It also downloads a local review-notes text file. Direct baseline URL: `/o4k9?mode=baseline`. The review UI is preview infrastructure, not a recommendation to add it to the live site. The presentation consolidates the mobile navigation discussion into its homepage slide and removes the two duplicate mobile slides and the rejected package-popup slide.
 
 Blake must confirm final arrival rules, package details, terms and housing suitability. The preview does not diagnose or fix the live intermittent booking error or availability configuration. SEO titles/copy are proposed; no production ranking or speed improvement is claimed from this static mockup.
 
