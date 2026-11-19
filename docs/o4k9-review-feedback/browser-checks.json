@@ -1,0 +1,153 @@
+{
+  "checkedOn": "2026-11-19",
+  "desktop": {
+    "actions": [
+      {
+        "background": "rgb(255, 101, 59)",
+        "color": "rgb(17, 17, 17)",
+        "font": "700 18px / 23.4px raleway, Arial, sans-serif",
+        "label": "START TRAINING",
+        "rect": {
+          "bottom": 672.8229370117188,
+          "height": 54,
+          "left": 168.33334350585938,
+          "right": 349.68751525878906,
+          "top": 618.8229370117188,
+          "width": 181.3541717529297,
+          "x": 168.33334350585938,
+          "y": 618.8229370117188
+        }
+      },
+      {
+        "background": "rgb(255, 101, 59)",
+        "color": "rgb(17, 17, 17)",
+        "font": "700 18px / 23.4px raleway, Arial, sans-serif",
+        "label": "BOOK A STAY",
+        "rect": {
+          "bottom": 672.8229370117188,
+          "height": 54,
+          "left": 363.6875,
+          "right": 543.6875,
+          "top": 618.8229370117188,
+          "width": 180,
+          "x": 363.6875,
+          "y": 618.8229370117188
+        }
+      },
+      {
+        "background": "rgb(255, 101, 59)",
+        "color": "rgb(17, 17, 17)",
+        "font": "700 18px / 23.4px raleway, Arial, sans-serif",
+        "label": "BOOK DAYCARE",
+        "rect": {
+          "bottom": 672.8229370117188,
+          "height": 54,
+          "left": 557.6875,
+          "right": 737.6875,
+          "top": 618.8229370117188,
+          "width": 180,
+          "x": 557.6875,
+          "y": 618.8229370117188
+        }
+      }
+    ],
+    "hero": {
+      "bottom": 787.8229217529297,
+      "height": 651,
+      "left": 0,
+      "right": 1264.666748046875,
+      "top": 136.8229217529297,
+      "width": 1264.666748046875,
+      "x": 0,
+      "y": 136.8229217529297
+    },
+    "location": {
+      "bottom": 598.8229370117188,
+      "height": 27,
+      "left": 168.33334350585938,
+      "right": 928.3333435058594,
+      "top": 571.8229370117188,
+      "width": 760,
+      "x": 168.33334350585938,
+      "y": 571.8229370117188
+    },
+    "viewport": 1265
+  },
+  "mobile": {
+    "actions": {
+      "bottom": 601.65625,
+      "height": 170.375,
+      "left": 25,
+      "right": 295,
+      "top": 431.28125,
+      "width": 270,
+      "x": 25,
+      "y": 431.28125
+    },
+    "buttons": [
+      {
+        "font": "700 16px / 20.8px raleway, Arial, sans-serif",
+        "rect": {
+          "bottom": 480.0729179382324,
+          "height": 48.79166793823242,
+          "left": 25,
+          "right": 295,
+          "top": 431.28125,
+          "width": 270,
+          "x": 25,
+          "y": 431.28125
+        }
+      },
+      {
+        "font": "700 16px / 20.8px raleway, Arial, sans-serif",
+        "rect": {
+          "bottom": 540.8646049499512,
+          "height": 48.79166793823242,
+          "left": 25,
+          "right": 295,
+          "top": 492.0729370117187,
+          "width": 270,
+          "x": 25,
+          "y": 492.0729370117187
+        }
+      },
+      {
+        "font": "700 16px / 20.8px raleway, Arial, sans-serif",
+        "rect": {
+          "bottom": 601.6562919616699,
+          "height": 48.79166793823242,
+          "left": 25,
+          "right": 295,
+          "top": 552.8646240234375,
+          "width": 270,
+          "x": 25,
+          "y": 552.8646240234375
+        }
+      }
+    ],
+    "hero": {
+      "bottom": 629.6562957763672,
+      "height": 530.5833740234375,
+      "left": 0,
+      "right": 320,
+      "top": 99.07292175292967,
+      "width": 320,
+      "x": 0,
+      "y": 99.07292175292967
+    },
+    "pageWidth": 320,
+    "scrollWidth": 320
+  },
+  "keyboard": {
+    "focused": true,
+    "outlineColor": "rgb(255, 255, 255)",
+    "outlineStyle": "solid",
+    "outlineWidth": "2.66667px"
+  },
+  "packageLinks": {
+    "desktop": "Services route, no popup",
+    "mobile": "Services route, no popup"
+  },
+  "baselineHeroAdditions": 0,
+  "buttonContrastRatio": 6.45
+}

@@ -1,0 +1,87 @@
+{
+  "checkedOn": "2026-11-19",
+  "desktopMenu": [
+    "Home",
+    "Training",
+    "Boarding",
+    "Daycare",
+    "Trainer",
+    "Shop",
+    "Contact"
+  ],
+  "actions": [
+    "START TRAINING",
+    "BOOK BOARDING",
+    "BOOK DAYCARE"
+  ],
+  "boardingActionAriaLabel": "BOOK BOARDING",
+  "serviceLine": "Moscow, Idaho · Dog Training, Boarding & Daycare",
+  "mobile": {
+    "outerViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "canvasWidth": 320,
+    "scrollWidth": 320,
+    "actionsMinimumHeight": 48.79,
+    "menuOrder": [
+      "Home",
+      "Training",
+      "Boarding",
+      "Daycare",
+      "Trainer",
+      "Shop",
+      "Contact"
+    ]
+  },
+  "help": {
+    "font": "18px / 28.8px raleway, Arial, sans-serif",
+    "color": "rgb(17, 17, 17)",
+    "background": "rgb(255, 255, 255)",
+    "desktopBounds": {
+      "left": 142.33,
+      "top": 299.83,
+      "width": 980,
+      "height": 188.78
+    },
+    "mobileBounds": {
+      "left": 0,
+      "top": 99.64,
+      "width": 320,
+      "height": 246.36
+    },
+    "buttonResult": "Contact route; selected date prefilled; no submission"
+  },
+  "footer": {
+    "visible": true,
+    "zIndex": 2,
+    "desktopHeight": 154.99,
+    "mobileHeight": 268.76
+  },
+  "hotelLabels": {
+    "labels": [
+      "Dogs",
+      "Kennels"
+    ],
+    "exactLanguageSettingsVerifiedBy": "User confirmed in Blake’s installed app",
+    "settingsPath": "Hotels → Property Setup → Languages → Booking Engine",
+    "explanatoryFallbackRemoved": true,
+    "details": [
+      "3 Dogs max",
+      "About this kennel"
+    ],
+    "action": {
+      "label": "Add kennel to cart",
+      "result": "Kennel added to demo stay; local total $50; no reservation created"
+    }
+  },
+  "presentation": {
+    "slides": 14,
+    "removedReviewedSlides": [
+      8,
+      10
+    ],
+    "label": "Proposed",
+    "revisionHistoryRemoved": true
+  }
+}

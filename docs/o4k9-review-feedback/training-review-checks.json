@@ -1,0 +1,55 @@
+{
+  "checkedOn": "2026-11-19",
+  "training": {
+    "consultationRequired": true,
+    "durationMinutes": 60,
+    "price": 150,
+    "programs": [
+      "Bronze",
+      "Bronze Plus",
+      "Silver",
+      "Silver Plus",
+      "Platinum"
+    ],
+    "directProgramEnrollment": false,
+    "otherCareLinks": [
+      "Boarding",
+      "Daycare"
+    ],
+    "legacyProposedServices": "Normalizes to #/training",
+    "desktopMouseConsultation": "Opens One Hour Dog Training Consultation calendar"
+  },
+  "buttons": {
+    "originalMeasuredWeight": "400",
+    "proposedDesktopWeight": "400",
+    "proposedMobileWeight": "400"
+  },
+  "mobile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "canvasWidth": 320,
+    "scrollWidth": 320,
+    "programGridColumns": "280px",
+    "consultationActionPointerEvents": "auto",
+    "consultationMouseClick": "Opens One Hour Dog Training Consultation calendar"
+  },
+  "consultationSummary": {
+    "service": "One Hour Dog Training Consultation",
+    "total": "$150.00",
+    "submitted": false
+  },
+  "baselineServices": {
+    "heading": "services",
+    "trainingAdditions": 0,
+    "daycareStillPresent": true
+  },
+  "presentation": {
+    "title": "O4K9 Website Proposal",
+    "slides": 15,
+    "repetitiveSubtitleRemoved": true,
+    "amenitiesTitle": "Clean up Hotel Amenities listing",
+    "standaloneSpellingSlideRemoved": true
+  }
+}

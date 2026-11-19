@@ -67,60 +67,6 @@
 
   const boardingPage = original.startsWith("boarding");
 
-  const plans = [
-    {
-      name: "Bronze",
-      price: 1050,
-      weeks: 5,
-      items: [
-        "Management",
-        "Loose-leash walking",
-        "Place command",
-        "Kennel/crate/potty training",
-        "Equipment included",
-      ],
-    },
-    {
-      name: "Bronze Plus",
-      price: 1100,
-      weeks: 6,
-      items: ["Management", "Basic commands", "Equipment included"],
-    },
-    {
-      name: "Silver",
-      price: 1250,
-      weeks: 7,
-      items: [
-        "Off-leash preparation",
-        "Puppy foundations",
-        "Play/games, positions, place and recall",
-        "Equipment included",
-      ],
-    },
-    {
-      name: "Silver Plus",
-      price: 1400,
-      weeks: 8,
-      items: [
-        "Off-leash preparation",
-        "Puppy foundations",
-        "Public places",
-        "Equipment included",
-      ],
-    },
-    {
-      name: "Platinum",
-      price: 2300,
-      weeks: "12+",
-      items: [
-        "Puppy foundations",
-        "Management",
-        "Off-leash obedience",
-        "Equipment included",
-      ],
-    },
-  ];
-
   const extras = [
     { name: "Bath", price: 50 },
     { name: "Extra Walks", price: 15 },
@@ -170,35 +116,102 @@
     else button.textContent = text;
   }
 
-  function openPlan(name) {
-    const p = plans.find((x) => x.name === name);
-    if (!p) return;
-    const el = dialog(
-      p.name,
-      `<p>${p.weeks} Weeks · ${money(p.price)}</p><ul>${p.items.map((x) => `<li>${x}</li>`).join("")}</ul><p>Ask Blake whether this program fits your dog and confirm the session arrangements before enrolling.</p><div class="preview-buttons"><button class="preview-btn" data-local="plan-enquiry">Ask about ${p.name}</button><button class="preview-btn" data-local="consultation">Book a consultation</button></div>`,
-    );
-    el.querySelector('[data-local="plan-enquiry"]').onclick = () => {
-      state.enquiry.plan = p.name;
-      navigate("/contact?plan=" + encodeURIComponent(p.name));
-    };
-    el.querySelector('[data-local="consultation"]').onclick = () => {
-      state.service = "consultation";
-      navigate("/booking-calendar/dog-daycare-1?service=consultation");
-    };
-  }
-
   function addHelp(root) {
     if (!root || root.querySelector(".preview-booking-help")) return;
-    const help = document.createElement("p");
+    const help = document.createElement("aside");
     help.className = "preview-booking-help";
+    help.setAttribute("aria-label", "Booking help");
     help.innerHTML =
-      'Trouble booking? (225) 773-3264 · <button type="button">Ask about your date</button>';
+      '<strong>Need help booking?</strong><p>If you see an error or cannot find your date, call <a href="/o4k9#/contact" data-preview-route="/contact">(225) 773-3264</a> or ask Blake about availability.</p><button type="button">Ask about your date</button>';
     help.querySelector("button").onclick = () => {
       state.enquiry.message =
         "I would like to ask about " + dateLabel(state.date) + ".";
       navigate("/contact");
     };
     root.append(help);
+  }
+
+  function boardingWording(value) {
+    return value.replace(/\b(adults?|rooms?)\b/gi, (word) => {
+      const replacement = {
+        adult: "dog",
+        adults: "dogs",
+        room: "kennel",
+        rooms: "kennels",
+      }[word.toLowerCase()];
+      return word[0] === word[0].toUpperCase()
+        ? replacement[0].toUpperCase() + replacement.slice(1)
+        : replacement;
+    });
+  }
+
+  function showTrainingPage() {
+    const root = $("#Containerv557c");
+    if (!root) return;
+    const introPhoto = $("#comp-lt8r2k0z img")?.getAttribute("src");
+    const programsPhoto = $("#comp-m398f7ff img")?.getAttribute("src");
+    const programs = [
+      {
+        name: "Bronze",
+        price: 1050,
+        weeks: "5 weeks · Management",
+        items: [
+          "Loose-leash walking",
+          "Place command",
+          "Kennel, crate and potty training",
+          "Equipment included",
+        ],
+      },
+      {
+        name: "Bronze Plus",
+        price: 1100,
+        weeks: "6 weeks",
+        items: ["Management", "Basic commands", "Equipment included"],
+      },
+      {
+        name: "Silver",
+        price: 1250,
+        weeks: "7 weeks · Off-leash preparation",
+        items: [
+          "Puppy foundations",
+          "Play and games, positions, place and recall",
+          "Equipment included",
+        ],
+      },
+      {
+        name: "Silver Plus",
+        price: 1400,
+        weeks: "8 weeks · Off-leash preparation",
+        items: ["Puppy foundations", "Public places", "Equipment included"],
+      },
+      {
+        name: "Platinum",
+        price: 2300,
+        weeks: "12+ weeks",
+        items: [
+          "Puppy foundations",
+          "Off-leash obedience",
+          "Equipment included",
+        ],
+      },
+    ];
+    const consultation = "/booking-calendar/dog-daycare-1?service=consultation";
+    const book = `<a class="preview-training-action" href="/o4k9#${consultation}" data-preview-route="${consultation}">Book a Consultation</a>`;
+    const intro = document.createElement("section");
+    intro.className = "preview-training-intro";
+    intro.innerHTML = `<div class="preview-training-inner"><h1>Dog Training</h1><p class="preview-training-lead">Obedience and behavior training in Moscow, Idaho, tailored to your dog and your goals.</p><section class="preview-training-consultation" aria-labelledby="training-consultation-title"><div><h2 id="training-consultation-title">Consultation required before training</h2><p>Every training program begins with a one-hour consultation with Blake. Discuss your dog’s behavior and goals, then choose a suitable training program together.</p></div><div><p class="preview-training-rate">1 hour · $150</p>${book}</div></section></div>`;
+    const programsSection = document.createElement("section");
+    programsSection.className = "preview-training-programs";
+    programsSection.innerHTML = `<div class="preview-training-inner"><h2>Training Programs</h2><p class="preview-training-lead">Explore the options before your consultation. Blake will help you choose the right program for your dog.</p><div class="preview-training-grid">${programs.map((p) => `<article><h3>${p.name}</h3><p class="preview-training-price">${money(p.price)}</p><p class="preview-training-duration">${p.weeks}</p><ul>${p.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div><section class="preview-training-rehab"><div><h3>Reactive Rehab</h3><p>For concerns such as lunging, growling, nipping, biting or resource guarding. Price varies; discuss your dog’s needs at the required consultation.</p></div>${book}</section><nav class="preview-training-other" aria-label="Other dog care"><span>Also looking for dog care?</span><a href="/o4k9#/dog-boarding" data-preview-route="/dog-boarding">Boarding</a><a href="/o4k9#/service-page/dog-daycare-1" data-preview-route="/service-page/dog-daycare-1">Daycare</a></nav></div>`;
+    for (const [section, photo] of [
+      [intro, introPhoto],
+      [programsSection, programsPhoto],
+    ]) {
+      if (photo)
+        section.style.backgroundImage = `linear-gradient(#0009, #000b), url("${photo}")`;
+    }
+    root.classList.add("preview-training-page");
+    root.replaceChildren(intro, programsSection);
   }
 
   if (proposed) {
@@ -218,7 +231,17 @@
         a.href = "/o4k9#/service-page/dog-daycare-1";
         a.removeAttribute("aria-current");
         item.querySelector("p").textContent = "Daycare";
-        source.before(item);
+        const boarding = [...nav.children].find((e) =>
+          e.querySelector('a[data-preview-route="/dog-boarding"]'),
+        );
+        source.querySelector("p").textContent = "Training";
+        source.style.width = "96px";
+        if (boarding) {
+          boarding.querySelector("p").textContent = "Boarding";
+          boarding.style.width = "100px";
+          boarding.before(source);
+          boarding.after(item);
+        } else source.after(item);
       }
     }
 
@@ -234,7 +257,16 @@
         next.textContent = "Daycare";
         next.setAttribute("data-preview-route", "/service-page/dog-daycare-1");
         next.href = "/o4k9#/service-page/dog-daycare-1";
-        a.closest("li").before(item);
+        const training = a.closest("li");
+        const boarding = mobileNav.querySelector(
+          'a[data-preview-route="/dog-boarding"]',
+        )?.closest("li");
+        a.textContent = "Training";
+        if (boarding) {
+          boarding.querySelector("a").textContent = "Boarding";
+          boarding.before(training);
+          boarding.after(item);
+        } else training.after(item);
       }
     }
 
@@ -249,20 +281,8 @@
         a.href = "/o4k9#/dog-boarding";
         return;
       }
-      const context =
-        a.closest('[data-testid="richTextElement"],[id^="comp-"]')
-          ?.textContent || text;
-      const p = [...plans]
-        .sort((a, b) => b.name.length - a.name.length)
-        .find((p) => context.includes(p.name));
-      if (p) {
-        a.dataset.previewPlan = p.name;
-        a.setAttribute("aria-label", "Learn about " + p.name + " training");
-      }
-      if (context.includes("Reactive Rehab")) {
-        a.dataset.previewRoute = "/contact?plan=Reactive%20Rehab";
-        a.href = "/o4k9#/contact?plan=Reactive%20Rehab";
-      }
+      a.dataset.previewRoute = "/training";
+      a.href = "/o4k9#/training";
     });
 
     const footer = $("#SITE_FOOTER");
@@ -272,18 +292,18 @@
       const contact = document.createElement("div");
       contact.className = "preview-contact-footer";
       contact.innerHTML =
-        '<div><a href="/o4k9#/contact" data-preview-route="/contact">(225) 773-3264</a><br><a href="/o4k9#/contact" data-preview-route="/contact">o4k9.training@gmail.com</a></div><div>2711 Foothill Road<br>Moscow, ID 83843</div>';
+        '<div><strong>O4K9</strong><p>Training · Boarding · Daycare</p></div><div><strong>Get in touch</strong><br><a href="/o4k9#/contact" data-preview-route="/contact">(225) 773-3264</a><br><a href="/o4k9#/contact" data-preview-route="/contact">o4k9.training@gmail.com</a></div><div><strong>Visit us</strong><p>2711 Foothill Road<br>Moscow, ID 83843</p></div>';
       footer.append(contact);
     }
 
     const descriptions = {
       home: [
-        "Dog Training, Daycare & Boarding | Moscow, Idaho | O4K9",
-        "Dog training, daycare and overnight boarding in Moscow, Idaho and Latah County. Explore programs, published prices and how to book.",
+        "Dog Training, Boarding & Daycare | Moscow, Idaho | O4K9",
+        "Dog training, overnight boarding and daycare in Moscow, Idaho and Latah County. Explore programs, published prices and how to book.",
       ],
       services: [
-        "Dog Training & Daycare Services | Moscow, ID | O4K9",
-        "Explore O4K9 dog training programs, consultations and daycare in Moscow, Idaho.",
+        "Dog Training in Moscow, Idaho | O4K9",
+        "Start O4K9 dog training with a required one-hour consultation in Moscow, Idaho. Explore obedience and behavior training programs, prices and inclusions.",
       ],
       boarding: [
         "Dog Boarding in Moscow, Idaho | O4K9",
@@ -324,6 +344,8 @@
     if (original === "about")
       replaceText(document.body, /Let 04K9 Help/g, "Let O4K9 Help");
 
+    if (original === "services") showTrainingPage();
+
     if (["daycare", "daycare-addons", "daycare-summary"].includes(original))
       replaceText(
         document.body,
@@ -342,31 +364,60 @@
         e.textContent.includes("Veteran Dog Trainer"),
       );
       if (first && stay && subtitle) {
-        const locationLine = document.createElement("span");
+        const stayLabel = stay.querySelector(".wixui-button__label");
+        if (stayLabel) stayLabel.textContent = "BOOK BOARDING";
+        else stay.textContent = "BOOK BOARDING";
+        stay.setAttribute("aria-label", "BOOK BOARDING");
+        const heroRect = hero.getBoundingClientRect();
+        const originalHeight = heroRect.height;
+        const originalActionTop =
+          first.getBoundingClientRect().top - heroRect.top;
+        hero.classList.add("preview-readable-hero");
+        subtitle.classList.add("preview-hero-subtitle");
+        const shade = document.createElement("div");
+        shade.className = "preview-hero-shade";
+        shade.setAttribute("aria-hidden", "true");
+        hero.querySelector("#bgLayers_comp-lt8r2k21").append(shade);
+
+        const locationLine = document.createElement("p");
         locationLine.className = "preview-hero-location";
         locationLine.textContent =
-          "Moscow, Idaho · Dog Training, Daycare & Boarding";
+          "Moscow, Idaho · Dog Training, Boarding & Daycare";
+        const actions = document.createElement("div");
+        actions.className = "preview-hero-actions";
         const daycare = document.createElement("a");
-        daycare.className = "preview-daycare-cta";
         daycare.textContent = "BOOK DAYCARE";
         daycare.dataset.previewRoute = "/service-page/dog-daycare-1";
         daycare.href = "/o4k9#/service-page/dog-daycare-1";
-        document.body.append(locationLine, daycare);
+        actions.append(first, stay, daycare);
+        hero.append(locationLine, actions);
+
         const place = () => {
-          const a = first.getBoundingClientRect(),
-            b = stay.getBoundingClientRect(),
-            s = subtitle.getBoundingClientRect();
-          const width = b.width;
-          const fits =
-            b.right + 18 + width < document.documentElement.clientWidth - 15;
-          locationLine.style.left = s.left + scrollX + "px";
-          locationLine.style.top = s.bottom + 6 + scrollY + "px";
-          locationLine.style.maxWidth =
-            document.documentElement.clientWidth - s.left - 10 + "px";
-          daycare.style.left = (fits ? b.right + 18 : a.left) + scrollX + "px";
-          daycare.style.top = (fits ? b.top : b.bottom + 12) + scrollY + "px";
-          daycare.style.width = width + "px";
-          daycare.style.height = b.height + "px";
+          const h = hero.getBoundingClientRect();
+          const s = subtitle.getBoundingClientRect();
+          const left = Math.max(16, s.left - h.left);
+          const width = Math.min(
+            760,
+            document.documentElement.clientWidth - left * 2,
+          );
+          Object.assign(locationLine.style, {
+            left: left + "px",
+            top: s.bottom - h.top + 12 + "px",
+            width: width + "px",
+          });
+          const locationBottom =
+            locationLine.getBoundingClientRect().bottom - h.top;
+          const top = Math.max(originalActionTop, locationBottom + 20);
+          Object.assign(actions.style, {
+            left: left + "px",
+            top: top + "px",
+            width: width + "px",
+          });
+          hero.style.minHeight =
+            Math.max(
+              originalHeight,
+              top + actions.getBoundingClientRect().height + 28,
+            ) + "px";
         };
         document.fonts.ready.then(place);
         requestAnimationFrame(place);
@@ -377,10 +428,14 @@
     if (boardingPage) {
       const engine = $("booking-engine");
       if (engine) {
-        replaceText(engine, /adults/gi, "dogs");
-        replaceText(engine, /adult/gi, "dog");
-        replaceText(engine, /rooms/gi, "kennels");
-        replaceText(engine, /room/gi, "kennel");
+        // Match the Booking Engine language settings, including details panels.
+        replaceText(document.body, /\b(adults?|rooms?)\b/gi, boardingWording);
+        $$('[aria-label],[title]').forEach((element) => {
+          for (const attribute of ["aria-label", "title"]) {
+            const value = element.getAttribute(attribute);
+            if (value) element.setAttribute(attribute, boardingWording(value));
+          }
+        });
         $$("span")
           .filter((e) =>
             /^\d+ bedrooms$|^Mountain view$|^Pets allowed$/.test(
@@ -391,7 +446,7 @@
         const intro = document.createElement("section");
         intro.className = "preview-boarding-intro";
         intro.innerHTML =
-          "<h1>Dog Boarding in Moscow, Idaho</h1><p>Temperature-controlled kennels, five daily outings and two walks, with food included twice daily.</p><p>Published nightly rates: $50 for the first dog, + $40 for the second, + $20 for the third. Confirm shared-kennel suitability and arrival arrangements with Blake.</p>";
+          '<h1>Dog Boarding in Moscow, Idaho</h1><p>Temperature-controlled kennels, five daily outings and two walks, with food included twice daily.</p><p>Nightly rates: $50 for the first dog, + $40 for the second, + $20 for the third. Confirm shared-kennel suitability and arrival arrangements with Blake.</p>';
         engine.prepend(intro);
         addHelp(engine);
       }
@@ -965,12 +1020,6 @@
         return;
       }
 
-      if (element.dataset.previewPlan) {
-        e.preventDefault();
-        openPlan(element.dataset.previewPlan);
-        return;
-      }
-
       if (
         (label.startsWith("More ") && label.endsWith(" pages")) ||
         element.dataset.testid === "expandablemenu-toggle"
@@ -1062,7 +1111,7 @@
         e.preventDefault();
         info(
           "Add another service",
-          "Use the Services page to explore a consultation or daycare. No second booking is created in this local preview.",
+          "Explore Training for a consultation or the Daycare page for daycare. No second booking is created in this local preview.",
         );
         return;
       }
@@ -1215,7 +1264,7 @@
         return;
       }
 
-      if (label === "Add room to cart") {
+      if (label === "Add room to cart" || label === "Add kennel to cart") {
         e.preventDefault();
         state.service = "boarding";
         state.kennelSelected = true;
